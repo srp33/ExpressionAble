@@ -15,6 +15,15 @@ import time
 def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
 	"""
 	Takes a look at the first few rows and columns of a parquet file and returns a pandas dataframe corresponding to the number of requested rows and columns
+	
+	:type parquetFilePath: string
+	:param parquetFilePath: filepath to a parquet file to be examined
+
+	:type numRows: int
+	:param numRows: the number of rows the returned Pandas dataframe will contain
+
+	:type numCols: int
+	:param numCols: the number of columns the returned Pandas dataframe will contain
 	"""	
 	allCols = getColumnNames(parquetFilePath)
 	if(numCols>len(allCols)):
@@ -31,6 +40,13 @@ def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
 def peekByColumnNames(parquetFilePath, listOfColumnNames,numRows=10)->pd.DataFrame:
 	"""
 	Returns a pandas dataframe containing row data for a given list of column names
+	
+	:type parquetFilePath: string
+	:param parquetFilePath: filepath to a parquet file to be examined
+
+	:type numRows: int
+	:param numRows: the number of rows the returned Pandas dataframe will contain
+
 	"""
 	listOfColumnNames.insert(0,"Sample")
 	df = pd.read_parquet(parquetFilePath, columns=listOfColumnNames)
@@ -41,6 +57,9 @@ def peekByColumnNames(parquetFilePath, listOfColumnNames,numRows=10)->pd.DataFra
 def getColumnNames(parquetFilePath)->list:
 	"""
 	Returns a list of all column names from a given parquet dataset
+	:type parquetFilePath: string
+	:param parquetFilePath: filepath to a parquet file to be examined
+	
 	"""
 	
 	p = pq.ParquetFile(parquetFilePath)
@@ -58,6 +77,15 @@ def getColumnNames(parquetFilePath)->list:
 def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnInfo:
 	"""
 	Given a parquet file and column name, returns a ColumnInfo object describing the column's name,data type (discrete/continuous), and all its unique values	
+	
+	:type parquetFilePath: string
+	:param parquetFilePath: filepath to a parquet file to be examined
+
+	:type columnName: string
+	:param columnName: the name of the column about which information is being obtained
+
+	:type sizeLimit: int
+	:param sizeLimit: limits the number of unique values returned to be no more than this number
 	"""
 	columnList = [columnName]
 	t = time.time()
@@ -84,7 +112,19 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 
 def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], discreteQueries: list=[])->pd.DataFrame:
 	"""
-	Performs mulitple queries on a parquet dataset. If no queries or columns are passed, it returns the entire dataset as a pandas dataframe
+	Performs mulitple queries on a parquet dataset. If no queries or columns are passed, it returns the entire dataset as a pandas dataframe. Otherwise, returns only the queried data over the requested columns as a Pandas dataframe
+
+	:type parquetFilePath: string
+	:param parquetFilePath: filepath to a parquet file to be queried on
+
+	:type columnList: list of strings
+	:param columnList: list of column names that will be included in the data resulting from the queries
+
+	:type continuousQueries: list of ContinuousQuery objects
+	:param continuousQueries: list of objects representing queries on a column of continuous data
+	
+	:type discreteQueries: list of DiscreteQuery objects
+	:param discreteQueries: list of objects representing queries on a column of discrete data
 	"""
 	if len(columnList)==0 and len(continuousQueries)==0 and len(discreteQueries)==0:
 		df = pd.read_parquet(parquetFilePath)
@@ -123,6 +163,27 @@ def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], disc
 
 def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, columnList: list=[], continuousQueries: list=[], discreteQueries: list=[], transpose= False):
 	"""Wrapper function for query that exectues queries then exports them to the given file type, such as JSON or CSV
+	:type parquetFilePath: string
+	:param parquetFilePath: filepath to a parquet file to be queried on
+
+	:type outFilePath: string
+	:param outFilePath: name of the file that query results will written to
+
+	:type outFileType: FileTypeEnum
+	:param outFileType: an enumerated object specifying what sort of file to which results will be exported	
+
+	:type columnList: list of strings
+	:param columnList: list of column names that will be included in the data resulting from the queries
+
+	:type continuousQueries: list of ContinuousQuery objects
+	:param continuousQueries: list of objects representing queries on a column of continuous data
+	
+	:type discreteQueries: list of DiscreteQuery objects
+	:param discreteQueries: list of objects representing queries on a column of discrete data
+
+	:type transpose: Boolean
+	:param transpose: if True, index and columns will be transposed 
+
 	"""
 	df = query(parquetFilePath, columnList, continuousQueries, discreteQueries)
 	if transpose:

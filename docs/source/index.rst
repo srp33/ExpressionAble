@@ -5,6 +5,8 @@
 
 Welcome to ShapeShifter's documentation!
 ========================================
+Project introduction goes here
+
 Guide
 ^^^^^ 
 

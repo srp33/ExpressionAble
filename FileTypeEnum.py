@@ -1,6 +1,9 @@
 from enum import Enum
 
 class FileTypeEnum(Enum):
+	"""
+	This class represents an indicator for various file types
+	"""
 	CSV = 0
 	JSON = 1
 	Excel = 4

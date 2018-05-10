@@ -8,7 +8,7 @@ Welcome to ShapeShifter's documentation!
 Project introduction goes here
 
 Guide
-^^^^^ 
+ 
 
 .. toctree::
    :maxdepth: 2

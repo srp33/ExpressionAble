@@ -1,0 +1,215 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>UseParquet module &#8212; ShapeShifter 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="argsExample module" href="argsExample.html" />
+    <link rel="prev" title="ParseArgs module" href="ParseArgs.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="argsExample.html" title="argsExample module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ParseArgs.html" title="ParseArgs module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ShapeShifter 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-UseParquet">
+<span id="useparquet-module"></span><h1>UseParquet module<a class="headerlink" href="#module-UseParquet" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="UseParquet.exportQueryResults">
+<code class="descclassname">UseParquet.</code><code class="descname">exportQueryResults</code><span class="sig-paren">(</span><em>parquetFilePath</em>, <em>outFilePath</em>, <em>outFileType: FileTypeEnum.FileTypeEnum</em>, <em>columnList: list = []</em>, <em>continuousQueries: list = []</em>, <em>discreteQueries: list = []</em>, <em>transpose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#UseParquet.exportQueryResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for query that exectues queries then exports them to the given file type, such as JSON or CSV
+:type parquetFilePath: string
+:param parquetFilePath: filepath to a parquet file to be queried on</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>outFilePath</strong> (<em>string</em>) – name of the file that query results will written to</li>
+<li><strong>outFileType</strong> (<a class="reference internal" href="FileTypeEnum.html#FileTypeEnum.FileTypeEnum" title="FileTypeEnum.FileTypeEnum"><em>FileTypeEnum</em></a>) – an enumerated object specifying what sort of file to which results will be exported</li>
+<li><strong>columnList</strong> (<em>list of strings</em>) – list of column names that will be included in the data resulting from the queries</li>
+<li><strong>continuousQueries</strong> (<em>list of ContinuousQuery objects</em>) – list of objects representing queries on a column of continuous data</li>
+<li><strong>discreteQueries</strong> (<em>list of DiscreteQuery objects</em>) – list of objects representing queries on a column of discrete data</li>
+<li><strong>transpose</strong> (<em>Boolean</em>) – if True, index and columns will be transposed</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="UseParquet.getColumnInfo">
+<code class="descclassname">UseParquet.</code><code class="descname">getColumnInfo</code><span class="sig-paren">(</span><em>parquetFilePath</em>, <em>columnName: str</em>, <em>sizeLimit: int = None</em><span class="sig-paren">)</span> &#x2192; ColumnInfo.ColumnInfo<a class="headerlink" href="#UseParquet.getColumnInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a parquet file and column name, returns a ColumnInfo object describing the column’s name,data type (discrete/continuous), and all its unique values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parquetFilePath</strong> (<em>string</em>) – filepath to a parquet file to be examined</li>
+<li><strong>columnName</strong> (<em>string</em>) – the name of the column about which information is being obtained</li>
+<li><strong>sizeLimit</strong> (<em>int</em>) – limits the number of unique values returned to be no more than this number</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="UseParquet.getColumnNames">
+<code class="descclassname">UseParquet.</code><code class="descname">getColumnNames</code><span class="sig-paren">(</span><em>parquetFilePath</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#UseParquet.getColumnNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all column names from a given parquet dataset
+:type parquetFilePath: string
+:param parquetFilePath: filepath to a parquet file to be examined</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="UseParquet.peek">
+<code class="descclassname">UseParquet.</code><code class="descname">peek</code><span class="sig-paren">(</span><em>parquetFilePath</em>, <em>numRows=10</em>, <em>numCols=10</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#UseParquet.peek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a look at the first few rows and columns of a parquet file and returns a pandas dataframe corresponding to the number of requested rows and columns</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parquetFilePath</strong> (<em>string</em>) – filepath to a parquet file to be examined</li>
+<li><strong>numRows</strong> (<em>int</em>) – the number of rows the returned Pandas dataframe will contain</li>
+<li><strong>numCols</strong> (<em>int</em>) – the number of columns the returned Pandas dataframe will contain</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="UseParquet.peekByColumnNames">
+<code class="descclassname">UseParquet.</code><code class="descname">peekByColumnNames</code><span class="sig-paren">(</span><em>parquetFilePath</em>, <em>listOfColumnNames</em>, <em>numRows=10</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#UseParquet.peekByColumnNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pandas dataframe containing row data for a given list of column names</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parquetFilePath</strong> (<em>string</em>) – filepath to a parquet file to be examined</li>
+<li><strong>numRows</strong> (<em>int</em>) – the number of rows the returned Pandas dataframe will contain</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="UseParquet.query">
+<code class="descclassname">UseParquet.</code><code class="descname">query</code><span class="sig-paren">(</span><em>parquetFilePath</em>, <em>columnList: list = []</em>, <em>continuousQueries: list = []</em>, <em>discreteQueries: list = []</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#UseParquet.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs mulitple queries on a parquet dataset. If no queries or columns are passed, it returns the entire dataset as a pandas dataframe. Otherwise, returns only the queried data over the requested columns as a Pandas dataframe</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parquetFilePath</strong> (<em>string</em>) – filepath to a parquet file to be queried on</li>
+<li><strong>columnList</strong> (<em>list of strings</em>) – list of column names that will be included in the data resulting from the queries</li>
+<li><strong>continuousQueries</strong> (<em>list of ContinuousQuery objects</em>) – list of objects representing queries on a column of continuous data</li>
+<li><strong>discreteQueries</strong> (<em>list of DiscreteQuery objects</em>) – list of objects representing queries on a column of discrete data</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ParseArgs.html"
+                        title="previous chapter">ParseArgs module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="argsExample.html"
+                        title="next chapter">argsExample module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/UseParquet.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="argsExample.html" title="argsExample module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ParseArgs.html" title="ParseArgs module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ShapeShifter 0.0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Stephen Piccolo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
+    </div>
+  </body>
+</html>

@@ -24,7 +24,7 @@ def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
 	:type numCols: int
 	:param numCols: the number of columns the returned Pandas dataframe will contain
 	
-	:return: the first numRows and numCols in the given parquet file
+	:return: The first numRows and numCols in the given parquet file
 	:rtype: Pandas dataframe
 	"""	
 	allCols = getColumnNames(parquetFilePath)
@@ -49,7 +49,7 @@ def peekByColumnNames(parquetFilePath, listOfColumnNames,numRows=10)->pd.DataFra
 	:type numRows: int
 	:param numRows: the number of rows the returned Pandas dataframe will contain
 
-	:return: the first numRows of all the listed columns in the given parquet file
+	:return: The first numRows of all the listed columns in the given parquet file
 	:rtype: Pandas dataframe
 
 	"""
@@ -65,7 +65,7 @@ def getColumnNames(parquetFilePath)->list:
 	:type parquetFilePath: string
 	:param parquetFilePath: filepath to a parquet file to be examined
 
-	:return: all column names
+	:return: All column names
 	:rtype: list
 	
 	"""
@@ -95,7 +95,7 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 	:type sizeLimit: int
 	:param sizeLimit: limits the number of unique values returned to be no more than this number
 
-	:return: name, data type (continuous/discrete), and unique values from specified column
+	:return: Name, data type (continuous/discrete), and unique values from specified column
 	:rtype: ColumnInfo object
 	"""
 	columnList = [columnName]
@@ -132,7 +132,7 @@ def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], disc
 	:type discreteQueries: list of DiscreteQuery objects
 	:param discreteQueries: list of objects representing queries on a column of discrete data
 
-	:return: requested columns with results of all queries 
+	:return: Requested columns with results of all queries 
 	:rtype: Pandas dataframe
 	"""
 	if len(columnList)==0 and len(continuousQueries)==0 and len(discreteQueries)==0:
@@ -171,7 +171,9 @@ def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], disc
 	return df
 
 def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, columnList: list=[], continuousQueries: list=[], discreteQueries: list=[], transpose= False):
-	"""Wrapper function for query that exectues queries then exports them to the given file type, such as JSON or CSV
+	"""
+	Performs mulitple queries on a parquet dataset and exports results to a file of specified type. If no queries or columns are passed, it exports the entire dataset as a pandas dataframe. Otherwise, exports the queried data over the requested columns 
+
 	:type parquetFilePath: string
 	:param parquetFilePath: filepath to a parquet file to be queried on
 

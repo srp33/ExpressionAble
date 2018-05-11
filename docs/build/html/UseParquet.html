@@ -63,16 +63,22 @@
 <dl class="function">
 <dt id="UseParquet.getColumnInfo">
 <code class="descclassname">UseParquet.</code><code class="descname">getColumnInfo</code><span class="sig-paren">(</span><em>parquetFilePath</em>, <em>columnName: str</em>, <em>sizeLimit: int = None</em><span class="sig-paren">)</span> &#x2192; ColumnInfo.ColumnInfo<a class="headerlink" href="#UseParquet.getColumnInfo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a parquet file and column name, returns a ColumnInfo object describing the column’s name,data type (discrete/continuous), and all its unique values</p>
+<dd><p>Retrieves a specified column’s name, data type, and all its unique values from a parquet file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>parquetFilePath</strong> (<em>string</em>) – filepath to a parquet file to be examined</li>
 <li><strong>columnName</strong> (<em>string</em>) – the name of the column about which information is being obtained</li>
 <li><strong>sizeLimit</strong> (<em>int</em>) – limits the number of unique values returned to be no more than this number</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">name, data type (continuous/discrete), and unique values from specified column</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ColumnInfo object</p>
 </td>
 </tr>
 </tbody>
@@ -82,9 +88,19 @@
 <dl class="function">
 <dt id="UseParquet.getColumnNames">
 <code class="descclassname">UseParquet.</code><code class="descname">getColumnNames</code><span class="sig-paren">(</span><em>parquetFilePath</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#UseParquet.getColumnNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of all column names from a given parquet dataset
+<dd><p>Retrieves all column names from a dataset stored in a parquet file
 :type parquetFilePath: string
 :param parquetFilePath: filepath to a parquet file to be examined</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">all column names</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -102,7 +118,10 @@
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">int – dataframe representing the information peeked at from the parquet file</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the first numRows and numCols in the given parquet file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Pandas dataframe</p>
 </td>
 </tr>
 </tbody>
@@ -112,15 +131,21 @@
 <dl class="function">
 <dt id="UseParquet.peekByColumnNames">
 <code class="descclassname">UseParquet.</code><code class="descname">peekByColumnNames</code><span class="sig-paren">(</span><em>parquetFilePath</em>, <em>listOfColumnNames</em>, <em>numRows=10</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="headerlink" href="#UseParquet.peekByColumnNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a pandas dataframe containing row data for a given list of column names</p>
+<dd><p>Peeks into a parquet file by looking at a specific set of columns</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>parquetFilePath</strong> (<em>string</em>) – filepath to a parquet file to be examined</li>
 <li><strong>numRows</strong> (<em>int</em>) – the number of rows the returned Pandas dataframe will contain</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the first numRows of all the listed columns in the given parquet file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Pandas dataframe</p>
 </td>
 </tr>
 </tbody>
@@ -135,12 +160,18 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>parquetFilePath</strong> (<em>string</em>) – filepath to a parquet file to be queried on</li>
 <li><strong>columnList</strong> (<em>list of strings</em>) – list of column names that will be included in the data resulting from the queries</li>
 <li><strong>continuousQueries</strong> (<em>list of ContinuousQuery objects</em>) – list of objects representing queries on a column of continuous data</li>
 <li><strong>discreteQueries</strong> (<em>list of DiscreteQuery objects</em>) – list of objects representing queries on a column of discrete data</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">requested columns with results of all queries</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Pandas dataframe</p>
 </td>
 </tr>
 </tbody>

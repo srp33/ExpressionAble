@@ -24,7 +24,7 @@ def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
 	:type numCols: int
 	:param numCols: the number of columns the returned Pandas dataframe will contain
 	
-	:returns: pandas.dataframe -- dataframe representing the information peeked at from the parquet file
+	:returns: int -- dataframe representing the information peeked at from the parquet file
 	"""	
 	allCols = getColumnNames(parquetFilePath)
 	if(numCols>len(allCols)):

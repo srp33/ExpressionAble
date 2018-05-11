@@ -24,7 +24,8 @@ def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
 	:type numCols: int
 	:param numCols: the number of columns the returned Pandas dataframe will contain
 	
-	:returns: int -- dataframe representing the information peeked at from the parquet file
+	:return: the first numRows and numCols in the given parquet file
+	:rtype: Pandas dataframe
 	"""	
 	allCols = getColumnNames(parquetFilePath)
 	if(numCols>len(allCols)):
@@ -40,13 +41,16 @@ def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
 
 def peekByColumnNames(parquetFilePath, listOfColumnNames,numRows=10)->pd.DataFrame:
 	"""
-	Returns a pandas dataframe containing row data for a given list of column names
+	Peeks into a parquet file by looking at a specific set of columns
 	
 	:type parquetFilePath: string
 	:param parquetFilePath: filepath to a parquet file to be examined
 
 	:type numRows: int
 	:param numRows: the number of rows the returned Pandas dataframe will contain
+
+	:return: the first numRows of all the listed columns in the given parquet file
+	:rtype: Pandas dataframe
 
 	"""
 	listOfColumnNames.insert(0,"Sample")
@@ -57,9 +61,12 @@ def peekByColumnNames(parquetFilePath, listOfColumnNames,numRows=10)->pd.DataFra
 
 def getColumnNames(parquetFilePath)->list:
 	"""
-	Returns a list of all column names from a given parquet dataset
+	Retrieves all column names from a dataset stored in a parquet file
 	:type parquetFilePath: string
 	:param parquetFilePath: filepath to a parquet file to be examined
+
+	:return: all column names
+	:rtype: list
 	
 	"""
 	
@@ -77,7 +84,7 @@ def getColumnNames(parquetFilePath)->list:
 
 def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnInfo:
 	"""
-	Given a parquet file and column name, returns a ColumnInfo object describing the column's name,data type (discrete/continuous), and all its unique values	
+	Retrieves a specified column's name, data type, and all its unique values from a parquet file
 	
 	:type parquetFilePath: string
 	:param parquetFilePath: filepath to a parquet file to be examined
@@ -87,6 +94,9 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 
 	:type sizeLimit: int
 	:param sizeLimit: limits the number of unique values returned to be no more than this number
+
+	:return: name, data type (continuous/discrete), and unique values from specified column
+	:rtype: ColumnInfo object
 	"""
 	columnList = [columnName]
 	df = pd.read_parquet(parquetFilePath, columns=columnList)
@@ -121,6 +131,9 @@ def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], disc
 	
 	:type discreteQueries: list of DiscreteQuery objects
 	:param discreteQueries: list of objects representing queries on a column of discrete data
+
+	:return: requested columns with results of all queries 
+	:rtype: Pandas dataframe
 	"""
 	if len(columnList)==0 and len(continuousQueries)==0 and len(discreteQueries)==0:
 		df = pd.read_parquet(parquetFilePath)

@@ -1,0 +1,10 @@
+	A	B	C	D	E	F	G	H	I	J	K	L	M	O	P	Q	R	S	T
+float1	1.2	4.2	7.1	1.1	2.5	22.3	9.3	0.3	8.0	52.1	6.6	0.3	9.4	4.4	7.2	12.5	7.7	90.2	110.2
+float2	3.5	7.3	2.3	4.3	6.3	5.2	5.3	7.7	4.5	34.0	4.4	4.3	5.3	7.7	3.3	33.2	46.2	1.2	4.2
+int1	4	3	5	5	1	52	5	3	8	42	4	5	2	6	44	4	3	4	100
+int2	2	9	4	7	12	3	88	7	22	33	6	11	99	6	3	6	9	11	12
+discrete1	hot	cold	hot	medium	cold	medium	cold	hot	medium	hot	cold	hot	cold	medium	medium	medium	hot	hot	cold
+discrete2	blue	red	red	red	blue	blue	red	blue	blue	red	blue	red	red	red	blue	red	red	blue	blue
+bool1	True	False	True	False	False	True	True	False	False	True	True	True	False	False	True	False	False	False	False
+bool2	True	True	False	True	False	False	True	False	True	True	False	False	True	False	True	False	True	True	False
+null1		yes			no							yes	yes			no	no	no	

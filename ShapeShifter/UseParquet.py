@@ -10,7 +10,6 @@ from DiscreteQuery import DiscreteQuery
 from OperatorEnum import OperatorEnum
 from FileTypeEnum import FileTypeEnum
 import sys
-import time
 
 def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
 	"""
@@ -24,6 +23,8 @@ def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
 
 	:type numCols: int
 	:param numCols: the number of columns the returned Pandas dataframe will contain
+	
+	:returns: pandas.dataframe -- dataframe representing the information peeked at from the parquet file
 	"""	
 	allCols = getColumnNames(parquetFilePath)
 	if(numCols>len(allCols)):
@@ -88,10 +89,7 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 	:param sizeLimit: limits the number of unique values returned to be no more than this number
 	"""
 	columnList = [columnName]
-	t = time.time()
 	df = pd.read_parquet(parquetFilePath, columns=columnList)
-	t2= time.time()
-	print("read in dataframe: " + str(t2-t))
 
 	uniqueValues = set()
 	for index, row in df.iterrows():
@@ -103,8 +101,6 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 			if len(uniqueValues)>=sizeLimit:
 				break
 	uniqueValues = list(uniqueValues)
-	t3 = time.time()
-	print("iterate through dataframe: " + str(t3-t2))
 	if isinstance(uniqueValues[0],str):
 		return ColumnInfo(columnName,"discrete", uniqueValues)
 	else:

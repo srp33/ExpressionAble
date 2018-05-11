@@ -1,3 +1,4 @@
 ParquetData/
 TsvData/
 argsExample.py
+__pycache__

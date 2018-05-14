@@ -1,15 +1,13 @@
 import pyarrow.parquet as pq
-import pyarrow as pa
+#import pyarrow as pa
 import pandas as pd
-import dask.dataframe as dd
-import xlsxwriter
-from sqlalchemy import create_engine
+#from sqlalchemy import create_engine
 from ColumnInfo import ColumnInfo
 from ContinuousQuery import ContinuousQuery
 from DiscreteQuery import DiscreteQuery
 from OperatorEnum import OperatorEnum
 from FileTypeEnum import FileTypeEnum
-import sys
+#import sys
 
 def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
 	"""
@@ -197,15 +195,19 @@ def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, c
 
 	"""
 	df = query(parquetFilePath, columnList, continuousQueries, discreteQueries)
+	null= 'NA'
+	df.reset_index(inplace=True)
 	if transpose:
 		df=df.transpose()
+
 	if outFileType== FileTypeEnum.CSV:
-		df.to_csv(path_or_buf=outFilePath, sep='\t')
+		df.to_csv(path_or_buf=outFilePath, sep='\t',na_rep=null)
 	elif outFileType == FileTypeEnum.JSON:
 		df.to_json(path_or_buf=outFilePath)
 	elif outFileType == FileTypeEnum.Excel:
+		import xlsxwriter
 		writer = pd.ExcelWriter(outFilePath, engine='xlsxwriter')
-		df.to_excel(writer, sheet_name='Sheet1') 
+		df.to_excel(writer, sheet_name='Sheet1', na_rep=null) 
 		writer.save()
 	elif outFileType == FileTypeEnum.Feather:
 		df=df.reset_index()
@@ -221,7 +223,7 @@ def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, c
 	elif outFileType == FileTypeEnum.Pickle:
 		df.to_pickle(outFilePath)
 	elif outFileType == FileTypeEnum.HTML:
-		html = df.to_html()
+		html = df.to_html(na_rep=null)
 		outFile = open(outFilePath, "w")
 		outFile.write(html)
 		outFile.close()

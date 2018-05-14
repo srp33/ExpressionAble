@@ -1,12 +1,14 @@
-import UseParquet #import *
+from UseParquet import exportQueryResults #import *
 from FileTypeEnum import FileTypeEnum
 from OperatorEnum import OperatorEnum
+from ContinuousQuery import ContinuousQuery
+from DiscreteQuery import DiscreteQuery
 import argparse
 
 def determineFileType(fileType):
 	if fileType== "CSV":
 		return FileTypeEnum.CSV
-	elif fileType== "JSON":
+	elif fileType == "JSON":
 		return FileTypeEnum.JSON
 	elif fileType== "Excel":
 		return FileTypeEnum.Excel
@@ -25,26 +27,130 @@ def determineFileType(fileType):
 	elif fileType =="HTML":
 		return FileTypeEnum.Pickle
 
+def determineExtension(fileName):
+	extension= fileName.rstrip("\n").split(".")
+	if len(extension)>1:
+		extension=extension[len(extension)-1]
+	if extension== "csv" or extension =="txt":
+                return FileTypeEnum.CSV
+	elif extension== "json":
+		return FileTypeEnum.JSON
+	elif extension== "xlsx":
+		return FileTypeEnum.Excel
+	elif extension== "hdf" or extension=="h5":
+		return FileTypeEnum.HDF5
+	elif extension=="feather":
+		return FileTypeEnum.Feather
+	elif extension =="pq":
+		return FileTypeEnum.Parquet
+	elif extension =="mp":
+		return FileTypeEnum.MsgPack
+	elif extension == "dta":
+		return FileTypeEnum.Stata
+	elif extension =="pkl":
+		return FileTypeEnum.Pickle
+	elif extension =="html":
+		return FileTypeEnum.Pickle
+
+def determineOperator(operator):
+	if operator=="==" or operator=="=":
+		return OperatorEnum.Equals
+	elif operator== "<":
+		return OperatorEnum.LessThan
+	elif operator =="<=":
+		return OperatorEnum.LessThanOrEqualTo
+	elif operator ==">":
+		return OperatorEnum.GreaterThan
+	elif operator ==">=":
+		return OperatorEnum.GreaterThanOrEqualTo
+
+def isOperator(operator):
+	if operator=="==" or operator=="<" or operator ==">" or operator==">=" or operator=="<=":
+		return True
+	print("\'"+operator+"\' is not a valid operator")
+	return False
+
+def isContinuous(query):
+	query = query.rstrip("\n").split(" ")
+	if len(query)<3:
+		print("invalid query: " + str(query) + ": wrong number of arguments")
+		return False
+	try:
+		float(query[2])
+		if isOperator(query[1]):
+			return True
+	except:
+		return False
+	return False 
+
+def isDiscrete(query):
+	query = query.rstrip("\n").split(" ")
+	if len(query)<3:
+		print("invalid query: " + str(query) + ": wrong number of arguments")
+		return False
+	try:
+		float(query[2])
+		return False
+	except:
+		if query[1]=='==':
+			return True
+	return False 
+def buildContinuousQuery(query):
+	query = query.rstrip("\n").split(" ")
+	col = query[0]
+	operator = determineOperator(query[1])
+	value = float(query[2])
+	return ContinuousQuery(col, value, operator)
+	
+def buildDiscreteQuery(query):
+	query=query.rstrip("\n").split(" ")
+	col = query[0]
+	values=[]
+	for i in range(2, len(query)):
+		values.append(query[i])
+	return DiscreteQuery(col, values)
+def buildAllQueries(queryList, discreteQueryList, continuousQueryList):
+	
+	for query in queryList:
+		if isDiscrete(query):
+			discreteQueryList.append(buildDiscreteQuery(query))
+		elif isContinuous(query):
+			continuousQueryList.append(buildContinuousQuery(query))
+		else:
+			print(query+": query is malformed")	
 
 parser = argparse.ArgumentParser(description = "Import, query on, and transform data into a format of your choice!")
 
 parser.add_argument("input_file", help = "Data file to be read, queried on, and/or transformed")
 parser.add_argument("output_file", help = "File path to which results are exported")
-parser.add_argument("output_file_type", help = "Type of file to which results are exported", choices = ["CSV","JSON","Excel","HDF5","Feather","Parquet","MsgPack","Stata","Pickle","HTML"])
 
+parser.add_argument("-i","--input_file_type", help = "Type of file to be imported. If not specified, file type will be determined by file extension", choices = ["CSV","JSON","Excel","HDF5","Feather","Parquet","MsgPack","Stata","Pickle","HTML"])
+parser.add_argument("-o","--output_file_type", help = "Type of file to which results are exported. If not specified, file type will be determined by file extension", choices = ["CSV","JSON","Excel","HDF5","Feather","Parquet","MsgPack","Stata","Pickle","HTML"])
 parser.add_argument("-t","--transpose", help="Transpose index and columns", action= "store_true")
 parser.add_argument("-c","--columns", nargs='+', help ="List of column names to examine in the given dataset") 
-parser.add_argument("--discrete_queries", nargs = '*', help = "List of discrete queries in the form of A B where A is the column name and B is the corresponding value")
+parser.add_argument("-f", "--filter", nargs = '+', help = "stuff to filter")
 args = parser.parse_args()
-fileType= determineFileType(args.output_file_type)
 
+inFileType = determineExtension(args.input_file)
+if args.input_file_type:
+	inFileType = determineFileType(args.input_file_type)
+	
+
+outFileType= determineExtension(args.output_file)
+if args.output_file_type:
+	outFileType = determineFileType(args.output_file_type)
 isTransposed = False
 if args.transpose:
 	isTransposed=True
 colList=[]
 discreteQueryList=[]
 continuousQueryList=[]
+if args.filter:
+	buildAllQueries(args.filter, discreteQueryList, continuousQueryList)
+
 if args.columns:
 	colList=args.columns
 
-UseParquet.exportQueryResults(args.input_file, args.output_file, fileType,columnList=colList,transpose=isTransposed)
+
+
+exportQueryResults(args.input_file, args.output_file, outFileType,continuousQueries=continuousQueryList, discreteQueries= discreteQueryList, columnList=colList,transpose=isTransposed)

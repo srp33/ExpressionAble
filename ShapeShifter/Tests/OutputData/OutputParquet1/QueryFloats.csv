@@ -1,0 +1,13 @@
+	Sample	null1	int1	float1	discrete1
+0	C	NA	5	7.1	hot
+1	D	NA	5	1.1	medium
+2	F	NA	52	22.3	medium
+3	H	NA	3	0.3	hot
+4	I	NA	8	8.0	medium
+5	J	NA	42	52.1	hot
+6	L	yes	5	0.3	hot
+7	O	NA	6	4.4	medium
+8	P	NA	44	7.2	medium
+9	Q	no	4	12.5	medium
+10	R	no	3	7.7	hot
+11	S	no	4	90.2	hot

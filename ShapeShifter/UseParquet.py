@@ -114,7 +114,10 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 	uniqueValues = df[columnName].unique()
 	
 	#Todo: There is probably a better way to do this...
-	if isinstance(uniqueValues[0],str):
+	i=0
+	while uniqueValues[i] == None:
+		i+=1
+	if isinstance(uniqueValues[i],str):
 		return ColumnInfo(columnName,"discrete", uniqueValues)
 	else:
 		return ColumnInfo(columnName, "continuous", uniqueValues)
@@ -134,7 +137,10 @@ def getAllColumnsInfo(parquetFilePath):
 	columnDict={}
 	for col in df:
 		uniqueValues=df[col].unique()
-		if isinstance(uniqueValues[0],str):
+		i=0
+		while uniqueValues[i] == None:
+			i+=1
+		if isinstance(uniqueValues[i],str):
 	                columnDict[col] = ColumnInfo(col,"discrete", uniqueValues)
 		else:
 			columnDict[col] = ColumnInfo(col, "continuous", uniqueValues)
@@ -188,6 +194,8 @@ def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], disc
 			df = df.loc[df[query.columnName]<query.value, [ col for col in columnList]]
 		elif query.operator == OperatorEnum.LessThanOrEqualTo:
 			df = df.loc[df[query.columnName]<=query.value, [ col for col in columnList]]
+		elif query.operator== OperatorEnum.NotEquals:
+			df = df.loc[df[query.columnName]!=query.value, [col for col in columnList]]
 	#perform discrete queries
 	for query in discreteQueries:
 		df = df.loc[df[query.columnName].isin(query.values), [col for col in columnList]]

@@ -63,9 +63,11 @@ def determineOperator(operator):
 		return OperatorEnum.GreaterThan
 	elif operator ==">=":
 		return OperatorEnum.GreaterThanOrEqualTo
+	elif operator == "!=":
+		return OperatorEnum.NotEquals
 
 def isOperator(operator):
-	if operator=="==" or operator=="<" or operator ==">" or operator==">=" or operator=="<=":
+	if operator=="==" or operator=="<" or operator ==">" or operator==">=" or operator=="<=" or operator=="!=":
 		return True
 	print("\'"+operator+"\' is not a valid operator")
 	return False
@@ -92,7 +94,7 @@ def isDiscrete(query):
 		float(query[2])
 		return False
 	except:
-		if query[1]=='==':
+		if query[1]=='==' or query[1]=='=':
 			return True
 	return False 
 def buildContinuousQuery(query):
@@ -100,7 +102,7 @@ def buildContinuousQuery(query):
 	col = query[0]
 	operator = determineOperator(query[1])
 	value = float(query[2])
-	return ContinuousQuery(col, value, operator)
+	return ContinuousQuery(col, operator, value)
 	
 def buildDiscreteQuery(query):
 	query=query.rstrip("\n").split(" ")
@@ -150,7 +152,6 @@ if args.filter:
 
 if args.columns:
 	colList=args.columns
-
 
 
 exportQueryResults(args.input_file, args.output_file, outFileType,continuousQueries=continuousQueryList, discreteQueries= discreteQueryList, columnList=colList,transpose=isTransposed)

@@ -7,4 +7,5 @@ class OperatorEnum(Enum):
 	GreaterThan = 1
 	GreaterThanOrEqualTo=2
 	LessThan = 3
-	LessThanOrEqualTo = 4 
+	LessThanOrEqualTo = 4
+	NotEquals=5 

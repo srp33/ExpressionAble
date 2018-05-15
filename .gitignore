@@ -3,3 +3,5 @@ TsvData/
 argsExample.py
 runstuff.py
 __pycache__
+*.swp
+*.pq

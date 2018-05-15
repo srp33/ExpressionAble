@@ -96,8 +96,11 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 	:return: Name, data type (continuous/discrete), and unique values from specified column
 	:rtype: ColumnInfo object
 	"""
+	t1=time.time()
 	columnList = [columnName]
 	df = pd.read_parquet(parquetFilePath, columns=columnList)
+	t2=time.time()
+	print("Time to read in Parquet file: " + str(t2-t1))
 
 #	uniqueValues = set()
 #	for index, row in df.iterrows():
@@ -111,7 +114,8 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 #	uniqueValues = list(uniqueValues)
 
 	uniqueValues = df[columnName].unique()
-	print(uniqueValues)
+	t3=time.time()
+	print("Time to find unique values: " +str(t3-t2))
 	if isinstance(uniqueValues[0],str):
 		return ColumnInfo(columnName,"discrete", uniqueValues)
 	else:

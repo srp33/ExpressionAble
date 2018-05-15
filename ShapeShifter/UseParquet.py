@@ -97,11 +97,8 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 	:return: Name, data type (continuous/discrete), and unique values from specified column
 	:rtype: ColumnInfo object
 	"""
-	t1=time.time()
 	columnList = [columnName]
 	df = pd.read_parquet(parquetFilePath, columns=columnList)
-	t2=time.time()
-	print("Time to read in Parquet file: " + str(t2-t1))
 
 #	uniqueValues = set()
 #	for index, row in df.iterrows():
@@ -115,12 +112,33 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 #	uniqueValues = list(uniqueValues)
 
 	uniqueValues = df[columnName].unique()
-	t3=time.time()
-	print("Time to find unique values: " +str(t3-t2))
+	
+	#Todo: There is probably a better way to do this...
 	if isinstance(uniqueValues[0],str):
 		return ColumnInfo(columnName,"discrete", uniqueValues)
 	else:
 		return ColumnInfo(columnName, "continuous", uniqueValues)
+
+def getAllColumnsInfo(parquetFilePath):
+	"""
+	Retrieves the column name, data type, and all unique values from every column in a file
+
+	:type parquetFilePath: string
+	:param parquetFilePath: filepath to a parquet file to be examined
+
+	:return: Name, data type (continuous/discrete), and unique values from every column
+	:rtype: dictionary where key: column name and value:ColumnInfo object containing the column name, data type (continuous/discrete), and unique values from all columns
+	"""
+	#columnNames = getColumnNames(parquetFilePath)
+	df=pd.read_parquet(parquetFilePath)
+	columnDict={}
+	for col in df:
+		uniqueValues=df[col].unique()
+		if isinstance(uniqueValues[0],str):
+	                columnDict[col] = ColumnInfo(col,"discrete", uniqueValues)
+		else:
+			columnDict[col] = ColumnInfo(col, "continuous", uniqueValues)
+	return columnDict
 
 def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], discreteQueries: list=[])->pd.DataFrame:
 	"""

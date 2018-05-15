@@ -99,16 +99,19 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 	columnList = [columnName]
 	df = pd.read_parquet(parquetFilePath, columns=columnList)
 
-	uniqueValues = set()
-	for index, row in df.iterrows():
-		try:
-			uniqueValues.add(row[columnName])
-		except (TypeError, KeyError) as e:
-			return None
-		if sizeLimit != None:
-			if len(uniqueValues)>=sizeLimit:
-				break
-	uniqueValues = list(uniqueValues)
+#	uniqueValues = set()
+#	for index, row in df.iterrows():
+#		try:
+#			uniqueValues.add(row[columnName])
+#		except (TypeError, KeyError) as e:
+#			return None
+#		if sizeLimit != None:
+#			if len(uniqueValues)>=sizeLimit:
+#				break
+#	uniqueValues = list(uniqueValues)
+
+	uniqueValues = df[columnName].unique()
+	print(uniqueValues)
 	if isinstance(uniqueValues[0],str):
 		return ColumnInfo(columnName,"discrete", uniqueValues)
 	else:

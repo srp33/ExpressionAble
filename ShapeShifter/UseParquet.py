@@ -111,8 +111,8 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 #				break
 #	uniqueValues = list(uniqueValues)
 
-	uniqueValues = df[columnName].unique()
-	
+	uniqueValues = df[columnName].unique().tolist()
+	#uniqueValues.remove(None)
 	#Todo: There is probably a better way to do this...
 	i=0
 	while uniqueValues[i] == None:
@@ -136,7 +136,7 @@ def getAllColumnsInfo(parquetFilePath):
 	df=pd.read_parquet(parquetFilePath)
 	columnDict={}
 	for col in df:
-		uniqueValues=df[col].unique()
+		uniqueValues=df[col].unique().tolist()
 		i=0
 		while uniqueValues[i] == None:
 			i+=1

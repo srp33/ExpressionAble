@@ -7,6 +7,7 @@ from ContinuousQuery import ContinuousQuery
 from DiscreteQuery import DiscreteQuery
 from OperatorEnum import OperatorEnum
 from FileTypeEnum import FileTypeEnum
+import time
 #import sys
 
 def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:

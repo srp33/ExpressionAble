@@ -67,7 +67,7 @@ def determineOperator(operator):
 		return OperatorEnum.NotEquals
 
 def isOperator(operator):
-	if operator=="==" or operator=="<" or operator ==">" or operator==">=" or operator=="<=" or operator=="!=":
+	if operator=="==" or operator=="=" or operator=="<" or operator ==">" or operator==">=" or operator=="<=" or operator=="!=":
 		return True
 	print("\'"+operator+"\' is not a valid operator")
 	return False
@@ -109,7 +109,12 @@ def buildDiscreteQuery(query):
 	col = query[0]
 	values=[]
 	for i in range(2, len(query)):
-		values.append(query[i])
+		if query[i] == "True":
+			values.append(True)
+		elif query[i] == "False":
+			values.append(False)
+		else:
+			values.append(query[i])
 	return DiscreteQuery(col, values)
 def buildAllQueries(queryList, discreteQueryList, continuousQueryList):
 	
@@ -131,6 +136,7 @@ parser.add_argument("-o","--output_file_type", help = "Type of file to which res
 parser.add_argument("-t","--transpose", help="Transpose index and columns", action= "store_true")
 parser.add_argument("-c","--columns", nargs='+', help ="List of column names to examine in the given dataset") 
 parser.add_argument("-f", "--filter", nargs = '+', help = "stuff to filter")
+parser.add_argument("-a", "--all_columns", help = "Includes all columns in the resulting dataset. Overrides the \"--columns\" flag", action="store_true")
 args = parser.parse_args()
 
 inFileType = determineExtension(args.input_file)
@@ -152,6 +158,8 @@ if args.filter:
 
 if args.columns:
 	colList=args.columns
+allCols=False
+if args.all_columns:
+	allCols=True
 
-
-exportQueryResults(args.input_file, args.output_file, outFileType,continuousQueries=continuousQueryList, discreteQueries= discreteQueryList, columnList=colList,transpose=isTransposed)
+exportQueryResults(args.input_file, args.output_file, outFileType,continuousQueries=continuousQueryList, discreteQueries= discreteQueryList, columnList=colList,transpose=isTransposed, includeAllColumns=allCols)

@@ -117,7 +117,7 @@ def getColumnInfo(parquetFilePath, columnName:str, sizeLimit:int=None)->ColumnIn
 	i=0
 	while uniqueValues[i] == None:
 		i+=1
-	if isinstance(uniqueValues[i],str):
+	if isinstance(uniqueValues[i],str) or isinstance(uniqueValues[i],bool):
 		return ColumnInfo(columnName,"discrete", uniqueValues)
 	else:
 		return ColumnInfo(columnName, "continuous", uniqueValues)
@@ -140,13 +140,13 @@ def getAllColumnsInfo(parquetFilePath):
 		i=0
 		while uniqueValues[i] == None:
 			i+=1
-		if isinstance(uniqueValues[i],str):
+		if isinstance(uniqueValues[i],str) or isinstance(uniqueValues[i],bool):
 	                columnDict[col] = ColumnInfo(col,"discrete", uniqueValues)
 		else:
 			columnDict[col] = ColumnInfo(col, "continuous", uniqueValues)
 	return columnDict
 
-def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], discreteQueries: list=[])->pd.DataFrame:
+def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], discreteQueries: list=[], includeAllColumns = False)->pd.DataFrame:
 	"""
 	Performs mulitple queries on a parquet dataset. If no queries or columns are passed, it returns the entire dataset as a pandas dataframe. Otherwise, returns only the queried data over the requested columns as a Pandas dataframe
 
@@ -162,25 +162,35 @@ def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], disc
 	:type discreteQueries: list of DiscreteQuery objects
 	:param discreteQueries: list of objects representing queries on a column of discrete data
 
+	:type includeAllColumns: bool
+	:param includeAllColumns: if true, will include all columns in results. Overrides columnList if True
+
 	:return: Requested columns with results of all queries 
 	:rtype: Pandas dataframe
 	"""
 	if len(columnList)==0 and len(continuousQueries)==0 and len(discreteQueries)==0:
 		df = pd.read_parquet(parquetFilePath)
-		df.set_index("Sample", drop=True, inplace=True)
+		#df.set_index("Sample", drop=True, inplace=True)
 		return df
 	
-	#extract all necessary columns in order to read them into pandas
-	for query in continuousQueries:
-		if query.columnName not in columnList:
-			columnList.append(query.columnName)
-	for query in discreteQueries:
-		if query.columnName not in columnList:
-			columnList.append(query.columnName)
-	columnList.insert(0,"Sample")
+	if includeAllColumns:
+		columnList = getColumnNames(parquetFilePath)
+	else:	
+		#extract all necessary columns in order to read them into pandas
+		for query in continuousQueries:
+			if query.columnName not in columnList:
+				columnList.append(query.columnName)
+		for query in discreteQueries:
+			if query.columnName not in columnList:
+				columnList.append(query.columnName)
+	if "Sample" not in columnList:
+		columnList.insert(0,"Sample")
+	else:
+		columnList.insert(0, columnList.pop(columnList.index("Sample")))
+	
 	df = pd.read_parquet(parquetFilePath, columns = columnList)
-	df.set_index("Sample", drop=True, inplace=True)
-	del columnList[0]
+	#df.set_index("Sample", drop=True, inplace=True)
+	#del columnList[0]
 
 	#perform continuous queries, adjusting for which operator is to be used
 	for query in continuousQueries:
@@ -202,7 +212,7 @@ def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], disc
 	
 	return df
 
-def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, columnList: list=[], continuousQueries: list=[], discreteQueries: list=[], transpose= False):
+def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, columnList: list=[], continuousQueries: list=[], discreteQueries: list=[], transpose= False, includeAllColumns = False):
 	"""
 	Performs mulitple queries on a parquet dataset and exports results to a file of specified type. If no queries or columns are passed, it exports the entire dataset as a pandas dataframe. Otherwise, exports the queried data over the requested columns 
 
@@ -224,13 +234,16 @@ def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, c
 	:type discreteQueries: list of DiscreteQuery objects
 	:param discreteQueries: list of objects representing queries on a column of discrete data
 
-	:type transpose: Boolean
-	:param transpose: if True, index and columns will be transposed 
+	:type transpose: bool
+	:param transpose: if True, index and columns will be transposed
+
+	:type includeAllColumns: bool
+        :param includeAllColumns: if true, will include all columns in results. Overrides columnList if True 
 
 	"""
-	df = query(parquetFilePath, columnList, continuousQueries, discreteQueries)
+	df = query(parquetFilePath, columnList, continuousQueries, discreteQueries, includeAllColumns = includeAllColumns)
 	null= 'NA'
-	df.reset_index(inplace=True)
+	#df.reset_index(inplace=True)
 	if transpose:
 		df=df.transpose()
 

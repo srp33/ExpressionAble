@@ -8,7 +8,10 @@ python3 ParseArgs.py Tests/InputData/InputParquet1.pq Tests/OutputData/OutputPar
 python3 ParseArgs.py Tests/InputData/InputParquet1.pq Tests/OutputData/OutputParquet1/FloatFilter.csv -f "float1 > 9.1"
 python3 ParseArgs.py Tests/InputData/InputParquet1.pq Tests/OutputData/OutputParquet1/IntFilter.csv -f "int2 <= 12"
 python3 ParseArgs.py Tests/InputData/InputParquet1.pq Tests/OutputData/OutputParquet1/DiscreteFilter.csv -f "discrete1 = hot"
+python3 ParseArgs.py Tests/InputData/InputParquet1.pq Tests/OutputData/OutputParquet1/DiscreteDoubleFilter.csv -f  "discrete1 = hot medium" 
 python3 ParseArgs.py Tests/InputData/InputParquet1.pq Tests/OutputData/OutputParquet1/BooleanFilter.csv -f "bool1 = True"
 python3 ParseArgs.py Tests/InputData/InputParquet1.pq Tests/OutputData/OutputParquet1/SampleFilter.csv -f "Sample == A"
 python3 ParseArgs.py Tests/InputData/InputParquet1.pq Tests/OutputData/OutputParquet1/MultiFilter.csv -f "Sample = A" "float1 < 2" "int1 > 3" "discrete2 = blue" "bool1 = True"
-python3 ParseArgs.py Tests/InputData/InputParquet1.pq Tests/OutputData/OutputParquet1/MultiFilter.csv -f  "float1 < 8" -c
+python3 ParseArgs.py Tests/InputData/InputParquet1.pq Tests/OutputData/OutputParquet1/FilterWithColumn.csv -f  "float1 < 8" -c int1
+python3 ParseArgs.py Tests/InputData/InputParquet1.pq Tests/OutputData/OutputParquet1/FilterWithManyColumns.csv -f  "float1 < 8" -c int1 discrete1 bool1 float2
+python3 ParseArgs.py Tests/InputData/InputParquet1.pq Tests/OutputData/OutputParquet1/FilterWithAllColumns.csv -f  "float1 < 8" -a

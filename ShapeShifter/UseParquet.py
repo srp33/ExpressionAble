@@ -247,7 +247,7 @@ def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, c
 	if transpose:
 		df=df.transpose()
 
-	if outFileType== FileTypeEnum.CSV:
+	if outFileType== FileTypeEnum.CSV:#modify to have a TSV option, change the seperators
 		df.to_csv(path_or_buf=outFilePath, sep='\t',na_rep=null)
 	elif outFileType == FileTypeEnum.JSON:
 		df.to_json(path_or_buf=outFilePath)

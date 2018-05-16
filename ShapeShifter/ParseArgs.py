@@ -157,7 +157,8 @@ if args.filter:
 	buildAllQueries(args.filter, discreteQueryList, continuousQueryList)
 
 if args.columns:
-	colList=args.columns
+	colSet=set(args.columns)
+	colList=list(colSet)
 allCols=False
 if args.all_columns:
 	allCols=True

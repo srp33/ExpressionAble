@@ -14,4 +14,5 @@ class FileTypeEnum(Enum):
 	Stata = 7
 	Pickle = 8
 	HTML = 9
+	TSV = 10
 

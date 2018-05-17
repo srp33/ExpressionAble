@@ -1,0 +1,12 @@
+	Sample	float1	float2	int1	int2	discrete1	discrete2	bool1	bool2	null1
+0	A	1.2	3.5	4	2	hot	blue	True	True	NA
+1	B	4.2	7.3	3	9	cold	red	False	True	yes
+2	C	7.1	2.3	5	4	hot	red	True	False	NA
+3	D	1.1	4.3	5	7	medium	red	False	True	NA
+4	E	2.5	6.3	1	12	cold	blue	False	False	no
+7	H	0.3	7.7	3	7	hot	blue	False	False	NA
+10	K	6.6	4.4	4	6	cold	blue	True	False	NA
+11	L	0.3	4.3	5	11	hot	red	True	False	yes
+13	O	4.4	7.7	6	6	medium	red	False	False	NA
+14	P	7.2	3.3	44	3	medium	blue	True	True	NA
+16	R	7.7	46.2	3	9	hot	red	False	True	no

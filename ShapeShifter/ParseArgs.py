@@ -8,6 +8,8 @@ import argparse
 def determineFileType(fileType):
 	if fileType== "CSV":
 		return FileTypeEnum.CSV
+	elif fileType=="TSV":
+		return FileTypeEnum.TSV
 	elif fileType == "JSON":
 		return FileTypeEnum.JSON
 	elif fileType== "Excel":
@@ -31,8 +33,10 @@ def determineExtension(fileName):
 	extension= fileName.rstrip("\n").split(".")
 	if len(extension)>1:
 		extension=extension[len(extension)-1]
-	if extension== "csv" or extension =="txt":
-                return FileTypeEnum.CSV
+	if extension== "tsv" or extension =="txt":
+                return FileTypeEnum.TSV
+	elif extension == "csv":
+		return FileTypeEnum.CSV
 	elif extension== "json":
 		return FileTypeEnum.JSON
 	elif extension== "xlsx":
@@ -157,8 +161,10 @@ if args.filter:
 	buildAllQueries(args.filter, discreteQueryList, continuousQueryList)
 
 if args.columns:
-	colSet=set(args.columns)
-	colList=list(colSet)
+	colList=args.columns
+	#todo: find a way to remove duplicates in the list without reordering the list
+	#colSet=set(args.columns)
+	#colList=list(colSet)
 allCols=False
 if args.all_columns:
 	allCols=True

@@ -1,5 +1,6 @@
 ParquetData/
 TsvData/
+Tests/OutputData/OutputParquet1
 argsExample.py
 runstuff.py
 __pycache__

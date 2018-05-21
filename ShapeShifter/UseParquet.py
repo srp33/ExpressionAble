@@ -1,4 +1,5 @@
 import pyarrow.parquet as pq
+import re
 #import pyarrow as pa
 import pandas as pd
 #from sqlalchemy import create_engine
@@ -212,7 +213,49 @@ def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], disc
 	
 	return df
 
-def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, columnList: list=[], continuousQueries: list=[], discreteQueries: list=[], transpose= False, includeAllColumns = False):
+def parseColumnNamesFromQuery(query):
+	args = re.split('==|<|>|!=|<=|>=|and|or|\&|\|', query)
+	colList=[]
+	for arg in args:
+		#first remove all whitespace and parentheses and brackets
+		arg=arg.strip()
+		arg=arg.replace("(","")
+		arg=arg.replace(")","")
+		arg=arg.replace("[","")
+		arg=arg.replace("]","")
+		#if it is a number, it isn't a column name
+		try:
+			float(arg)
+		except:
+			#check if the string is surrounded by quotes. If so, it is not a column name
+			if arg[0]!="'" and arg[0]!='"':
+				#check for duplicates
+				if arg not in colList:
+					colList.append(arg)
+	return colList
+
+def newQuery(parquetFilePath, columnList, query, includeAllColumns = False):
+	
+	if len(columnList)==0 and query == None:
+		df = pd.read_parquet(parquetFilePath)
+		#df.set_index("Sample", drop=True, inplace=True)
+		return df
+	if includeAllColumns:
+		columnList = getColumnNames(parquetFilePath)
+	else:
+		queryColumns= parseColumnNamesFromQuery(query)
+		columnList = queryColumns+columnList 
+	if "Sample" not in columnList:
+		columnList.insert(0,"Sample")
+	else:
+		columnList.insert(0, columnList.pop(columnList.index("Sample")))
+
+	df = pd.read_parquet(parquetFilePath, columns=columnList)
+	df=df.query(query)
+	return df
+	
+
+def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, columnList: list=[], query=None, transpose= False, includeAllColumns = False):
 	"""
 	Performs mulitple queries on a parquet dataset and exports results to a file of specified type. If no queries or columns are passed, it exports the entire dataset as a pandas dataframe. Otherwise, exports the queried data over the requested columns 
 
@@ -241,22 +284,22 @@ def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, c
         :param includeAllColumns: if true, will include all columns in results. Overrides columnList if True 
 
 	"""
-	df = query(parquetFilePath, columnList, continuousQueries, discreteQueries, includeAllColumns = includeAllColumns)
+	df = newQuery(parquetFilePath, columnList, query, includeAllColumns = includeAllColumns)
 	null= 'NA'
 	#df.reset_index(inplace=True)
 	if transpose:
 		df=df.transpose()
 
 	if outFileType== FileTypeEnum.TSV:
-		df.to_csv(path_or_buf=outFilePath, sep='\t',na_rep=null)
+		df.to_csv(path_or_buf=outFilePath, sep='\t',na_rep=null, index=False)
 	elif outFileType == FileTypeEnum.CSV:
-		df.to_csv(path_or_buf=outFilePath, na_rep=null)
+		df.to_csv(path_or_buf=outFilePath, na_rep=null, index=False)
 	elif outFileType == FileTypeEnum.JSON:
-		df.to_json(path_or_buf=outFilePath)
+		df.to_json(path_or_buf=outFilePath, index = False)
 	elif outFileType == FileTypeEnum.Excel:
 		import xlsxwriter
 		writer = pd.ExcelWriter(outFilePath, engine='xlsxwriter')
-		df.to_excel(writer, sheet_name='Sheet1', na_rep=null) 
+		df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=False) 
 		writer.save()
 	elif outFileType == FileTypeEnum.Feather:
 		df=df.reset_index()
@@ -268,11 +311,11 @@ def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, c
 	elif outFileType ==FileTypeEnum.Parquet:
 		df.to_parquet(outFilePath)
 	elif outFileType == FileTypeEnum.Stata:
-		df.to_stata(outFilePath)
+		df.to_stata(outFilePath, write_index=False)
 	elif outFileType == FileTypeEnum.Pickle:
 		df.to_pickle(outFilePath)
 	elif outFileType == FileTypeEnum.HTML:
-		html = df.to_html(na_rep=null)
+		html = df.to_html(na_rep=null,index=False)
 		outFile = open(outFilePath, "w")
 		outFile.write(html)
 		outFile.close()

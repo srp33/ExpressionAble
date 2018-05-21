@@ -120,6 +120,11 @@ def buildDiscreteQuery(query):
 		else:
 			values.append(query[i])
 	return DiscreteQuery(col, values)
+
+def parseColumns(columns):
+	colList = columns.rstrip("\n").split(",")
+	return colList
+
 def buildAllQueries(queryList, discreteQueryList, continuousQueryList):
 	
 	for query in queryList:
@@ -135,11 +140,11 @@ parser = argparse.ArgumentParser(description = "Import, query on, and transform 
 parser.add_argument("input_file", help = "Data file to be read, queried on, and/or transformed")
 parser.add_argument("output_file", help = "File path to which results are exported")
 
-parser.add_argument("-i","--input_file_type", help = "Type of file to be imported. If not specified, file type will be determined by file extension", choices = ["CSV","JSON","Excel","HDF5","Feather","Parquet","MsgPack","Stata","Pickle","HTML"])
-parser.add_argument("-o","--output_file_type", help = "Type of file to which results are exported. If not specified, file type will be determined by file extension", choices = ["CSV","JSON","Excel","HDF5","Feather","Parquet","MsgPack","Stata","Pickle","HTML"])
+parser.add_argument("-i","--input_file_type", help = "Type of file to be imported. If not specified, file type will be determined by file extension", choices = ["CSV", "TSV", "JSON","Excel","HDF5","Feather","Parquet","MsgPack","Stata","Pickle","HTML"])
+parser.add_argument("-o","--output_file_type", help = "Type of file to which results are exported. If not specified, file type will be determined by file extension", choices = ["CSV", "TSV","JSON","Excel","HDF5","Feather","Parquet","MsgPack","Stata","Pickle","HTML"])
 parser.add_argument("-t","--transpose", help="Transpose index and columns", action= "store_true")
-parser.add_argument("-c","--columns", nargs='+', help ="List of column names to examine in the given dataset") 
-parser.add_argument("-f", "--filter", nargs = '+', help = "stuff to filter")
+parser.add_argument("-c","--columns",  help ="List of column names to examine in the given dataset, seperated by commas and without spaces") 
+parser.add_argument("-f", "--filter", help = "stuff to filter")
 parser.add_argument("-a", "--all_columns", help = "Includes all columns in the resulting dataset. Overrides the \"--columns\" flag", action="store_true")
 args = parser.parse_args()
 
@@ -158,10 +163,11 @@ colList=[]
 discreteQueryList=[]
 continuousQueryList=[]
 if args.filter:
-	buildAllQueries(args.filter, discreteQueryList, continuousQueryList)
+	#buildAllQueries(args.filter, discreteQueryList, continuousQueryList)
+	query=args.filter
 
 if args.columns:
-	colList=args.columns
+	colList=parseColumns(args.columns)
 	#todo: find a way to remove duplicates in the list without reordering the list
 	#colSet=set(args.columns)
 	#colList=list(colSet)
@@ -169,4 +175,4 @@ allCols=False
 if args.all_columns:
 	allCols=True
 
-exportQueryResults(args.input_file, args.output_file, outFileType,continuousQueries=continuousQueryList, discreteQueries= discreteQueryList, columnList=colList,transpose=isTransposed, includeAllColumns=allCols)
+exportQueryResults(args.input_file, args.output_file, outFileType, query=query, columnList=colList,transpose=isTransposed, includeAllColumns=allCols)

@@ -214,6 +214,9 @@ def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], disc
 	return df
 
 def parseColumnNamesFromQuery(query):
+	"""
+	For internal use. Takes a query and determines what columns are being queried on
+	"""
 	args = re.split('==|<|>|!=|<=|>=|and|or|\&|\|', query)
 	colList=[]
 	for arg in args:
@@ -235,8 +238,22 @@ def parseColumnNamesFromQuery(query):
 	return colList
 
 
-def newQuery(parquetFilePath, columnList, query=None, includeAllColumns = False):
-	
+def filterData(parquetFilePath, columnList=[], query=None, includeAllColumns = False):
+	"""	
+	Applies a filter to a parquet dataset. If no filter or columns are passed in, it returns the entire dataset as a pandas dataframe. Otherwise, returns only the filtered data over the requested columns as a Pandas dataframe
+
+	:type parquetFilePath: string
+	:param parquetFilePath: filepath to a parquet file to be filtered
+
+	:type columnList: list of strings
+	:param columnList: list of column names that will be included in the data resulting from the filter
+
+	:type query: string
+	:param query: filter to apply to the dataset, written using python logical syntax
+
+	:type includeAllColumns: bool
+	:param includeAllColumns: if True, will include all columns in the filtered dataset. Overrides columnList if True
+	"""
 	if len(columnList)==0 and query == None:
 		df = pd.read_parquet(parquetFilePath)
 		#df.set_index("Sample", drop=True, inplace=True)
@@ -261,7 +278,7 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 	Performs mulitple queries on a parquet dataset and exports results to a file of specified type. If no queries or columns are passed, it exports the entire dataset as a pandas dataframe. Otherwise, exports the queried data over the requested columns 
 
 	:type parquetFilePath: string
-	:param parquetFilePath: filepath to a parquet file to be queried on
+	:param parquetFilePath: filepath to a parquet file to be filtered
 
 	:type outFilePath: string
 	:param outFilePath: name of the file that query results will written to
@@ -270,37 +287,36 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 	:param outFileType: an enumerated object specifying what sort of file to which results will be exported	
 
 	:type columnList: list of strings
-	:param columnList: list of column names that will be included in the data resulting from the queries
+	:param columnList: list of column names that will be included in the data resulting from the filter
 
-	:type continuousQueries: list of ContinuousQuery objects
-	:param continuousQueries: list of objects representing queries on a column of continuous data
-	
-	:type discreteQueries: list of DiscreteQuery objects
-	:param discreteQueries: list of objects representing queries on a column of discrete data
+	:type query: string
+	:param query: filter to apply to the dataset, written using python logical syntax
 
 	:type transpose: bool
 	:param transpose: if True, index and columns will be transposed
 
 	:type includeAllColumns: bool
-        :param includeAllColumns: if true, will include all columns in results. Overrides columnList if True 
+        :param includeAllColumns: if True, will include all columns in the filtered dataset. Overrides columnList if True 
 
 	"""
-	df = newQuery(parquetFilePath, columnList, query, includeAllColumns = includeAllColumns)
+	df = filterData(parquetFilePath, columnList, query, includeAllColumns = includeAllColumns)
 	null= 'NA'
-	#df.reset_index(inplace=True)
+	includeIndex=False
 	if transpose:
+		df=df.set_index("Sample")
 		df=df.transpose()
+		includeIndex=True
 
 	if outFileType== FileTypeEnum.TSV:
-		df.to_csv(path_or_buf=outFilePath, sep='\t',na_rep=null, index=False)
+		df.to_csv(path_or_buf=outFilePath, sep='\t',na_rep=null, index=includeIndex)
 	elif outFileType == FileTypeEnum.CSV:
-		df.to_csv(path_or_buf=outFilePath, na_rep=null, index=False)
+		df.to_csv(path_or_buf=outFilePath, na_rep=null, index=includeIndex)
 	elif outFileType == FileTypeEnum.JSON:
-		df.to_json(path_or_buf=outFilePath, index = False)
+		df.to_json(path_or_buf=outFilePath, index = includeIndex)
 	elif outFileType == FileTypeEnum.Excel:
 		import xlsxwriter
 		writer = pd.ExcelWriter(outFilePath, engine='xlsxwriter')
-		df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=False) 
+		df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=includeIndex) 
 		writer.save()
 	elif outFileType == FileTypeEnum.Feather:
 		df=df.reset_index()
@@ -312,15 +328,20 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 	elif outFileType ==FileTypeEnum.Parquet:
 		df.to_parquet(outFilePath)
 	elif outFileType == FileTypeEnum.Stata:
-		df.to_stata(outFilePath, write_index=False)
+		df.to_stata(outFilePath, write_index=includeIndex)
 	elif outFileType == FileTypeEnum.Pickle:
 		df.to_pickle(outFilePath)
 	elif outFileType == FileTypeEnum.HTML:
-		html = df.to_html(na_rep=null,index=False)
+		html = df.to_html(na_rep=null,index=includeIndex)
 		outFile = open(outFilePath, "w")
 		outFile.write(html)
 		outFile.close()
+
 def operatorEnumConverter(operator: OperatorEnum):
+	"""
+	Function for internal use. Used to translate an OperatorEnum into a string representation of that operator
+	"""
+
 	if operator == OperatorEnum.Equals:
 		return "=="
 	elif operator == OperatorEnum.GreaterThan:
@@ -335,6 +356,10 @@ def operatorEnumConverter(operator: OperatorEnum):
 		return "!="
 
 def convertQueriesToString(continuousQueries: list=[], discreteQueries: list=[]):
+	"""
+	Function for internal use. Given a list of ContinuousQuery objects and DiscreteQuery objects, returns a single string representing all given queries
+	"""
+
 	if len(continuousQueries) ==0 and len(discreteQueries)==0:
 		return None
 	
@@ -365,7 +390,7 @@ def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, c
 	:param parquetFilePath: filepath to a parquet file to be queried on
 	
 	:type outFilePath: string
-	:param outFilePath: name of the file that query results will written to
+	:param outFilePath: name of the file that query results will be written to
 	
 	:type outFileType: FileTypeEnum
 	:param outFileType: an enumerated object specifying what sort of file to which results will be exported	
@@ -380,10 +405,10 @@ def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, c
 	:param discreteQueries: list of objects representing queries on a column of discrete data
 	
 	:type transpose: bool
-	:param transpose: if True, index and columns will be transposed
+	:param transpose: if True, index and columns will be transposed in the output file
 	
 	:type includeAllColumns: bool
-        :param includeAllColumns: if true, will include all columns in results. Overrides columnList if True 
+        :param includeAllColumns: if True, will include all columns in resulting dataset. Overrides columnList if True 
 	"""
 	query = convertQueriesToString(continuousQueries, discreteQueries)
 	exportFilterResults(parquetFilePath, outFilePath, outFileType, columnList=columnList, query=query, transpose = transpose, includeAllColumns = includeAllColumns)

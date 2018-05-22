@@ -1,4 +1,5 @@
 from UseParquet import exportQueryResults #import *
+from UseParquet import exportFilterResults
 from FileTypeEnum import FileTypeEnum
 from OperatorEnum import OperatorEnum
 from ContinuousQuery import ContinuousQuery
@@ -175,4 +176,5 @@ allCols=False
 if args.all_columns:
 	allCols=True
 
-exportQueryResults(args.input_file, args.output_file, outFileType, query=query, columnList=colList,transpose=isTransposed, includeAllColumns=allCols)
+#exportQueryResults(args.input_file, args.output_file, outFileType, columnList=colList, continuousQueries=continuousQueryList, discreteQueries=discreteQueryList, transpose=isTransposed, includeAllColumns=allCols)
+exportFilterResults(args.input_file, args.output_file, outFileType, query=query, columnList=colList,transpose=isTransposed, includeAllColumns=allCols)

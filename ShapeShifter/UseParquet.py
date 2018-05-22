@@ -234,7 +234,8 @@ def parseColumnNamesFromQuery(query):
 					colList.append(arg)
 	return colList
 
-def newQuery(parquetFilePath, columnList, query, includeAllColumns = False):
+
+def newQuery(parquetFilePath, columnList, query=None, includeAllColumns = False):
 	
 	if len(columnList)==0 and query == None:
 		df = pd.read_parquet(parquetFilePath)
@@ -255,7 +256,7 @@ def newQuery(parquetFilePath, columnList, query, includeAllColumns = False):
 	return df
 	
 
-def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, columnList: list=[], query=None, transpose= False, includeAllColumns = False):
+def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, columnList: list=[], query=None, transpose= False, includeAllColumns = False):
 	"""
 	Performs mulitple queries on a parquet dataset and exports results to a file of specified type. If no queries or columns are passed, it exports the entire dataset as a pandas dataframe. Otherwise, exports the queried data over the requested columns 
 
@@ -319,4 +320,70 @@ def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, c
 		outFile = open(outFilePath, "w")
 		outFile.write(html)
 		outFile.close()
+def operatorEnumConverter(operator: OperatorEnum):
+	if operator == OperatorEnum.Equals:
+		return "=="
+	elif operator == OperatorEnum.GreaterThan:
+		return ">"
+	elif operator == OperatorEnum.GreaterThanOrEqualTo:
+		return ">="
+	elif operator == OperatorEnum.LessThan:
+		return "<"
+	elif operator == OperatorEnum.LessThanOrEqualTo:
+		return "<="
+	elif operator == OperatorEnum.NotEquals:
+		return "!="
 
+def convertQueriesToString(continuousQueries: list=[], discreteQueries: list=[]):
+	if len(continuousQueries) ==0 and len(discreteQueries)==0:
+		return None
+	
+	completeQuery=""
+	for i in range(0, len(continuousQueries)):
+		completeQuery+= continuousQueries[i].columnName + operatorEnumConverter(continuousQueries[i].operator) + str(continuousQueries[i].value)
+		if i < len(continuousQueries)-1 or len(discreteQueries)>0:
+			completeQuery+=" and "
+
+	for i in range(0, len(discreteQueries)):
+		completeQuery+="("
+		for j in range(0, len(discreteQueries[i].values)):
+			completeQuery+= discreteQueries[i].columnName + "==" + "'"+discreteQueries[i].values[j]+"'"
+			if j<len(discreteQueries[i].values)-1:
+				completeQuery+=" or "
+		completeQuery+=")"
+		if i<len(discreteQueries)-1:
+			completeQuery+=" and "
+	print(completeQuery)
+	return completeQuery
+	
+
+def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, columnList: list=[], continuousQueries: list=[], discreteQueries: list=[], transpose= False, includeAllColumns = False):
+	"""
+	Performs mulitple queries on a parquet dataset and exports results to a file of specified type. If no queries or columns are passed, it exports the entire dataset as a pandas dataframe. Otherwise, exports the queried data over the requested columns. This function differs from 'exportFilterResults' in that it takes ContinuousQuery and DiscreteQuery objects rather than a single string representing all queries 
+	
+	:type parquetFilePath: string
+	:param parquetFilePath: filepath to a parquet file to be queried on
+	
+	:type outFilePath: string
+	:param outFilePath: name of the file that query results will written to
+	
+	:type outFileType: FileTypeEnum
+	:param outFileType: an enumerated object specifying what sort of file to which results will be exported	
+	
+	:type columnList: list of strings
+	:param columnList: list of column names that will be included in the data resulting from the queries
+	
+	:type continuousQueries: list of ContinuousQuery objects
+	:param continuousQueries: list of objects representing queries on a column of continuous data
+	
+	:type discreteQueries: list of DiscreteQuery objects
+	:param discreteQueries: list of objects representing queries on a column of discrete data
+	
+	:type transpose: bool
+	:param transpose: if True, index and columns will be transposed
+	
+	:type includeAllColumns: bool
+        :param includeAllColumns: if true, will include all columns in results. Overrides columnList if True 
+	"""
+	query = convertQueriesToString(continuousQueries, discreteQueries)
+	exportFilterResults(parquetFilePath, outFilePath, outFileType, columnList=columnList, query=query, transpose = transpose, includeAllColumns = includeAllColumns)

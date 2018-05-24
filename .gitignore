@@ -1,7 +1,7 @@
 ParquetData/
 TsvData/
-ShapeShifter/Tests/OutputData/Parquet1ToTsv/
-ShapeShifter/Tests/OutputData/Parquet1ToOtherFormats/
+Tests/OutputData/Parquet1ToTsv/
+Tests/OutputData/Parquet1ToOtherFormats/
 argsExample.py
 runstuff.py
 __pycache__

@@ -326,14 +326,14 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 	elif outFileType == FileTypeEnum.CSV:
 		df.to_csv(path_or_buf=outFilePath, na_rep=null, index=includeIndex)
 	elif outFileType == FileTypeEnum.JSON:
-		df.to_json(path_or_buf=outFilePath, index = includeIndex)
+		df.to_json(path_or_buf=outFilePath) #new pandas can include index parameter?
 	elif outFileType == FileTypeEnum.Excel:
 		import xlsxwriter
 		writer = pd.ExcelWriter(outFilePath, engine='xlsxwriter')
-		df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=False) 
+		df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=includeIndex) 
 		writer.save()
 	elif outFileType == FileTypeEnum.Feather:
-		df=df.reset_index()
+		#df=df.reset_index()
 		df.to_feather(outFilePath)
 	elif outFileType ==FileTypeEnum.HDF5:
 		df.to_hdf(outFilePath, "group", mode= 'w')

@@ -27,7 +27,7 @@ def readFileIntoPandas(fileName):
         elif extension =="pkl":
                 return pd.read_pickle(fileName)
         elif extension =="html":
-                return read_html(fileName)
+                return pd.read_html(fileName)[0]
         #elif extension == "arff":
          #       data=arff.loadarff(fileName)
           #      return pd.DataFrame(data[0])
@@ -38,13 +38,15 @@ f2 = sys.argv[2]
 
 df1= readFileIntoPandas(f1)
 df2= readFileIntoPandas(f2)
-print(df1)
-print(df2)
-assert (df1.columns == df2.columns).all(), \
-	"Dataframe column names are different"
+#print(df1)
+#print(df2)
+#print(df1.columns)
+#print(df2.columns)
+#assert (df1.columns == df2.columns).all(),\
+#	"Dataframes from " +f1+ " and " +f2+ " have differing column names"
 
 if df1.equals(df2):
-	print("Equals")
+	print("Files match")
 else:
 	merged = df1.merge(df2, indicator=True, how='outer')
 	merged[merged['_merge'] == 'right_only']
@@ -52,4 +54,4 @@ else:
 		print("Dataframes from " +f1 + " and " + f2 + " differ: ")
 		print(merged)
 	else:
-		print("Equals")
+		print("Files Match")

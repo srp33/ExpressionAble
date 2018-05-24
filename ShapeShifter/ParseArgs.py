@@ -4,7 +4,11 @@ from FileTypeEnum import FileTypeEnum
 from OperatorEnum import OperatorEnum
 from ContinuousQuery import ContinuousQuery
 from DiscreteQuery import DiscreteQuery
+from ColumnNotFoundError import ColumnNotFoundError
+import pandas as pd
 import argparse
+import pyarrow
+import sys
 
 def determineFileType(fileType):
 	if fileType== "CSV":
@@ -29,6 +33,8 @@ def determineFileType(fileType):
 		return FileTypeEnum.Pickle
 	elif fileType =="HTML":
 		return FileTypeEnum.HTML
+	elif fileType == "ARFF":
+		return FileTypeEnum.ARFF
 
 def determineExtension(fileName):
 	extension= fileName.rstrip("\n").split(".")
@@ -56,6 +62,11 @@ def determineExtension(fileName):
 		return FileTypeEnum.Pickle
 	elif extension =="html":
 		return FileTypeEnum.HTML
+	elif extension == "arff":
+		return FileTypeEnum.ARFF
+	else:
+		print("Error: Extension on " + fileName+ " not recognized. Please use appropriate file extensions or explicitly specify file type using the -i or -o flags")
+		sys.exit()
 
 def determineOperator(operator):
 	if operator=="==" or operator=="=":
@@ -146,8 +157,8 @@ supportedFiles=["CSV", "TSV", "JSON","Excel","HDF5","Feather","Parquet","MsgPack
 parser.add_argument("-i","--input_file_type", help = "Type of file to be imported. If not specified, file type will be determined by the file extension given. Available choices are: "+", ".join(supportedFiles), choices = supportedFiles, metavar= 'File_Type')
 parser.add_argument("-o","--output_file_type", help = "Type of file to which results are exported. If not specified, file type will be determined by the file extension given. Available choices are: "+", ".join(supportedFiles), choices = supportedFiles, metavar='File_Type')
 parser.add_argument("-t","--transpose", help="Transpose index and columns in the output file", action= "store_true")
-parser.add_argument("-f", "--filter", help = "Filter data using python logical syntax. Your filter must be surrounded by quotes.\n\nFor example: -f \"ColumnName1 > 12.5 and (ColumnName2 == 'x' or ColumnName2 =='y')\"", metavar="\"FILTER\"")
-parser.add_argument("-c","--columns",  help ="List of additional column names to include in the output file. Column names must be seperated by commas and without spaces. For example: -c ColumnName1,ColumnName2,ColumnName3") 
+parser.add_argument("-f", "--filter", help = "Filter data using python logical syntax. Your filter must be surrounded by quotes.\n\nFor example: -f \"ColumnName1 > 12.5 and (ColumnName2 == 'x' or ColumnName2 =='y')\"", metavar="\"FILTER\"", action='append')
+parser.add_argument("-c","--columns", action='append', help ="List of additional column names to include in the output file. Column names must be seperated by commas and without spaces. For example: -c ColumnName1,ColumnName2,ColumnName3") 
 parser.add_argument("-a", "--all_columns", help = "Includes all columns in the output file. Overrides the \"--columns\" flag", action="store_true")
 args = parser.parse_args()
 
@@ -166,12 +177,17 @@ colList=[]
 query=None
 discreteQueryList=[]
 continuousQueryList=[]
+if args.filter and len(args.filter)>1:
+	parser.error("--filter appears multiple times")
+if args.columns and len(args.columns)>1:
+	parser.error("--columns appears multiple times")
+
 if args.filter:
 	#buildAllQueries(args.filter, discreteQueryList, continuousQueryList)
-	query=args.filter
+	query=args.filter[0]
 
 if args.columns:
-	colList=parseColumns(args.columns)
+	colList=parseColumns(args.columns[0])
 	#todo: find a way to remove duplicates in the list without reordering the list
 	#colSet=set(args.columns)
 	#colList=list(colSet)
@@ -180,4 +196,12 @@ if args.all_columns:
 	allCols=True
 
 #exportQueryResults(args.input_file, args.output_file, outFileType, columnList=colList, continuousQueries=continuousQueryList, discreteQueries=discreteQueryList, transpose=isTransposed, includeAllColumns=allCols)
-exportFilterResults(args.input_file, args.output_file, outFileType, query=query, columnList=colList,transpose=isTransposed, includeAllColumns=allCols)
+try:
+	exportFilterResults(args.input_file, args.output_file, outFileType, query=query, columnList=colList,transpose=isTransposed, includeAllColumns=allCols)
+except pyarrow.lib.ArrowIOError as e:
+	print("Error: " + str(e))
+except pd.core.computation.ops.UndefinedVariableError as e:
+	print("Error: Variable not found: " + str(e))
+	print("Hint: If the variable not found is a column name, make sure it is spelled correctly. If the variable is a value, make sure it is surrounded by quotes")
+except ColumnNotFoundError as e:
+	print("Warning: the following columns requested were not found and therefore not included in the output: " +str(e))

@@ -8,8 +8,10 @@ from ContinuousQuery import ContinuousQuery
 from DiscreteQuery import DiscreteQuery
 from OperatorEnum import OperatorEnum
 from FileTypeEnum import FileTypeEnum
+from ColumnNotFoundError import ColumnNotFoundError
+from ConvertARFF import toARFF
 import time
-#import sys
+import sys
 
 def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
 	"""
@@ -217,7 +219,7 @@ def parseColumnNamesFromQuery(query):
 	"""
 	For internal use. Takes a query and determines what columns are being queried on
 	"""
-	args = re.split('==|<|>|!=|<=|>=|and|or|\&|\|', query)
+	args = re.split('==|<=|>=|!=|<|>|and|or|\&|\|', query)
 	colList=[]
 	for arg in args:
 		#first remove all whitespace and parentheses and brackets
@@ -233,10 +235,19 @@ def parseColumnNamesFromQuery(query):
 			#check if the string is surrounded by quotes. If so, it is not a column name
 			if arg[0]!="'" and arg[0]!='"':
 				#check for duplicates
-				if arg not in colList:
+				if arg not in colList and arg !="True" and arg!="False":
 					colList.append(arg)
 	return colList
 
+
+def checkIfColumnsExist(df, columnList):
+	missingColumns=[]
+	for column in columnList:
+		if column not in df.columns:
+			missingColumns.append(column)
+	#if len(missingColumns)>0:
+	#	raise ColumnNotFoundError(missingColumns)
+	return missingColumns
 
 def filterData(parquetFilePath, columnList=[], query=None, includeAllColumns = False):
 	"""	
@@ -269,7 +280,10 @@ def filterData(parquetFilePath, columnList=[], query=None, includeAllColumns = F
 		columnList.insert(0, columnList.pop(columnList.index("Sample")))
 
 	df = pd.read_parquet(parquetFilePath, columns=columnList)
-	df=df.query(query)
+	missingColumns =  checkIfColumnsExist(df, columnList) 
+	if len(missingColumns)>0:
+		print("Warning: the following columns were not found and therefore not included in output: " + ", ".join(missingColumns))
+	df=df.query(query)	
 	return df
 	
 
@@ -316,7 +330,7 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 	elif outFileType == FileTypeEnum.Excel:
 		import xlsxwriter
 		writer = pd.ExcelWriter(outFilePath, engine='xlsxwriter')
-		df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=includeIndex) 
+		df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=False) 
 		writer.save()
 	elif outFileType == FileTypeEnum.Feather:
 		df=df.reset_index()
@@ -336,7 +350,8 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 		outFile = open(outFilePath, "w")
 		outFile.write(html)
 		outFile.close()
-
+	elif outFileType == FileTypeEnum.ARFF:
+		toARFF(df, outFilePath)
 def operatorEnumConverter(operator: OperatorEnum):
 	"""
 	Function for internal use. Used to translate an OperatorEnum into a string representation of that operator

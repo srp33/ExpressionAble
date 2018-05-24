@@ -15,4 +15,5 @@ class FileTypeEnum(Enum):
 	Pickle = 8
 	HTML = 9
 	TSV = 10
+	ARFF = 11
 

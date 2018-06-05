@@ -36,8 +36,14 @@ def readFileIntoPandas(fileName):
 f1 = sys.argv[1]
 f2 = sys.argv[2]
 
-df1= readFileIntoPandas(f1)
-df2= readFileIntoPandas(f2)
+try:
+	df1= readFileIntoPandas(f1)
+except FileNotFoundError as e:
+	print("Error: " + str(e) + ": FAIL")
+try:
+	df2= readFileIntoPandas(f2)
+except FileNotFoundError as e:
+	print("Error: " + str(e) + ": FAIL")
 #print(df1)
 #print(df2)
 #print(df1.columns)
@@ -46,12 +52,12 @@ df2= readFileIntoPandas(f2)
 #	"Dataframes from " +f1+ " and " +f2+ " have differing column names"
 
 if df1.equals(df2):
-	print("Files match")
+	print(f1 + " and " +f2+ ": PASS")
 else:
 	merged = df1.merge(df2, indicator=True, how='outer')
 	merged[merged['_merge'] == 'right_only']
 	if 'right_only' in merged._merge.values or 'left_only' in merged._merge.values:
-		print("Dataframes from " +f1 + " and " + f2 + " differ: ")
+		print(f1 + " and " + f2 + ": FAIL")
 		print(merged)
 	else:
-		print("Files Match")
+		print(f1 + " and "+ f2 +": PASS")

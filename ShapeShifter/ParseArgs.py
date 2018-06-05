@@ -37,9 +37,11 @@ def determineFileType(fileType):
 		return FileTypeEnum.ARFF
 
 def determineExtension(fileName):
-	extension= fileName.rstrip("\n").split(".")
-	if len(extension)>1:
-		extension=extension[len(extension)-1]
+	extensions= fileName.rstrip("\n").split(".")
+	if len(extensions)>1:
+		extension=extensions[len(extensions)-1]
+		if extension =='gz':
+			extension=extensions[len(extensions)-2]
 	if extension== "tsv" or extension =="txt":
                 return FileTypeEnum.TSV
 	elif extension == "csv":
@@ -67,6 +69,12 @@ def determineExtension(fileName):
 	else:
 		print("Error: Extension on " + fileName+ " not recognized. Please use appropriate file extensions or explicitly specify file type using the -i or -o flags")
 		sys.exit()
+
+def isGzipped(fileName):
+	extensions=fileName.rstrip("\n").split(".")
+	if extensions[len(extensions)-1]=='gz':
+		return True
+	return False
 
 def determineOperator(operator):
 	if operator=="==" or operator=="=":
@@ -160,12 +168,13 @@ parser.add_argument("-t","--transpose", help="Transpose index and columns in the
 parser.add_argument("-f", "--filter", help = "Filter data using python logical syntax. Your filter must be surrounded by quotes.\n\nFor example: -f \"ColumnName1 > 12.5 and (ColumnName2 == 'x' or ColumnName2 =='y')\"", metavar="\"FILTER\"", action='append')
 parser.add_argument("-c","--columns", action='append', help ="List of additional column names to include in the output file. Column names must be seperated by commas and without spaces. For example: -c ColumnName1,ColumnName2,ColumnName3") 
 parser.add_argument("-a", "--all_columns", help = "Includes all columns in the output file. Overrides the \"--columns\" flag", action="store_true")
+parser.add_argument("-g","--gzip", help = "Gzips the output file", action="store_true")
 args = parser.parse_args()
 
 inFileType = determineExtension(args.input_file)
 if args.input_file_type:
 	inFileType = determineFileType(args.input_file_type)
-	
+isInFileGzipped = isGzipped(args.input_file)	
 
 outFileType= determineExtension(args.output_file)
 if args.output_file_type:
@@ -185,7 +194,9 @@ if args.columns and len(args.columns)>1:
 if args.filter:
 	#buildAllQueries(args.filter, discreteQueryList, continuousQueryList)
 	query=args.filter[0]
-
+	if not("==" in query or "!=" in query or "<" in query or ">" in query or "<=" in query or ">=" in query):
+		print("Error: Filter must be an expression involving an operator such as '==' or '<'. If you simply want to include certain columns in the output, try using the --columns flag")
+		sys.exit()
 if args.columns:
 	colList=parseColumns(args.columns[0])
 	#todo: find a way to remove duplicates in the list without reordering the list
@@ -195,13 +206,33 @@ allCols=False
 if args.all_columns:
 	allCols=True
 
+gzip=False
+if (not isGzipped(args.output_file) and args.gzip):
+	print("NOTE: Because you requested the output be gzipped, it will be saved to "+args.output_file+".gz")
+if isGzipped(args.output_file) or args.gzip:
+	gzip=True
 #exportQueryResults(args.input_file, args.output_file, outFileType, columnList=colList, continuousQueries=continuousQueryList, discreteQueries=discreteQueryList, transpose=isTransposed, includeAllColumns=allCols)
 try:
-	exportFilterResults(args.input_file, args.output_file, outFileType, query=query, columnList=colList,transpose=isTransposed, includeAllColumns=allCols)
+	exportFilterResults(args.input_file, args.output_file, outFileType, gzippedInput=isInFileGzipped, query=query, columnList=colList,transpose=isTransposed, includeAllColumns=allCols, gzipResults=gzip)
 except pyarrow.lib.ArrowIOError as e:
 	print("Error: " + str(e))
 except pd.core.computation.ops.UndefinedVariableError as e:
 	print("Error: Variable not found: " + str(e))
 	print("Hint: If the variable not found is a column name, make sure it is spelled correctly. If the variable is a value, make sure it is surrounded by quotes")
+except SyntaxError as error:
+	try:
+		print("Error: \'" +error.text.rstrip() +"\'\n" +" "*(error.offset+6)+"^")
+	except AttributeError:
+		pass
+	finally:
+		print("Syntax is invalid. Valid python syntax must be used")
+except ValueError as e:
+	print("Error: "+str(e))
+#except TypeError as e:
+#	print("Error: Type error. Maybe you left the filter blank?")
+except KeyError as e:
+	print("Error: " + str(e))
+except NotImplementedError as e:
+	print("Error: " + str(e))
 except ColumnNotFoundError as e:
 	print("Warning: the following columns requested were not found and therefore not included in the output: " +str(e))

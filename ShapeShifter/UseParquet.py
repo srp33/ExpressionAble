@@ -10,8 +10,10 @@ from OperatorEnum import OperatorEnum
 from FileTypeEnum import FileTypeEnum
 from ColumnNotFoundError import ColumnNotFoundError
 from ConvertARFF import toARFF
+import gzip
 import time
 import sys
+import os
 
 def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
 	"""
@@ -215,11 +217,29 @@ def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], disc
 	
 	return df
 
+def translateNullQuery(query):
+	"""
+	For internal use only. Because pandas does not support querying for null values by "columnname == None", this function translates such queries into valid syntax
+	"""
+	regex1 = r"\S*\s*!=\s*None\s*"
+	regex2 = r"\S*\s*==\s*None\s*"
+	matchlist1=re.findall(regex1, query, flags=0)
+	matchlist2=re.findall(regex2,query,flags=0)
+	for match in matchlist1:
+		col = match.split("!=")[0].rstrip()
+		query=query.replace(match, col+"=="+col+" ")
+	for match in matchlist2:
+		col = match.split("==")[0].rstrip()
+		query=query.replace(match, col+"!="+col+" ")
+	return query	
+
 def parseColumnNamesFromQuery(query):
 	"""
 	For internal use. Takes a query and determines what columns are being queried on
 	"""
-	args = re.split('==|<=|>=|!=|<|>|and|or|\&|\|', query)
+	query=re.sub(r'\band\b','&',query)
+	query=re.sub(r'\bor\b','|',query)
+	args = re.split('==|<=|>=|!=|<|>|\&|\|', query)
 	colList=[]
 	for arg in args:
 		#first remove all whitespace and parentheses and brackets
@@ -233,7 +253,7 @@ def parseColumnNamesFromQuery(query):
 			float(arg)
 		except:
 			#check if the string is surrounded by quotes. If so, it is not a column name
-			if arg[0]!="'" and arg[0]!='"':
+			if len(arg)>0 and arg[0]!="'" and arg[0]!='"':
 				#check for duplicates
 				if arg not in colList and arg !="True" and arg!="False":
 					colList.append(arg)
@@ -281,13 +301,33 @@ def filterData(parquetFilePath, columnList=[], query=None, includeAllColumns = F
 
 	df = pd.read_parquet(parquetFilePath, columns=columnList)
 	missingColumns =  checkIfColumnsExist(df, columnList) 
+	df=df.query(query)	
 	if len(missingColumns)>0:
 		print("Warning: the following columns were not found and therefore not included in output: " + ", ".join(missingColumns))
-	df=df.query(query)	
 	return df
 	
+def appendGZ(outFilePath):
+	if not (outFilePath[len(outFilePath) -3] == '.' and outFilePath[len(outFilePath)-2] =='g' and outFilePath[len(outFilePath)-1] =='z'):
+		outFilePath += '.gz'
+	return outFilePath
 
-def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, columnList: list=[], query=None, transpose= False, includeAllColumns = False):
+
+def compressResults(outFilePath):
+	#file name in and out must be different, I can't compress a file without changing its filepath as well
+	with open(outFilePath, 'rb') as f_in:
+		with gzip.open(appendGZ(outFilePath), 'wb') as f_out:
+			f_out.writelines(f_in)
+	os.remove(outFilePath)
+
+
+def readInputToPandas(inputFilePath, inputFileType, gzippedInput):
+	if inputFileType==FileTypeEnum.Parquet:
+		if gzippedInput:
+			print("test")
+	
+	
+
+def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, inputFileType=FileTypeEnum.Parquet, gzippedInput=False, columnList: list=[], query=None, transpose= False, includeAllColumns = False, gzipResults=False):
 	"""
 	Performs mulitple queries on a parquet dataset and exports results to a file of specified type. If no queries or columns are passed, it exports the entire dataset as a pandas dataframe. Otherwise, exports the queried data over the requested columns 
 
@@ -310,48 +350,99 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 	:param transpose: if True, index and columns will be transposed
 
 	:type includeAllColumns: bool
-        :param includeAllColumns: if True, will include all columns in the filtered dataset. Overrides columnList if True 
+        :param includeAllColumns: if True, will include all columns in the filtered dataset. Overrides columnList if True
+
+	:type gzipResults: bool
+	:param gzipResults: if True, the output file will be compressed with gzip 
 
 	"""
-	df = filterData(parquetFilePath, columnList, query, includeAllColumns = includeAllColumns)
+	if query != None:
+		query=translateNullQuery(query)
+	if gzippedInput:
+		df = filterData(gzip.open(parquetFilePath), columnList, query, includeAllColumns = includeAllColumns)
+	else:
+		df = filterData(parquetFilePath, columnList, query, includeAllColumns=includeAllColumns)
 	null= 'NA'
 	includeIndex=False
 	if transpose:
 		df=df.set_index("Sample")
 		df=df.transpose()
 		includeIndex=True
-
 	if outFileType== FileTypeEnum.TSV:
-		df.to_csv(path_or_buf=outFilePath, sep='\t',na_rep=null, index=includeIndex)
+		if gzipResults:
+			outFilePath= appendGZ(outFilePath)
+			df.to_csv(path_or_buf=outFilePath, sep='\t',na_rep=null, index=includeIndex, compression = 'gzip')
+		else:
+			df.to_csv(path_or_buf=outFilePath, sep='\t',na_rep=null, index=includeIndex)
 	elif outFileType == FileTypeEnum.CSV:
-		df.to_csv(path_or_buf=outFilePath, na_rep=null, index=includeIndex)
+		if gzipResults:
+			outFilePath=appendGZ(outFilePath)
+			df.to_csv(path_or_buf=outFilePath, na_rep=null, index=includeIndex, compression = 'gzip')
+		else:
+			df.to_csv(path_or_buf=outFilePath, na_rep=null, index=includeIndex)
 	elif outFileType == FileTypeEnum.JSON:
-		df.to_json(path_or_buf=outFilePath) #new pandas can include index parameter?
+		df=df.set_index("Sample",drop=False)
+		if gzipResults:
+			outFilePath = appendGZ(outFilePath)
+			df.to_json(path_or_buf=outFilePath, compression='gzip')
+		else:
+			df.to_json(path_or_buf=outFilePath) 
 	elif outFileType == FileTypeEnum.Excel:
+		#NEED TO GZIP MANUALLY
 		import xlsxwriter
 		writer = pd.ExcelWriter(outFilePath, engine='xlsxwriter')
 		df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=includeIndex) 
 		writer.save()
+		if gzipResults:
+			compressResults(outFilePath)
 	elif outFileType == FileTypeEnum.Feather:
-		#df=df.reset_index()
+		df=df.reset_index()
+		#MANUALLY GZIP
 		df.to_feather(outFilePath)
+		if gzipResults:
+			compressResults(outFilePath)
 	elif outFileType ==FileTypeEnum.HDF5:
+		#manually gzip
 		df.to_hdf(outFilePath, "group", mode= 'w')
+		if gzipResults:
+			compressResults(outFilePath)
 	elif outFileType ==FileTypeEnum.MsgPack:
+		#manually gzip
 		df.to_msgpack(outFilePath)
+		if gzipResults:
+			compressResults(outFilePath)
+
 	elif outFileType ==FileTypeEnum.Parquet:
-		df.to_parquet(outFilePath)
+		if gzipResults:
+			df.to_parquet(appendGZ(outFilePath), compression='gzip')
+		else:
+			df.to_parquet(outFilePath)
 	elif outFileType == FileTypeEnum.Stata:
+		#manually gzip
 		df.to_stata(outFilePath, write_index=includeIndex)
+		if gzipResults:
+			compressResults(outFilePath)
+
 	elif outFileType == FileTypeEnum.Pickle:
-		df.to_pickle(outFilePath)
+		if gzipResults:
+			df.to_pickle(appendGZ(outFilePath), compression='gzip')
+		else:
+			df.to_pickle(outFilePath)
 	elif outFileType == FileTypeEnum.HTML:
 		html = df.to_html(na_rep=null,index=includeIndex)
-		outFile = open(outFilePath, "w")
-		outFile.write(html)
-		outFile.close()
+		if gzipResults:
+			html= html.encode()
+			with gzip.open(outFilePath,'wb') as f:
+				f.write(html)
+		else:
+			outFile = open(outFilePath, "w")
+			outFile.write(html)
+			outFile.close()
 	elif outFileType == FileTypeEnum.ARFF:
 		toARFF(df, outFilePath)
+		if gzipResults:
+			compressResults(outFilePath)
+		
 def operatorEnumConverter(operator: OperatorEnum):
 	"""
 	Function for internal use. Used to translate an OperatorEnum into a string representation of that operator
@@ -427,3 +518,4 @@ def exportQueryResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, c
 	"""
 	query = convertQueriesToString(continuousQueries, discreteQueries)
 	exportFilterResults(parquetFilePath, outFilePath, outFileType, columnList=columnList, query=query, transpose = transpose, includeAllColumns = includeAllColumns)
+	

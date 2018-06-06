@@ -182,6 +182,9 @@ if args.output_file_type:
 isTransposed = False
 if args.transpose:
 	isTransposed=True
+	if outFileType == FileTypeEnum.Feather or outFileType == FileTypeEnum.Parquet or outFileType == FileTypeEnum.Stata:
+		print("Error: Feather, Parquet, and Stata file types do not support transposing. Either choose a different output file type or remove the --transpose flag")
+		sys.exit()
 colList=[]
 query=None
 discreteQueryList=[]

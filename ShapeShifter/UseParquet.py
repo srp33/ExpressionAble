@@ -381,7 +381,8 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 		else:
 			df.to_csv(path_or_buf=outFilePath, na_rep=null, index=includeIndex)
 	elif outFileType == FileTypeEnum.JSON:
-		df=df.set_index("Sample",drop=False)
+		if not transpose:
+			df=df.set_index("Sample",drop=True)
 		if gzipResults:
 			outFilePath = appendGZ(outFilePath)
 			df.to_json(path_or_buf=outFilePath, compression='gzip')
@@ -403,33 +404,46 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 			compressResults(outFilePath)
 	elif outFileType ==FileTypeEnum.HDF5:
 		#manually gzip
+		if not transpose:
+			df=df.set_index("Sample")
 		df.to_hdf(outFilePath, "group", mode= 'w')
 		if gzipResults:
 			compressResults(outFilePath)
 	elif outFileType ==FileTypeEnum.MsgPack:
 		#manually gzip
+		if not transpose:
+			df=df.set_index("Sample")
 		df.to_msgpack(outFilePath)
 		if gzipResults:
 			compressResults(outFilePath)
 
 	elif outFileType ==FileTypeEnum.Parquet:
+		if not transpose:
+			df=df.set_index("Sample")
 		if gzipResults:
 			df.to_parquet(appendGZ(outFilePath), compression='gzip')
 		else:
 			df.to_parquet(outFilePath)
 	elif outFileType == FileTypeEnum.Stata:
 		#manually gzip
+		if not transpose:
+			df=df.set_index("Sample")
+			print(df)
 		df.to_stata(outFilePath, write_index=includeIndex)
 		if gzipResults:
 			compressResults(outFilePath)
 
 	elif outFileType == FileTypeEnum.Pickle:
+		if not transpose:
+			df=df.set_index("Sample")
 		if gzipResults:
 			df.to_pickle(appendGZ(outFilePath), compression='gzip')
 		else:
 			df.to_pickle(outFilePath)
 	elif outFileType == FileTypeEnum.HTML:
-		html = df.to_html(na_rep=null,index=includeIndex)
+		#if not transpose:
+		#	df=df.set_index("Sample")
+		html = df.to_html(na_rep=null,index=False)
 		if gzipResults:
 			html= html.encode()
 			with gzip.open(outFilePath,'wb') as f:

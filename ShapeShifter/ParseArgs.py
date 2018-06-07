@@ -21,8 +21,8 @@ def determineFileType(fileType):
 		return FileTypeEnum.Excel
 	elif fileType== "HDF5":
 		return FileTypeEnum.HDF5
-	elif fileType=="Feather":
-		return FileTypeEnum.Feather
+	#elif fileType=="Feather":
+	#	return FileTypeEnum.Feather
 	elif fileType =="Parquet":
 		return FileTypeEnum.Parquet
 	elif fileType =="MsgPack":
@@ -52,8 +52,8 @@ def determineExtension(fileName):
 		return FileTypeEnum.Excel
 	elif extension== "hdf" or extension=="h5":
 		return FileTypeEnum.HDF5
-	elif extension=="feather":
-		return FileTypeEnum.Feather
+	#elif extension=="feather":
+	#	return FileTypeEnum.Feather
 	elif extension =="pq":
 		return FileTypeEnum.Parquet
 	elif extension =="mp":
@@ -160,7 +160,7 @@ parser = argparse.ArgumentParser(description = "Import, filter, and transform da
 parser.add_argument("input_file", help = "Data file to be imported, filtered, and/or transformed")
 parser.add_argument("output_file", help = "File path to which results are exported")
 
-supportedFiles=["CSV", "TSV", "JSON","Excel","HDF5","Feather","Parquet","MsgPack","Stata","Pickle","HTML"]
+supportedFiles=["CSV", "TSV", "JSON","Excel","HDF5","Parquet","MsgPack","Stata","Pickle","HTML"]
 
 parser.add_argument("-i","--input_file_type", help = "Type of file to be imported. If not specified, file type will be determined by the file extension given. Available choices are: "+", ".join(supportedFiles), choices = supportedFiles, metavar= 'File_Type')
 parser.add_argument("-o","--output_file_type", help = "Type of file to which results are exported. If not specified, file type will be determined by the file extension given. Available choices are: "+", ".join(supportedFiles), choices = supportedFiles, metavar='File_Type')
@@ -183,7 +183,7 @@ isTransposed = False
 if args.transpose:
 	isTransposed=True
 	if outFileType == FileTypeEnum.Feather or outFileType == FileTypeEnum.Parquet or outFileType == FileTypeEnum.Stata:
-		print("Error: Feather, Parquet, and Stata file types do not support transposing. Either choose a different output file type or remove the --transpose flag")
+		print("Error: Parquet and Stata file types do not support transposing. Either choose a different output file type or remove the --transpose flag")
 		sys.exit()
 colList=[]
 query=None
@@ -236,6 +236,8 @@ except ValueError as e:
 except KeyError as e:
 	print("Error: " + str(e))
 except NotImplementedError as e:
+	print("Error: " + str(e))
+except RecursionError as e:
 	print("Error: " + str(e))
 except ColumnNotFoundError as e:
 	print("Warning: the following columns requested were not found and therefore not included in the output: " +str(e))

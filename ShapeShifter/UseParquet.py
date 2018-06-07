@@ -396,12 +396,12 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 		writer.save()
 		if gzipResults:
 			compressResults(outFilePath)
-	elif outFileType == FileTypeEnum.Feather:
-		df=df.reset_index()
-		#MANUALLY GZIP
-		df.to_feather(outFilePath)
-		if gzipResults:
-			compressResults(outFilePath)
+#	elif outFileType == FileTypeEnum.Feather:
+#		df=df.reset_index()
+#		#MANUALLY GZIP
+#		df.to_feather(outFilePath)
+#		if gzipResults:
+#			compressResults(outFilePath)
 	elif outFileType ==FileTypeEnum.HDF5:
 		#manually gzip
 		if not transpose:
@@ -428,7 +428,6 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 		#manually gzip
 		if not transpose:
 			df=df.set_index("Sample")
-			print(df)
 		df.to_stata(outFilePath, write_index=includeIndex)
 		if gzipResults:
 			compressResults(outFilePath)
@@ -498,7 +497,7 @@ def convertQueriesToString(continuousQueries: list=[], discreteQueries: list=[])
 		completeQuery+=")"
 		if i<len(discreteQueries)-1:
 			completeQuery+=" and "
-	print(completeQuery)
+	#print(completeQuery)
 	return completeQuery
 	
 

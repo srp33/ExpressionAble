@@ -33,6 +33,8 @@ def determineFileType(fileType):
 		return FileTypeEnum.Pickle
 	elif fileType =="HTML":
 		return FileTypeEnum.HTML
+	elif fileType =="SQL":
+		return FileTypeEnum.SQL
 	elif fileType == "ARFF":
 		return FileTypeEnum.ARFF
 
@@ -64,6 +66,8 @@ def determineExtension(fileName):
 		return FileTypeEnum.Pickle
 	elif extension =="html":
 		return FileTypeEnum.HTML
+	elif extension=="db":
+		return FileTypeEnum.SQL
 	elif extension == "arff":
 		return FileTypeEnum.ARFF
 	else:
@@ -160,7 +164,7 @@ parser = argparse.ArgumentParser(description = "Import, filter, and transform da
 parser.add_argument("input_file", help = "Data file to be imported, filtered, and/or transformed")
 parser.add_argument("output_file", help = "File path to which results are exported")
 
-supportedFiles=["CSV", "TSV", "JSON","Excel","HDF5","Parquet","MsgPack","Stata","Pickle","HTML"]
+supportedFiles=["CSV", "TSV", "JSON","Excel","HDF5","Parquet","MsgPack","Stata","Pickle","HTML", "SQL"]
 
 parser.add_argument("-i","--input_file_type", help = "Type of file to be imported. If not specified, file type will be determined by the file extension given. Available choices are: "+", ".join(supportedFiles), choices = supportedFiles, metavar= 'File_Type')
 parser.add_argument("-o","--output_file_type", help = "Type of file to which results are exported. If not specified, file type will be determined by the file extension given. Available choices are: "+", ".join(supportedFiles), choices = supportedFiles, metavar='File_Type')

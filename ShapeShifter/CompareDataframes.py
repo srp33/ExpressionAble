@@ -28,9 +28,16 @@ def readFileIntoPandas(fileName):
                 return pd.read_pickle(fileName)
         elif extension =="html":
                 return pd.read_html(fileName)[0]
-        #elif extension == "arff":
-         #       data=arff.loadarff(fileName)
-          #      return pd.DataFrame(data[0])
+        elif extension =="db":
+                from sqlalchemy import create_engine
+                engine = create_engine('sqlite:///'+fileName)
+                table = fileName.split('.')[0]
+                tableList= table.split('/')
+                table= tableList[len(tableList)-1]
+                return pd.read_sql("SELECT * FROM "+table,engine)
+	#elif extension == "arff":
+	#       data=arff.loadarff(fileName)
+	#      return pd.DataFrame(data[0])
 
 
 f1 = sys.argv[1]
@@ -38,26 +45,20 @@ f2 = sys.argv[2]
 
 try:
 	df1= readFileIntoPandas(f1)
-except FileNotFoundError as e:
-	print("Error: " + str(e) + ": FAIL")
-try:
-	df2= readFileIntoPandas(f2)
-except FileNotFoundError as e:
-	print("Error: " + str(e) + ": FAIL")
-#print(df1)
-#print(df2)
-#print(df1.columns)
-#print(df2.columns)
-#assert (df1.columns == df2.columns).all(),\
-#	"Dataframes from " +f1+ " and " +f2+ " have differing column names"
 
-if df1.equals(df2):
-	print(f1 + " and " +f2+ ": PASS")
-else:
-	merged = df1.merge(df2, indicator=True, how='outer')
-	merged[merged['_merge'] == 'right_only']
-	if 'right_only' in merged._merge.values or 'left_only' in merged._merge.values:
-		print(f1 + " and " + f2 + ": FAIL")
-		print(merged)
+	df2= readFileIntoPandas(f2)
+
+	if df1.equals(df2):
+		print(f1 + " and " +f2+ ": PASS")
 	else:
-		print(f1 + " and "+ f2 +": PASS")
+		merged = df1.merge(df2, indicator=True, how='outer')
+		merged[merged['_merge'] == 'right_only']
+		if 'right_only' in merged._merge.values or 'left_only' in merged._merge.values:
+			print(f1 + " and " + f2 + ": FAIL")
+			print(merged)
+		else:
+			print(f1 + " and "+ f2 +": PASS")
+except Exception as e:
+	print(f1 + " and " +f2+ ": FAIL")
+	print("Error: " + str(e))
+

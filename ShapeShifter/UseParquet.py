@@ -2,7 +2,6 @@ import pyarrow.parquet as pq
 import re
 #import pyarrow as pa
 import pandas as pd
-#from sqlalchemy import create_engine
 from ColumnInfo import ColumnInfo
 from ContinuousQuery import ContinuousQuery
 from DiscreteQuery import DiscreteQuery
@@ -364,7 +363,7 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 		df = filterData(parquetFilePath, columnList, query, includeAllColumns=includeAllColumns)
 	null= 'NA'
 	includeIndex=False
-	if transpose:
+	if transpose and outFileType!=FileTypeEnum.SQL:
 		df=df.set_index("Sample")
 		df=df.transpose()
 		includeIndex=True
@@ -451,6 +450,21 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 			outFile = open(outFilePath, "w")
 			outFile.write(html)
 			outFile.close()
+	elif outFileType == FileTypeEnum.SQL:
+		from sqlalchemy import create_engine
+		engine = create_engine('sqlite:///'+outFilePath)
+		table = outFilePath.split('.')[0]
+		tableList= table.split('/')
+		table= tableList[len(tableList)-1]
+		if not transpose:
+			df=df.set_index("Sample")
+			df.to_sql(table,engine, index=True, if_exists="replace")
+		else:
+			df=df.set_index("Sample")
+			df=df.transpose()
+			df.to_sql(table, engine, if_exists="replace", index=True, index_label='Sample')
+		if gzipResults:
+			compressResults(outFilePath)
 	elif outFileType == FileTypeEnum.ARFF:
 		toARFF(df, outFilePath)
 		if gzipResults:

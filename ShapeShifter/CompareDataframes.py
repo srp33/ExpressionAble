@@ -1,6 +1,7 @@
 import pandas as pd
 import sys
-#from scipy.io import arff
+from ConvertARFF import toARFF
+from ConvertARFF import arffToPandas
 
 def readFileIntoPandas(fileName):
         extension= fileName.rstrip("\n").split(".")
@@ -35,9 +36,8 @@ def readFileIntoPandas(fileName):
                 tableList= table.split('/')
                 table= tableList[len(tableList)-1]
                 return pd.read_sql("SELECT * FROM "+table,engine)
-	#elif extension == "arff":
-	#       data=arff.loadarff(fileName)
-	#      return pd.DataFrame(data[0])
+        elif extension == "arff":
+                return arffToPandas(fileName)
 
 
 f1 = sys.argv[1]
@@ -47,7 +47,10 @@ try:
 	df1= readFileIntoPandas(f1)
 
 	df2= readFileIntoPandas(f2)
-
+	#print(df1.discrete1)
+	#print(df2.discrete1)
+	#print(df1.null1)
+	#print(df2.null1)
 	if df1.equals(df2):
 		print(f1 + " and " +f2+ ": PASS")
 	else:

@@ -16,5 +16,5 @@ class FileTypeEnum(Enum):
 	HTML = 9
 	TSV = 10
 	ARFF = 11
-	SQL = 12
+	SQLite = 12
 

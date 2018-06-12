@@ -9,12 +9,13 @@ from OperatorEnum import OperatorEnum
 from FileTypeEnum import FileTypeEnum
 from ColumnNotFoundError import ColumnNotFoundError
 from ConvertARFF import toARFF
+from ConvertARFF import arffToPandas
 import gzip
 import time
 import sys
 import os
 
-def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
+def peek(parquetFilePath, numRows=10, numCols=10,indexCol="Sample")->pd.DataFrame:
 	"""
 	Takes a look at the first few rows and columns of a parquet file and returns a pandas dataframe corresponding to the number of requested rows and columns
 	
@@ -34,15 +35,15 @@ def peek(parquetFilePath, numRows=10, numCols=10)->pd.DataFrame:
 	if(numCols>len(allCols)):
 		numCols=len(allCols)
 	selectedCols = []
-	selectedCols.append("Sample")
+	selectedCols.append(indexCol)
 	for i in range(0, numCols):
 		selectedCols.append(allCols[i])
 	df = pd.read_parquet(parquetFilePath, columns=selectedCols)
-	df.set_index("Sample", drop=True, inplace=True)
+	df.set_index(indexCol, drop=True, inplace=True)
 	df=df.iloc[0:numRows, 0:numCols]
 	return df
 
-def peekByColumnNames(parquetFilePath, listOfColumnNames,numRows=10)->pd.DataFrame:
+def peekByColumnNames(parquetFilePath, listOfColumnNames,numRows=10,indexCol="Sample")->pd.DataFrame:
 	"""
 	Peeks into a parquet file by looking at a specific set of columns
 	
@@ -56,9 +57,9 @@ def peekByColumnNames(parquetFilePath, listOfColumnNames,numRows=10)->pd.DataFra
 	:rtype: Pandas dataframe
 
 	"""
-	listOfColumnNames.insert(0,"Sample")
+	listOfColumnNames.insert(0,indexCol)
 	df = pd.read_parquet(parquetFilePath, columns=listOfColumnNames)
-	df.set_index("Sample", drop=True, inplace=True)
+	df.set_index(indexCol, drop=True, inplace=True)
 	df=df[0:numRows]
 	return df
 
@@ -150,7 +151,7 @@ def getAllColumnsInfo(parquetFilePath):
 			columnDict[col] = ColumnInfo(col, "continuous", uniqueValues)
 	return columnDict
 
-def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], discreteQueries: list=[], includeAllColumns = False)->pd.DataFrame:
+def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], discreteQueries: list=[], includeAllColumns = False,indexCol="Sample")->pd.DataFrame:
 	"""
 	Performs mulitple queries on a parquet dataset. If no queries or columns are passed, it returns the entire dataset as a pandas dataframe. Otherwise, returns only the queried data over the requested columns as a Pandas dataframe
 
@@ -174,7 +175,6 @@ def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], disc
 	"""
 	if len(columnList)==0 and len(continuousQueries)==0 and len(discreteQueries)==0:
 		df = pd.read_parquet(parquetFilePath)
-		#df.set_index("Sample", drop=True, inplace=True)
 		return df
 	
 	if includeAllColumns:
@@ -187,14 +187,12 @@ def query(parquetFilePath, columnList: list=[], continuousQueries: list=[], disc
 		for query in discreteQueries:
 			if query.columnName not in columnList:
 				columnList.append(query.columnName)
-	if "Sample" not in columnList:
-		columnList.insert(0,"Sample")
+	if indexCol not in columnList:
+		columnList.insert(0, indexCol)
 	else:
-		columnList.insert(0, columnList.pop(columnList.index("Sample")))
+		columnList.insert(0, columnList.pop(columnList.index(indexCol)))
 	
 	df = pd.read_parquet(parquetFilePath, columns = columnList)
-	#df.set_index("Sample", drop=True, inplace=True)
-	#del columnList[0]
 
 	#perform continuous queries, adjusting for which operator is to be used
 	for query in continuousQueries:
@@ -268,7 +266,7 @@ def checkIfColumnsExist(df, columnList):
 	#	raise ColumnNotFoundError(missingColumns)
 	return missingColumns
 
-def filterData(parquetFilePath, columnList=[], query=None, includeAllColumns = False):
+def filterData(parquetFilePath, columnList=[],inputFileType=FileTypeEnum.Parquet, query=None, includeAllColumns = False, indexCol="Sample"):
 	"""	
 	Applies a filter to a parquet dataset. If no filter or columns are passed in, it returns the entire dataset as a pandas dataframe. Otherwise, returns only the filtered data over the requested columns as a Pandas dataframe
 
@@ -285,20 +283,30 @@ def filterData(parquetFilePath, columnList=[], query=None, includeAllColumns = F
 	:param includeAllColumns: if True, will include all columns in the filtered dataset. Overrides columnList if True
 	"""
 	if len(columnList)==0 and query == None:
-		df = pd.read_parquet(parquetFilePath)
-		#df.set_index("Sample", drop=True, inplace=True)
+		#df = pd.read_parquet(parquetFilePath)
+		df = readInputToPandas(parquetFilePath, inputFileType, columnList,indexCol)
+		df.set_index(indexCol, drop=True, inplace=True)
+		df.reset_index(inplace=True)
+		return df
+	elif len(columnList)>0 and query==None and not includeAllColumns:
+		if indexCol not in columnList:
+			columnList.insert(0,indexCol)
+		else:
+			columnList.insert(0, columnList.pop(columnList.index(indexCol)))
+		#df=pd.read_parquet(parquetFilePath, columns=columnList)
+		df=readInputToPandas(parquetFilePath, inputFileType, columnList,indexCol)
 		return df
 	if includeAllColumns:
 		columnList = getColumnNames(parquetFilePath)
 	else:
 		queryColumns= parseColumnNamesFromQuery(query)
 		columnList = queryColumns+columnList 
-	if "Sample" not in columnList:
-		columnList.insert(0,"Sample")
+	if indexCol not in columnList:
+		columnList.insert(0, indexCol)
 	else:
-		columnList.insert(0, columnList.pop(columnList.index("Sample")))
+		columnList.insert(0, columnList.pop(columnList.index(indexCol)))
 
-	df = pd.read_parquet(parquetFilePath, columns=columnList)
+	df = readInputToPandas(parquetFilePath, inputFileType, columnList, indexCol)
 	missingColumns =  checkIfColumnsExist(df, columnList) 
 	df=df.query(query)	
 	if len(missingColumns)>0:
@@ -319,14 +327,81 @@ def compressResults(outFilePath):
 	os.remove(outFilePath)
 
 
-def readInputToPandas(inputFilePath, inputFileType, gzippedInput):
+def readInputToPandas(inputFilePath, inputFileType, columnList, indexCol):
 	if inputFileType==FileTypeEnum.Parquet:
-		if gzippedInput:
-			print("test")
+		if len(columnList)==0:
+			return pd.read_parquet(inputFilePath)
+		return pd.read_parquet(inputFilePath, columns=columnList)
+	elif inputFileType==FileTypeEnum.TSV:
+		if len(columnList)==0:
+			return pd.read_csv(inputFilePath, sep="\t")
+		return pd.read_csv(inputFilePath, sep="\t", usecols=columnList)	
+	elif inputFileType == FileTypeEnum.CSV:
+		if len(columnList)==0:
+			return pd.read_csv(inputFilePath)
+		return pd.read_csv(inputFilePath, usecols=columnList)
+	elif inputFileType == FileTypeEnum.JSON:
+		df=pd.read_json(inputFilePath)
+		df=df.reset_index()
+		if len(columnList)>0:
+			columnList[columnList.index(indexCol)]='index'
+			df=df[columnList]
+		return df
+	elif inputFileType == FileTypeEnum.Excel:
+		df= pd.read_excel(inputFilePath)
+		if len(columnList)>0:
+			df=df[columnList]
+		return df
+	elif inputFileType == FileTypeEnum.HDF5:
+		df= pd.read_hdf(inputFilePath)
+		df=df.reset_index()
+		if len(columnList)>0:
+			df=df[columnList]
+		return df
+	elif inputFileType == FileTypeEnum.MsgPack:
+		df= pd.read_msgpack(inputFilePath)
+		df=df.reset_index()
+		if len(columnList)>0:
+			df=df[columnList]
+		return df
+	elif inputFileType == FileTypeEnum.Stata:
+		if len(columnList)>0:
+			return pd.read_stata(inputFilePath, columns=columnList)
+		return pd.read_stata(inputFilePath)
+	elif inputFileType == FileTypeEnum.Pickle:
+		df=pd.read_pickle(inputFilePath)
+		df=df.reset_index()
+		if len(columnList)>0:
+			df=df[columnList]
+		return df
+	elif inputFileType == FileTypeEnum.HTML:
+		df=pd.read_html(inputFilePath)[0]
+		df=df.reset_index()
+		if len(columnList)>0:
+			df=df[columnList]
+		return df
+	elif inputFileType == FileTypeEnum.ARFF:
+		df= arffToPandas(inputFilePath)
+		print(df.columns)
+		if len(columnList)>0:
+			df=df[columnList]
+		return df
+	elif inputFileType == FileTypeEnum.SQLite:
+		from sqlalchemy import create_engine
+		engine = create_engine('sqlite:///'+inputFilePath)
+		table=inputFilePath.split('.')[0]
+		tableList=table.split('/')
+		table=tableList[len(tableList)-1]
+		query="SELECT * FROM "+table
+		if len(columnList)>0:
+			query="SELECT " +", ".join(columnList) +" FROM " + table
+
+		df=pd.read_sql(query, engine)
+		return df
 	
 	
 
-def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, inputFileType=FileTypeEnum.Parquet, gzippedInput=False, columnList: list=[], query=None, transpose= False, includeAllColumns = False, gzipResults=False):
+def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, inputFileType=FileTypeEnum.Parquet, gzippedInput=False, columnList: list=[], query=None, transpose= False, includeAllColumns = False, gzipResults=False, indexCol="Sample"):
 	"""
 	Performs mulitple queries on a parquet dataset and exports results to a file of specified type. If no queries or columns are passed, it exports the entire dataset as a pandas dataframe. Otherwise, exports the queried data over the requested columns 
 
@@ -358,13 +433,13 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 	if query != None:
 		query=translateNullQuery(query)
 	if gzippedInput:
-		df = filterData(gzip.open(parquetFilePath), columnList, query, includeAllColumns = includeAllColumns)
+		df = filterData(gzip.open(parquetFilePath), columnList=columnList, query=query, inputFileType=inputFileType, includeAllColumns = includeAllColumns,indexCol=indexCol)
 	else:
-		df = filterData(parquetFilePath, columnList, query, includeAllColumns=includeAllColumns)
+		df = filterData(parquetFilePath, columnList=columnList, query=query, inputFileType=inputFileType, includeAllColumns=includeAllColumns,indexCol=indexCol)
 	null= 'NA'
 	includeIndex=False
-	if transpose and outFileType!=FileTypeEnum.SQL:
-		df=df.set_index("Sample")
+	if transpose and outFileType!=FileTypeEnum.SQLite:
+		df=df.set_index(indexCol)
 		df=df.transpose()
 		includeIndex=True
 	if outFileType== FileTypeEnum.TSV:
@@ -381,7 +456,7 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 			df.to_csv(path_or_buf=outFilePath, na_rep=null, index=includeIndex)
 	elif outFileType == FileTypeEnum.JSON:
 		if not transpose:
-			df=df.set_index("Sample",drop=True)
+			df=df.set_index(indexCol,drop=True)
 		if gzipResults:
 			outFilePath = appendGZ(outFilePath)
 			df.to_json(path_or_buf=outFilePath, compression='gzip')
@@ -404,21 +479,21 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 	elif outFileType ==FileTypeEnum.HDF5:
 		#manually gzip
 		if not transpose:
-			df=df.set_index("Sample")
+			df=df.set_index(indexCol)
 		df.to_hdf(outFilePath, "group", mode= 'w')
 		if gzipResults:
 			compressResults(outFilePath)
 	elif outFileType ==FileTypeEnum.MsgPack:
 		#manually gzip
 		if not transpose:
-			df=df.set_index("Sample")
+			df=df.set_index(indexCol)
 		df.to_msgpack(outFilePath)
 		if gzipResults:
 			compressResults(outFilePath)
 
 	elif outFileType ==FileTypeEnum.Parquet:
 		if not transpose:
-			df=df.set_index("Sample")
+			df=df.set_index(indexCol)
 		if gzipResults:
 			df.to_parquet(appendGZ(outFilePath), compression='gzip')
 		else:
@@ -426,21 +501,21 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 	elif outFileType == FileTypeEnum.Stata:
 		#manually gzip
 		if not transpose:
-			df=df.set_index("Sample")
-		df.to_stata(outFilePath, write_index=includeIndex)
+			df=df.set_index(indexCol)
+		df.to_stata(outFilePath, write_index=True)
 		if gzipResults:
 			compressResults(outFilePath)
 
 	elif outFileType == FileTypeEnum.Pickle:
 		if not transpose:
-			df=df.set_index("Sample")
+			df=df.set_index(indexCol)
 		if gzipResults:
 			df.to_pickle(appendGZ(outFilePath), compression='gzip')
 		else:
 			df.to_pickle(outFilePath)
 	elif outFileType == FileTypeEnum.HTML:
 		#if not transpose:
-		#	df=df.set_index("Sample")
+		#	df=df.set_index(indexCol)
 		html = df.to_html(na_rep=null,index=False)
 		if gzipResults:
 			html= html.encode()
@@ -450,22 +525,24 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 			outFile = open(outFilePath, "w")
 			outFile.write(html)
 			outFile.close()
-	elif outFileType == FileTypeEnum.SQL:
+	elif outFileType == FileTypeEnum.SQLite:
 		from sqlalchemy import create_engine
 		engine = create_engine('sqlite:///'+outFilePath)
 		table = outFilePath.split('.')[0]
 		tableList= table.split('/')
 		table= tableList[len(tableList)-1]
 		if not transpose:
-			df=df.set_index("Sample")
+			df=df.set_index(indexCol)
 			df.to_sql(table,engine, index=True, if_exists="replace")
 		else:
-			df=df.set_index("Sample")
+			df=df.set_index(indexCol)
 			df=df.transpose()
-			df.to_sql(table, engine, if_exists="replace", index=True, index_label='Sample')
+			df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol)
 		if gzipResults:
 			compressResults(outFilePath)
 	elif outFileType == FileTypeEnum.ARFF:
+		#if not transpose:
+		#	df=df.set_index(indexCol)
 		toARFF(df, outFilePath)
 		if gzipResults:
 			compressResults(outFilePath)

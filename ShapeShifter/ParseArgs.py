@@ -33,8 +33,8 @@ def determineFileType(fileType):
 		return FileTypeEnum.Pickle
 	elif fileType =="HTML":
 		return FileTypeEnum.HTML
-	elif fileType =="SQL":
-		return FileTypeEnum.SQL
+	elif fileType =="SQLite":
+		return FileTypeEnum.SQLite
 	elif fileType == "ARFF":
 		return FileTypeEnum.ARFF
 
@@ -67,7 +67,7 @@ def determineExtension(fileName):
 	elif extension =="html":
 		return FileTypeEnum.HTML
 	elif extension=="db":
-		return FileTypeEnum.SQL
+		return FileTypeEnum.SQLite
 	elif extension == "arff":
 		return FileTypeEnum.ARFF
 	else:
@@ -164,7 +164,7 @@ parser = argparse.ArgumentParser(description = "Import, filter, and transform da
 parser.add_argument("input_file", help = "Data file to be imported, filtered, and/or transformed")
 parser.add_argument("output_file", help = "File path to which results are exported")
 
-supportedFiles=["CSV", "TSV", "JSON","Excel","HDF5","Parquet","MsgPack","Stata","Pickle","HTML", "SQL"]
+supportedFiles=["CSV", "TSV", "JSON","Excel","HDF5","Parquet","MsgPack","Stata","Pickle","HTML", "SQLite","ARFF"]
 
 parser.add_argument("-i","--input_file_type", help = "Type of file to be imported. If not specified, file type will be determined by the file extension given. Available choices are: "+", ".join(supportedFiles), choices = supportedFiles, metavar= 'File_Type')
 parser.add_argument("-o","--output_file_type", help = "Type of file to which results are exported. If not specified, file type will be determined by the file extension given. Available choices are: "+", ".join(supportedFiles), choices = supportedFiles, metavar='File_Type')
@@ -173,6 +173,7 @@ parser.add_argument("-f", "--filter", help = "Filter data using python logical s
 parser.add_argument("-c","--columns", action='append', help ="List of additional column names to include in the output file. Column names must be seperated by commas and without spaces. For example: -c ColumnName1,ColumnName2,ColumnName3") 
 parser.add_argument("-a", "--all_columns", help = "Includes all columns in the output file. Overrides the \"--columns\" flag", action="store_true")
 parser.add_argument("-g","--gzip", help = "Gzips the output file", action="store_true")
+parser.add_argument("-s","--set_index", help="Sets the given column to become the index column, where appropriate. If not set, the default index will be 'Sample'",nargs=1)
 args = parser.parse_args()
 
 inFileType = determineExtension(args.input_file)
@@ -212,15 +213,16 @@ if args.columns:
 allCols=False
 if args.all_columns:
 	allCols=True
-
 gzip=False
 if (not isGzipped(args.output_file) and args.gzip):
 	print("NOTE: Because you requested the output be gzipped, it will be saved to "+args.output_file+".gz")
 if isGzipped(args.output_file) or args.gzip:
 	gzip=True
-#exportQueryResults(args.input_file, args.output_file, outFileType, columnList=colList, continuousQueries=continuousQueryList, discreteQueries=discreteQueryList, transpose=isTransposed, includeAllColumns=allCols)
+indexCol="Sample"
+if args.set_index:
+	indexCol=args.set_index[0]
 try:
-	exportFilterResults(args.input_file, args.output_file, outFileType, gzippedInput=isInFileGzipped, query=query, columnList=colList,transpose=isTransposed, includeAllColumns=allCols, gzipResults=gzip)
+	exportFilterResults(args.input_file, args.output_file, outFileType, inputFileType=inFileType, gzippedInput=isInFileGzipped, query=query, columnList=colList,transpose=isTransposed, includeAllColumns=allCols, gzipResults=gzip,indexCol=indexCol)
 except pyarrow.lib.ArrowIOError as e:
 	print("Error: " + str(e))
 except pd.core.computation.ops.UndefinedVariableError as e:

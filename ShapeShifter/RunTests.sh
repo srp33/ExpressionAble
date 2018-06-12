@@ -6,11 +6,11 @@ outputDir2="Tests/OutputData/Parquet1ToOtherFormats"
 keyDir1="Tests/OutputData/Parquet1ToTsvKey"
 keyDir2="Tests/OutputData/Parquet1ToOtherFormatsKey"
 
-fileNames=("NoChange" "SimpleTranspose" "FloatFilter" "IntFilter" "DiscreteFilter" "DiscreteDoubleFilter" "BooleanFilter" "SampleFilter" "MultiFilter" "FilterWithColumn" "FilterWithManyColumns" "FilterWithAllColumns" "NullFilter1" "NullFilter2")
+fileNames=("NoChange" "SimpleTranspose" "FloatFilter" "IntFilter" "DiscreteFilter" "DiscreteDoubleFilter" "BooleanFilter" "SampleFilter" "MultiFilter" "ColumnsOnly" "FilterWithColumn" "FilterWithManyColumns" "FilterWithAllColumns" "NullFilter1" "NullFilter2" "SetIndex")
 
 filterList=("" "-t" "-f \"float1 > 9.1\"" "-f \"int2 <= 12\"" "-f \"discrete1 = hot\"" "-f \"discrete1 = hot medium\"" "-f \"bool1 = True\"" "-f \"Sample = A\"" "-f \"Sample = A\" \"float1 < 2\" \"int1 > 3\" \"discrete2 = blue\" \"bool1 = True\"" "-f \"float1 < 8\" -c int1" "-f \"float1 < 8\" -c int1 discrete1 bool1 float2" "-f \"float1 < 8\" -a")
 
-extensions=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "html" "db")
+extensions=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "html" "db" "arff")
 
 #echo for loop!
 #for i in ${!fileNames[*]}; do
@@ -32,11 +32,13 @@ python3 ParseArgs.py $inputFile1 $outputDir1/DiscreteDoubleFilter.tsv -f  "discr
 python3 ParseArgs.py $inputFile1 $outputDir1/BooleanFilter.tsv -f "bool1 == True"
 python3 ParseArgs.py $inputFile1 $outputDir1/SampleFilter.tsv -f "Sample == 'A'"
 python3 ParseArgs.py $inputFile1 $outputDir1/MultiFilter.tsv -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
+python3 ParseArgs.py $inputFile1 $outputDir1/ColumnsOnly.tsv -c int1,int2,bool1,bool2
 python3 ParseArgs.py $inputFile1 $outputDir1/FilterWithColumn.tsv -f  "float1 < 8" -c int1
 python3 ParseArgs.py $inputFile1 $outputDir1/FilterWithManyColumns.tsv -f  "float1 < 8" -c int1,discrete1,bool1,float2
 python3 ParseArgs.py $inputFile1 $outputDir1/FilterWithAllColumns.tsv -f  "float1 < 8" -a
 python3 ParseArgs.py $inputFile1 $outputDir1/NullFilter1.tsv -f "int1>2 or null1 != None"
 python3 ParseArgs.py $inputFile1 $outputDir1/NullFilter2.tsv -f "null1 ==None and int1>2"
+python3 ParseArgs.py $inputFile1 $outputDir1/SetIndex.tsv -f "int1>5" -s bool1
 
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.csv -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.json -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True" 
@@ -48,7 +50,7 @@ python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.mp -f "Sample == 'A' an
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.dta -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.pkl -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.html -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
-#python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.arff -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
+python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.arff -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
 
 
 

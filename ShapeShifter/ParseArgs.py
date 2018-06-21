@@ -8,6 +8,7 @@ from ColumnNotFoundError import ColumnNotFoundError
 import pandas as pd
 import argparse
 import pyarrow
+import time
 import sys
 
 def determineFileType(fileType):
@@ -37,6 +38,8 @@ def determineFileType(fileType):
 		return FileTypeEnum.SQLite
 	elif fileType == "ARFF":
 		return FileTypeEnum.ARFF
+	elif fileType == "GCT":
+		return FileTypeEnum.GCT
 
 def determineExtension(fileName):
 	extensions= fileName.rstrip("\n").split(".")
@@ -70,6 +73,8 @@ def determineExtension(fileName):
 		return FileTypeEnum.SQLite
 	elif extension == "arff":
 		return FileTypeEnum.ARFF
+	elif extension == "gct":
+		return FileTypeEnum.GCT
 	else:
 		print("Error: Extension on " + fileName+ " not recognized. Please use appropriate file extensions or explicitly specify file type using the -i or -o flags")
 		sys.exit()
@@ -159,12 +164,13 @@ def buildAllQueries(queryList, discreteQueryList, continuousQueryList):
 		else:
 			print(query+": query is malformed")	
 
+#t1=time.time()
 parser = argparse.ArgumentParser(description = "Import, filter, and transform data into a format of your choice!")
 
 parser.add_argument("input_file", help = "Data file to be imported, filtered, and/or transformed")
 parser.add_argument("output_file", help = "File path to which results are exported")
 
-supportedFiles=["CSV", "TSV", "JSON","Excel","HDF5","Parquet","MsgPack","Stata","Pickle","HTML", "SQLite","ARFF"]
+supportedFiles=["CSV", "TSV", "JSON","Excel","HDF5","Parquet","MsgPack","Stata","Pickle","HTML", "SQLite","ARFF", "GCT"]
 
 parser.add_argument("-i","--input_file_type", help = "Type of file to be imported. If not specified, file type will be determined by the file extension given. Available choices are: "+", ".join(supportedFiles), choices = supportedFiles, metavar= 'File_Type')
 parser.add_argument("-o","--output_file_type", help = "Type of file to which results are exported. If not specified, file type will be determined by the file extension given. Available choices are: "+", ".join(supportedFiles), choices = supportedFiles, metavar='File_Type')
@@ -223,6 +229,8 @@ if args.set_index:
 	indexCol=args.set_index[0]
 try:
 	exportFilterResults(args.input_file, args.output_file, outFileType, inputFileType=inFileType, gzippedInput=isInFileGzipped, query=query, columnList=colList,transpose=isTransposed, includeAllColumns=allCols, gzipResults=gzip,indexCol=indexCol)
+	#t2=time.time()
+	#print("Time: " + str(t2-t1))
 except pyarrow.lib.ArrowIOError as e:
 	print("Error: " + str(e))
 except pd.core.computation.ops.UndefinedVariableError as e:
@@ -235,12 +243,12 @@ except SyntaxError as error:
 		pass
 	finally:
 		print("Syntax is invalid. Valid python syntax must be used")
-except ValueError as e:
-	print("Error: "+str(e))
+#except ValueError as e:
+#	print("Error: "+str(e))
 #except TypeError as e:
-#	print("Error: Type error. Maybe you left the filter blank?")
-except KeyError as e:
-	print("Error: " + str(e))
+#	print("Error: Type error. You may have tried to compare items that are not comparable (strings and integers), or you may left the filter blank")
+#except KeyError as e:
+#	print("Error: " + str(e))
 except NotImplementedError as e:
 	print("Error: " + str(e))
 except RecursionError as e:

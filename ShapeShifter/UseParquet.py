@@ -10,6 +10,8 @@ from FileTypeEnum import FileTypeEnum
 from ColumnNotFoundError import ColumnNotFoundError
 from ConvertARFF import toARFF
 from ConvertARFF import arffToPandas
+from ConvertGCT import toGCT
+from ConvertGCT import gctToPandas
 import gzip
 import time
 import sys
@@ -282,11 +284,15 @@ def filterData(parquetFilePath, columnList=[],inputFileType=FileTypeEnum.Parquet
 	:type includeAllColumns: bool
 	:param includeAllColumns: if True, will include all columns in the filtered dataset. Overrides columnList if True
 	"""
+	t1=time.time()
 	if len(columnList)==0 and query == None:
 		#df = pd.read_parquet(parquetFilePath)
 		df = readInputToPandas(parquetFilePath, inputFileType, columnList,indexCol)
-		df.set_index(indexCol, drop=True, inplace=True)
-		df.reset_index(inplace=True)
+		t2=time.time()
+		print("Time to read to pandas: " + str(t2-t1))
+		if indexCol in df.columns:
+			df.set_index(indexCol, drop=True, inplace=True)
+			df.reset_index(inplace=True)
 		return df
 	elif len(columnList)>0 and query==None and not includeAllColumns:
 		if indexCol not in columnList:
@@ -295,6 +301,8 @@ def filterData(parquetFilePath, columnList=[],inputFileType=FileTypeEnum.Parquet
 			columnList.insert(0, columnList.pop(columnList.index(indexCol)))
 		#df=pd.read_parquet(parquetFilePath, columns=columnList)
 		df=readInputToPandas(parquetFilePath, inputFileType, columnList,indexCol)
+		t2=time.time()
+		print("Time to read to pandas: " + str(t2-t1))
 		return df
 	if includeAllColumns:
 		columnList = getColumnNames(parquetFilePath)
@@ -305,10 +313,14 @@ def filterData(parquetFilePath, columnList=[],inputFileType=FileTypeEnum.Parquet
 		columnList.insert(0, indexCol)
 	else:
 		columnList.insert(0, columnList.pop(columnList.index(indexCol)))
-
 	df = readInputToPandas(parquetFilePath, inputFileType, columnList, indexCol)
-	missingColumns =  checkIfColumnsExist(df, columnList) 
+	t2=time.time()
+	print("Time to read to pandas: " + str(t2-t1))
+	missingColumns =  checkIfColumnsExist(df, columnList)
+	t3=time.time()
 	df=df.query(query)	
+	t4=time.time()
+	print("Time to filter: " +str(t4-t3))
 	if len(missingColumns)>0:
 		print("Warning: the following columns were not found and therefore not included in output: " + ", ".join(missingColumns))
 	return df
@@ -330,8 +342,15 @@ def compressResults(outFilePath):
 def readInputToPandas(inputFilePath, inputFileType, columnList, indexCol):
 	if inputFileType==FileTypeEnum.Parquet:
 		if len(columnList)==0:
-			return pd.read_parquet(inputFilePath)
-		return pd.read_parquet(inputFilePath, columns=columnList)
+			df=pd.read_parquet(inputFilePath)
+			if df.index.name == indexCol:
+				df.reset_index(inplace=True)
+			return df
+		
+		df=pd.read_parquet(inputFilePath, columns=columnList)
+		if df.index.name == indexCol:
+			df.reset_index(inplace=True)	
+		return(df)
 	elif inputFileType==FileTypeEnum.TSV:
 		if len(columnList)==0:
 			return pd.read_csv(inputFilePath, sep="\t")
@@ -350,6 +369,7 @@ def readInputToPandas(inputFilePath, inputFileType, columnList, indexCol):
 	elif inputFileType == FileTypeEnum.Excel:
 		df= pd.read_excel(inputFilePath)
 		if len(columnList)>0:
+			print(columnList)
 			df=df[columnList]
 		return df
 	elif inputFileType == FileTypeEnum.HDF5:
@@ -382,7 +402,11 @@ def readInputToPandas(inputFilePath, inputFileType, columnList, indexCol):
 		return df
 	elif inputFileType == FileTypeEnum.ARFF:
 		df= arffToPandas(inputFilePath)
-		print(df.columns)
+		if len(columnList)>0:
+			df=df[columnList]
+		return df
+	elif inputFileType == FileTypeEnum.GCT:
+		df= gctToPandas(inputFilePath)
 		if len(columnList)>0:
 			df=df[columnList]
 		return df
@@ -430,6 +454,7 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 	:param gzipResults: if True, the output file will be compressed with gzip 
 
 	"""
+
 	if query != None:
 		query=translateNullQuery(query)
 	if gzippedInput:
@@ -438,8 +463,9 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 		df = filterData(parquetFilePath, columnList=columnList, query=query, inputFileType=inputFileType, includeAllColumns=includeAllColumns,indexCol=indexCol)
 	null= 'NA'
 	includeIndex=False
+	t1=time.time()
 	if transpose and outFileType!=FileTypeEnum.SQLite:
-		df=df.set_index(indexCol)
+		df=df.set_index(indexCol) if indexCol in df.columns else df
 		df=df.transpose()
 		includeIndex=True
 	if outFileType== FileTypeEnum.TSV:
@@ -456,7 +482,7 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 			df.to_csv(path_or_buf=outFilePath, na_rep=null, index=includeIndex)
 	elif outFileType == FileTypeEnum.JSON:
 		if not transpose:
-			df=df.set_index(indexCol,drop=True)
+			df=df.set_index(indexCol,drop=True) if indexCol in df.columns else df 
 		if gzipResults:
 			outFilePath = appendGZ(outFilePath)
 			df.to_json(path_or_buf=outFilePath, compression='gzip')
@@ -464,6 +490,9 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 			df.to_json(path_or_buf=outFilePath) 
 	elif outFileType == FileTypeEnum.Excel:
 		#NEED TO GZIP MANUALLY
+		if len(df.columns)>16384 or len(df.index)>1048576:
+			print("WARNING: Excel supports a maximum of 16,384 columns and 1,048,576 rows. The dimensions of your data are " + str(df.shape))
+			print("Data beyond the size limit will be truncated")
 		import xlsxwriter
 		writer = pd.ExcelWriter(outFilePath, engine='xlsxwriter')
 		df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=includeIndex) 
@@ -479,21 +508,21 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 	elif outFileType ==FileTypeEnum.HDF5:
 		#manually gzip
 		if not transpose:
-			df=df.set_index(indexCol)
+			df=df.set_index(indexCol) if indexCol in df.columns else df
 		df.to_hdf(outFilePath, "group", mode= 'w')
 		if gzipResults:
 			compressResults(outFilePath)
 	elif outFileType ==FileTypeEnum.MsgPack:
 		#manually gzip
 		if not transpose:
-			df=df.set_index(indexCol)
+			df=df.set_index(indexCol) if indexCol in df.columns else df
 		df.to_msgpack(outFilePath)
 		if gzipResults:
 			compressResults(outFilePath)
 
 	elif outFileType ==FileTypeEnum.Parquet:
 		if not transpose:
-			df=df.set_index(indexCol)
+			df=df.set_index(indexCol) if indexCol in df.columns else df
 		if gzipResults:
 			df.to_parquet(appendGZ(outFilePath), compression='gzip')
 		else:
@@ -501,14 +530,14 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 	elif outFileType == FileTypeEnum.Stata:
 		#manually gzip
 		if not transpose:
-			df=df.set_index(indexCol)
+			df=df.set_index(indexCol) if indexCol in df.columns else df
 		df.to_stata(outFilePath, write_index=True)
 		if gzipResults:
 			compressResults(outFilePath)
 
 	elif outFileType == FileTypeEnum.Pickle:
 		if not transpose:
-			df=df.set_index(indexCol)
+			df=df.set_index(indexCol) if indexCol in df.columns else df
 		if gzipResults:
 			df.to_pickle(appendGZ(outFilePath), compression='gzip')
 		else:
@@ -526,16 +555,19 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 			outFile.write(html)
 			outFile.close()
 	elif outFileType == FileTypeEnum.SQLite:
+		if len(df.columns) > 2000:
+			print("Error: SQLite supports a maximum of 2,000 columns. Your data has " + str(len(df.columns)) + " columns")
+			return
 		from sqlalchemy import create_engine
 		engine = create_engine('sqlite:///'+outFilePath)
 		table = outFilePath.split('.')[0]
 		tableList= table.split('/')
 		table= tableList[len(tableList)-1]
 		if not transpose:
-			df=df.set_index(indexCol)
+			df=df.set_index(indexCol) if indexCol in df.columns else df
 			df.to_sql(table,engine, index=True, if_exists="replace")
 		else:
-			df=df.set_index(indexCol)
+			df=df.set_index(indexCol) if indexCol in df.columns else df
 			df=df.transpose()
 			df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol)
 		if gzipResults:
@@ -546,6 +578,12 @@ def exportFilterResults(parquetFilePath, outFilePath, outFileType:FileTypeEnum, 
 		toARFF(df, outFilePath)
 		if gzipResults:
 			compressResults(outFilePath)
+	elif outFileType == FileTypeEnum.GCT:
+		toGCT(df, outFilePath)
+		if gzipResults:
+			compressResults(outFilePath)
+	t2=time.time()
+	print("Time to write to file: " + str(t2-t1))
 		
 def operatorEnumConverter(operator: OperatorEnum):
 	"""

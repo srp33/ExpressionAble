@@ -38,7 +38,7 @@ def buildParquet(inputFiles, outputFile):
 		return
 	for i in range(0,len(inputFiles)-1):
 		df2=loadTSV(inputFiles[i+1])
-		df1 = pd.merge(df1,df2,how='inner', on='sampleID')
+		df1 = pd.merge(df1,df2,how='inner')
 	df1.to_parquet(outputFile)
 
-
+buildParquet(["TsvData/METABRIC/data.tsv","TsvData/METABRIC/converted_metadata.txt"],"METABRIC.pq")

@@ -2,7 +2,7 @@ import pandas as pd
 import sys
 from ConvertARFF import toARFF
 from ConvertARFF import arffToPandas
-
+from ConvertGCT import gctToPandas 
 def readFileIntoPandas(fileName):
         extension= fileName.rstrip("\n").split(".")
         if len(extension)>1:
@@ -38,6 +38,8 @@ def readFileIntoPandas(fileName):
                 return pd.read_sql("SELECT * FROM "+table,engine)
         elif extension == "arff":
                 return arffToPandas(fileName)
+        elif extension=="gct":
+                return gctToPandas(fileName)
 
 
 f1 = sys.argv[1]
@@ -47,8 +49,8 @@ try:
 	df1= readFileIntoPandas(f1)
 
 	df2= readFileIntoPandas(f2)
-	#print(df1.discrete1)
-	#print(df2.discrete1)
+	#print(list(df1.columns.values))
+	#print(list(df2.columns.values))
 	#print(df1.null1)
 	#print(df2.null1)
 	if df1.equals(df2):

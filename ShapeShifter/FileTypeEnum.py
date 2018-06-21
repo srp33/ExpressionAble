@@ -17,4 +17,5 @@ class FileTypeEnum(Enum):
 	TSV = 10
 	ARFF = 11
 	SQLite = 12
+	GCT = 13
 

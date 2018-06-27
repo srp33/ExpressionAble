@@ -22,7 +22,7 @@ class SSFile:
     def prep_for_export(self, inputSSFile, gzippedInput, columnList, query, transpose, includeAllColumns, df, includeIndex, indexCol):
         #this function is used for every file's export_filter_results except SQLite
         if query != None:
-            query = self.__translate_null_query(query)
+            query = self._translate_null_query(query)
         if gzippedInput:
             inputSSFile.filePath=gzip.open(inputSSFile.filePath)
         df = inputSSFile.__filter_data(columnList=columnList, query=query,
@@ -49,7 +49,7 @@ class SSFile:
         elif type == FileTypeEnum.FileTypeEnum.GCT: return GCTFile.GCTFile(filePath,type)
     factory=staticmethod(factory)
 
-    def __translate_null_query(self, query):
+    def _translate_null_query(self, query):
         """
         For internal use only. Because pandas does not support querying for null values by "columnname == None", this function translates such queries into valid syntax
         """

@@ -1,10 +1,11 @@
-from UseParquet import exportQueryResults #import *
-from UseParquet import exportFilterResults
+from UseParquet import export_query_results #import *
+from UseParquet import export_filter_results
 from FileTypeEnum import FileTypeEnum
 from OperatorEnum import OperatorEnum
 from ContinuousQuery import ContinuousQuery
 from DiscreteQuery import DiscreteQuery
 from ColumnNotFoundError import ColumnNotFoundError
+from ShapeShifter import ShapeShifter
 import pandas as pd
 import argparse
 import pyarrow
@@ -228,7 +229,7 @@ indexCol="Sample"
 if args.set_index:
 	indexCol=args.set_index[0]
 try:
-	exportFilterResults(args.input_file, args.output_file, outFileType, inputFileType=inFileType, gzippedInput=isInFileGzipped, query=query, columnList=colList,transpose=isTransposed, includeAllColumns=allCols, gzipResults=gzip,indexCol=indexCol)
+	export_filter_results(args.input_file, args.output_file, outFileType, inputFileType=inFileType, gzippedInput=isInFileGzipped, query=query, columnList=colList, transpose=isTransposed, includeAllColumns=allCols, gzipResults=gzip, indexCol=indexCol)
 	#t2=time.time()
 	#print("Time: " + str(t2-t1))
 except pyarrow.lib.ArrowIOError as e:

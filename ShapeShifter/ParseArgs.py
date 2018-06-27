@@ -229,9 +229,12 @@ indexCol="Sample"
 if args.set_index:
 	indexCol=args.set_index[0]
 try:
-	export_filter_results(args.input_file, args.output_file, outFileType, inputFileType=inFileType, gzippedInput=isInFileGzipped, query=query, columnList=colList, transpose=isTransposed, includeAllColumns=allCols, gzipResults=gzip, indexCol=indexCol)
-	#t2=time.time()
-	#print("Time: " + str(t2-t1))
+	ss = ShapeShifter(args.input_file, inFileType, query, colList, indexCol)
+	ss.export_filter_results(args.output_file, outFileType, transpose=isTransposed, includeAllColumns= allCols, gzipResults= gzip)
+
+	#export_filter_results(args.input_file, args.output_file, outFileType, inputFileType=inFileType, gzippedInput=isInFileGzipped, query=query, columnList=colList, transpose=isTransposed, includeAllColumns=allCols, gzipResults=gzip, indexCol=indexCol)
+
+
 except pyarrow.lib.ArrowIOError as e:
 	print("Error: " + str(e))
 except pd.core.computation.ops.UndefinedVariableError as e:

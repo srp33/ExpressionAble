@@ -25,8 +25,8 @@ class SSFile:
             query = self._translate_null_query(query)
         if gzippedInput:
             inputSSFile.filePath=gzip.open(inputSSFile.filePath)
-        df = inputSSFile.__filter_data(columnList=columnList, query=query,
-                                       includeAllColumns=includeAllColumns, indexCol=indexCol)
+        df = inputSSFile._filter_data(columnList=columnList, query=query,
+                                      includeAllColumns=includeAllColumns, indexCol=indexCol)
         if transpose:
             df = df.set_index(indexCol) if indexCol in df.columns else df
             df = df.transpose()
@@ -123,8 +123,8 @@ class SSFile:
         #	raise ColumnNotFoundError(missingColumns)
         return missingColumns
 
-    def __filter_data(self, columnList=[], query=None,
-                      includeAllColumns=False, indexCol="Sample"):
+    def _filter_data(self, columnList=[], query=None,
+                     includeAllColumns=False, indexCol="Sample"):
         """
         Applies a filter to a parquet dataset. If no filter or columns are passed in, it returns the entire dataset as a pandas dataframe. Otherwise, returns only the filtered data over the requested columns as a Pandas dataframe
 

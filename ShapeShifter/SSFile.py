@@ -14,12 +14,45 @@ class SSFile:
 
 
     def read_input_to_pandas(self, columnList, indexCol):
+        """
+        Reads from a file into a Pandas data frame. Must be implemented by subclasses
+        :param columnList: List of string column names to be read in. If blank, all columns will be read in
+        :param indexCol: String name of the column representing the index of the data set
+        :return: Pandas data frame with the requested data
+        """
         raise NotImplementedError("This method should have been implemented, but has not been")
 
     def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
+        """
+        Filters and then exports data to a file
+        :param inputSSFile: SSFile object representing the file to be read and filtered
+        :param gzippedInput: boolean indicating if the inputSSFile is gzipped
+        :param columnList: list of columns to include in the output. If blank, all columns will be included.
+        :param query: string representing the query or filter to apply to the data set
+        :param transpose: boolean indicating whether the results will be transposed
+        :param includeAllColumns: boolean indicating whether to include all columns in the output. If True, overrides columnList
+        :param gzipResults: boolean indicating whether the resulting file will be gzipped
+        :param indexCol: string name of the index column of the data set
+        """
         raise NotImplementedError("This method should have been implemented, but has not been")
 
-    def prep_for_export(self, inputSSFile, gzippedInput, columnList, query, transpose, includeAllColumns, df, includeIndex, indexCol):
+    def _prep_for_export(self, inputSSFile, gzippedInput, columnList, query, transpose, includeAllColumns, df, includeIndex, indexCol):
+        """
+        Prepares a file to be exported by checking query syntax, unzipping the input, filtering, and transposing the data. This function is used
+        in every file type's export_filter_results function with the exception of SQLiteFile
+
+        :param inputSSFile: SSFile containing the data to be filtered
+        :param gzippedInput: boolean indicating if inputSSFile is gzipped
+        :param columnList: list of column names to be included in the output. If the list is empty, all columns will be included
+        :param query: string representing the query or filter to be applied to the data set
+        :param transpose: boolean indicating if the resulting data should be transposed
+        :param includeAllColumns: boolean indicating to include all columns in the output. If True, it overrides columnList
+        :param df: the Pandas data frame that will contain the results of the filters
+        :param includeIndex: boolean that will store whether or not the output file will include the index column
+        :param indexCol: string representing the name of the index column of the data set
+        :return: updated query, inputSSFile, df, includeIndex. These updated values will be used by export_filter_results
+        """
+
         #this function is used for every file's export_filter_results except SQLite
         if query != None:
             query = self._translate_null_query(query)
@@ -33,7 +66,13 @@ class SSFile:
             includeIndex = True
         return query, inputSSFile, df, includeIndex
 
-    def factory( filePath, type):
+    def factory(filePath, type):
+        """
+        Constructs the appropriate subclass object based on the type of file passed in
+        :param filePath: string representing a file's path
+        :param type: FileTypeEnum representing the type of file
+        :return: SSFile subclass object
+        """
         if type == FileTypeEnum.FileTypeEnum.Parquet: return ParquetFile.ParquetFile(filePath, type)
         elif type == FileTypeEnum.FileTypeEnum.TSV: return TSVFile.TSVFile(filePath,type)
         elif type == FileTypeEnum.FileTypeEnum.CSV: return CSVFile.CSVFile(filePath,type)
@@ -67,13 +106,10 @@ class SSFile:
 
     def get_column_names(self) -> list:
         """
-        Retrieves all column names from a dataset stored in a parquet file
-        :type parquetFilePath: string
-        :param parquetFilePath: filepath to a parquet file to be examined
+        Retrieves all column names from a data set stored in a parquet file
 
         :return: All column names
         :rtype: list
-
         """
         import pyarrow.parquet as pq
         p = pq.ParquetFile(self.filePath)
@@ -116,6 +152,12 @@ class SSFile:
 
 
     def __check_if_columns_exist(self, df, columnList):
+        """
+        For internal use. Checks to see if certain columns are found in a data frame
+        :param df: Pandas data frame to be examined
+        :param columnList: List of string column names to be checked
+        :return: A list of string column names representing columns that were not found
+        """
         missingColumns = []
         for column in columnList:
             if column not in df.columns:
@@ -127,43 +169,36 @@ class SSFile:
     def _filter_data(self, columnList=[], query=None,
                      includeAllColumns=False, indexCol="Sample"):
         """
-        Applies a filter to a parquet dataset. If no filter or columns are passed in, it returns the entire dataset as a pandas dataframe. Otherwise, returns only the filtered data over the requested columns as a Pandas dataframe
-
-        :type inputFilePath: string
-        :param inputFilePath: filepath to a parquet file to be filtered
-
-        :type columnList: list of strings
-        :param columnList: list of column names that will be included in the data resulting from the filter
-
-        :type query: string
-        :param query: filter to apply to the dataset, written using python logical syntax
-
-        :type includeAllColumns: bool
-        :param includeAllColumns: if True, will include all columns in the filtered dataset. Overrides columnList if True
+        Filters a data set down according to queries and requested columns
+        :param columnList: List of string column names to include in the results. If blank, all columns will be included
+        :param query: String representing a query to be applied to the data set
+        :param includeAllColumns: boolean indicating whether all columns should be included. If true, overrides columnList
+        :param indexCol: string representing the name of the index column of the data set
+        :return: filtered Pandas data frame
         """
-        if len(columnList) == 0 and query == None:
+        if (len(columnList) == 0 or includeAllColumns):
+            columnList=[]
             df = self.read_input_to_pandas(columnList, indexCol)
             if indexCol in df.columns:
                 df.set_index(indexCol, drop=True, inplace=True)
                 df.reset_index(inplace=True)
+            if query != None:
+                df=df.query(query)
             return df
-        elif len(columnList) > 0 and query == None and not includeAllColumns:
+        elif len(columnList) > 0 and query == None:
             if indexCol not in columnList:
                 columnList.insert(0, indexCol)
             else:
                 columnList.insert(0, columnList.pop(columnList.index(indexCol)))
             df = self.read_input_to_pandas(columnList, indexCol)
             return df
-        if includeAllColumns:
-            columnList = [] #if the list of columns is empty, the whole file is read in
-        else:
-            queryColumns = self.__parse_column_names_from_query(query)
-            columnList = queryColumns + columnList
-        if indexCol not in columnList and not includeAllColumns:
+
+        queryColumns = self.__parse_column_names_from_query(query)
+        columnList = queryColumns + columnList
+        if indexCol not in columnList:
             columnList.insert(0, indexCol)
         else:
-            if not includeAllColumns:
-                columnList.insert(0, columnList.pop(columnList.index(indexCol)))
+            columnList.insert(0, columnList.pop(columnList.index(indexCol)))
         df = self.read_input_to_pandas(columnList, indexCol)
         missingColumns = self.__check_if_columns_exist(df, columnList)
         df = df.query(query)
@@ -173,12 +208,18 @@ class SSFile:
         return df
 
     def __append_gz(self, outFilePath):
+        """
+        For internal use. If a file is to be gzipped, this function appends '.gz' to the filepath if necessary.
+        """
         if not (outFilePath[len(outFilePath) - 3] == '.' and outFilePath[len(outFilePath) - 2] == 'g' and outFilePath[
             len(outFilePath) - 1] == 'z'):
             outFilePath += '.gz'
         return outFilePath
 
     def __compress_results(self, outFilePath):
+        """
+        For internal use. Manually gzips result files if Pandas does not inherently do so for the given file type.
+        """
         with open(outFilePath, 'rb') as f_in:
             with gzip.open(self.__append_gz(outFilePath), 'wb') as f_out:
                 f_out.writelines(f_in)

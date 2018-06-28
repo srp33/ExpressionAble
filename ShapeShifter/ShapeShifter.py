@@ -13,6 +13,7 @@ class ShapeShifter:
 
     def export_filter_results(self, outFilePath, outFileType, filters=None, columns=[], transpose=False, includeAllColumns=False, gzipResults=False):
         self.outputFile = SSFile.SSFile.factory(outFilePath,outFileType)
+        #todo: swap so that it looks like this: self.inputFile.export_filter_results(self.exportFile, .......)
         self.outputFile.export_filter_results(self.inputFile, gzippedInput=self.gzippedInput, columnList=columns, query=filters, transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults, indexCol=self.index)
 
     def export_query_results(self, outFilePath, outFileType, columns: list = [],

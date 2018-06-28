@@ -14,9 +14,9 @@ class CSVFile(SSFile):
         df = None
         includeIndex = False
         null = 'NA'
-        query, inputSSFile, df, includeIndex = super().prep_for_export(inputSSFile, gzippedInput, columnList, query,
-                                                                       transpose, includeAllColumns, df, includeIndex,
-                                                                       indexCol)
+        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, gzippedInput, columnList, query,
+                                                                        transpose, includeAllColumns, df, includeIndex,
+                                                                        indexCol)
         if gzipResults:
             self.filePath = super().__append_gz(self.filePath)
             df.to_csv(path_or_buf=self.filePath, na_rep=null, index=includeIndex, compression='gzip')

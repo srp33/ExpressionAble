@@ -15,9 +15,9 @@ class ExcelFile(SSFile):
         df = None
         includeIndex = False
         null = 'NA'
-        query, inputSSFile, df, includeIndex = super().prep_for_export(inputSSFile, gzippedInput, columnList, query,
-                                                                       transpose, includeAllColumns, df, includeIndex,
-                                                                       indexCol)
+        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, gzippedInput, columnList, query,
+                                                                        transpose, includeAllColumns, df, includeIndex,
+                                                                        indexCol)
         if len(df.columns) > 16384 or len(df.index) > 1048576:
             print(
                 "WARNING: Excel supports a maximum of 16,384 columns and 1,048,576 rows. The dimensions of your data are " + str(

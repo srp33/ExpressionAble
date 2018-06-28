@@ -14,9 +14,9 @@ class GCTFile(SSFile):
         df = None
         includeIndex = False
         null = 'NA'
-        query, inputSSFile, df, includeIndex = super().prep_for_export(inputSSFile, gzippedInput, columnList, query,
-                                                                       transpose, includeAllColumns, df, includeIndex,
-                                                                       indexCol)
+        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, gzippedInput, columnList, query,
+                                                                        transpose, includeAllColumns, df, includeIndex,
+                                                                        indexCol)
         toGCT(df, self.filePath)
         if gzipResults:
             super().__compress_results(self.filePath)

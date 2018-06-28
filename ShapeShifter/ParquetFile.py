@@ -20,9 +20,9 @@ class ParquetFile(SSFile):
         df = None
         includeIndex = False
         null = 'NA'
-        query, inputSSFile, df, includeIndex = super().prep_for_export(inputSSFile, gzippedInput, columnList, query,
-                                                                       transpose, includeAllColumns, df, includeIndex,
-                                                                       indexCol)
+        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, gzippedInput, columnList, query,
+                                                                        transpose, includeAllColumns, df, includeIndex,
+                                                                        indexCol)
         if gzipResults:
             df.to_parquet(super().__append_gz(self.filePath), compression='gzip')
         else:

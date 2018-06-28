@@ -8,7 +8,6 @@ class ExcelFile(SSFile):
     def read_input_to_pandas(self, columnList, indexCol):
         df = pd.read_excel(self.filePath)
         if len(columnList) > 0:
-            print(columnList)
             df = df[columnList]
         return df
 

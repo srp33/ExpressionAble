@@ -64,6 +64,7 @@ class SSFile:
             col = match.split("==")[0].rstrip()
             query = query.replace(match, col + "!=" + col + " ")
         return query
+
     def get_column_names(self) -> list:
         """
         Retrieves all column names from a dataset stored in a parquet file
@@ -140,11 +141,8 @@ class SSFile:
         :type includeAllColumns: bool
         :param includeAllColumns: if True, will include all columns in the filtered dataset. Overrides columnList if True
         """
-        t1 = time.time()
         if len(columnList) == 0 and query == None:
             df = self.read_input_to_pandas(columnList, indexCol)
-            t2 = time.time()
-            print("Time to read to pandas: " + str(t2 - t1))
             if indexCol in df.columns:
                 df.set_index(indexCol, drop=True, inplace=True)
                 df.reset_index(inplace=True)
@@ -155,26 +153,20 @@ class SSFile:
             else:
                 columnList.insert(0, columnList.pop(columnList.index(indexCol)))
             df = self.read_input_to_pandas(columnList, indexCol)
-            t2 = time.time()
-            print("Time to read to pandas: " + str(t2 - t1))
             return df
         if includeAllColumns:
-            columnList = self.get_column_names()
+            columnList = [] #if the list of columns is empty, the whole file is read in
         else:
             queryColumns = self.__parse_column_names_from_query(query)
             columnList = queryColumns + columnList
-        if indexCol not in columnList:
+        if indexCol not in columnList and not includeAllColumns:
             columnList.insert(0, indexCol)
         else:
-            columnList.insert(0, columnList.pop(columnList.index(indexCol)))
+            if not includeAllColumns:
+                columnList.insert(0, columnList.pop(columnList.index(indexCol)))
         df = self.read_input_to_pandas(columnList, indexCol)
-        t2 = time.time()
-        print("Time to read to pandas: " + str(t2 - t1))
         missingColumns = self.__check_if_columns_exist(df, columnList)
-        t3 = time.time()
         df = df.query(query)
-        t4 = time.time()
-        print("Time to filter: " + str(t4 - t3))
         if len(missingColumns) > 0:
             print("Warning: the following columns were not found and therefore not included in output: " + ", ".join(
                 missingColumns))
@@ -187,7 +179,6 @@ class SSFile:
         return outFilePath
 
     def __compress_results(self, outFilePath):
-        # file name in and out must be different, I can't compress a file without changing its filepath as well
         with open(outFilePath, 'rb') as f_in:
             with gzip.open(self.__append_gz(outFilePath), 'wb') as f_out:
                 f_out.writelines(f_in)

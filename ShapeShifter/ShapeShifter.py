@@ -5,17 +5,24 @@ import SSFile
 
 class ShapeShifter:
 
-    def __init__(self, filePath, fileType,  filters=None, columns=[], index='Sample'):
+    def __init__(self, filePath, fileType, index='Sample'):
         self.inputFile = SSFile.SSFile.factory(filePath, fileType)
         self.gzippedInput= self.__is_gzipped()
-        self.filters=filters
-        self.columns = columns
         self.index = index
         self.outputFile= None
 
-    def export_filter_results(self, outFilePath, outFileType,  transpose=False, includeAllColumns=False, gzipResults=False):
+    def export_filter_results(self, outFilePath, outFileType, filters=None, columns=[], transpose=False, includeAllColumns=False, gzipResults=False):
         self.outputFile = SSFile.SSFile.factory(outFilePath,outFileType)
-        self.outputFile.export_filter_results(self.inputFile, gzippedInput=self.gzippedInput, columnList=self.columns, query=self.filters, transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults, indexCol=self.index)
+        self.outputFile.export_filter_results(self.inputFile, gzippedInput=self.gzippedInput, columnList=columns, query=filters, transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults, indexCol=self.index)
+
+    def export_query_results(self, outFilePath, outFileType, columns: list = [],
+                             continuousQueries: list = [], discreteQueries: list = [], transpose=False,
+                             includeAllColumns=False, gzipResults = False):
+
+        self.outputFile = SSFile.SSFile.factory(outFilePath, outFileType)
+        query = self.__convert_queries_to_string(continuousQueries, discreteQueries)
+        self.export_filter_results( columns=columns, filters=query,
+                              transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults)
 
     def __is_gzipped(self):
         extensions = self.inputFile.filePath.rstrip("\n").split(".")
@@ -23,6 +30,50 @@ class ShapeShifter:
             return True
         return False
 
+    def __convert_queries_to_string(self, continuousQueries: list = [], discreteQueries: list = []):
+        """
+        Function for internal use. Given a list of ContinuousQuery objects and DiscreteQuery objects, returns a single string representing all given queries
+        """
+
+        if len(continuousQueries) == 0 and len(discreteQueries) == 0:
+            return None
+
+        completeQuery = ""
+        for i in range(0, len(continuousQueries)):
+            completeQuery += continuousQueries[i].columnName + self.__operator_enum_converter(
+                continuousQueries[i].operator) + str(continuousQueries[i].value)
+            if i < len(continuousQueries) - 1 or len(discreteQueries) > 0:
+                completeQuery += " and "
+
+        for i in range(0, len(discreteQueries)):
+            completeQuery += "("
+            for j in range(0, len(discreteQueries[i].values)):
+                completeQuery += discreteQueries[i].columnName + "==" + "'" + discreteQueries[i].values[j] + "'"
+                if j < len(discreteQueries[i].values) - 1:
+                    completeQuery += " or "
+            completeQuery += ")"
+            if i < len(discreteQueries) - 1:
+                completeQuery += " and "
+        # print(completeQuery)
+        return completeQuery
+
+    def __operator_enum_converter(self, operator):
+        """
+        Function for internal use. Used to translate an OperatorEnum into a string representation of that operator
+        """
+        import OperatorEnum
+        if operator == OperatorEnum.OperatorEnum.Equals:
+            return "=="
+        elif operator == OperatorEnum.OperatorEnum.GreaterThan:
+            return ">"
+        elif operator == OperatorEnum.OperatorEnum.GreaterThanOrEqualTo:
+            return ">="
+        elif operator == OperatorEnum.OperatorEnum.LessThan:
+            return "<"
+        elif operator == OperatorEnum.OperatorEnum.LessThanOrEqualTo:
+            return "<="
+        elif operator == OperatorEnum.OperatorEnum.NotEquals:
+            return "!="
 
 
 ########################################################################################################################

@@ -199,8 +199,6 @@ if args.transpose:
 		sys.exit()
 colList=[]
 query=None
-discreteQueryList=[]
-continuousQueryList=[]
 if args.filter and len(args.filter)>1:
 	parser.error("--filter appears multiple times")
 if args.columns and len(args.columns)>1:
@@ -210,7 +208,7 @@ if args.filter:
 	#buildAllQueries(args.filter, discreteQueryList, continuousQueryList)
 	query=args.filter[0]
 	if not("==" in query or "!=" in query or "<" in query or ">" in query or "<=" in query or ">=" in query):
-		print("Error: Filter must be an expression involving an operator such as '==' or '<'. If you simply want to include certain columns in the output, try using the --columns flag")
+		print("Error: Filter must be an expression involving an operator such as '==' or '<'. If you simply want to include specific columns in the output, try using the --columns flag")
 		sys.exit()
 if args.columns:
 	colList=parseColumns(args.columns[0])
@@ -229,8 +227,8 @@ indexCol="Sample"
 if args.set_index:
 	indexCol=args.set_index[0]
 try:
-	ss = ShapeShifter(args.input_file, inFileType, query, colList, indexCol)
-	ss.export_filter_results(args.output_file, outFileType, transpose=isTransposed, includeAllColumns= allCols, gzipResults= gzip)
+	ss = ShapeShifter(args.input_file, inFileType, indexCol)
+	ss.export_filter_results(args.output_file, outFileType, columns=colList, filters=query, transpose=isTransposed, includeAllColumns= allCols, gzipResults= gzip)
 
 	#export_filter_results(args.input_file, args.output_file, outFileType, inputFileType=inFileType, gzippedInput=isInFileGzipped, query=query, columnList=colList, transpose=isTransposed, includeAllColumns=allCols, gzipResults=gzip, indexCol=indexCol)
 

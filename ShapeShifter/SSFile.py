@@ -257,7 +257,9 @@ class SSFile:
             columnList.insert(0, columnList.pop(columnList.index(indexCol)))
         df = self.read_input_to_pandas(columnList, indexCol)
         missingColumns = self.__check_if_columns_exist(df, columnList)
-        df = df.query(query)
+        if query!=None:
+            df = df.query(query)
+
         if len(missingColumns) > 0:
             print("Warning: the following columns were not found and therefore not included in output: " + ", ".join(
                 missingColumns))

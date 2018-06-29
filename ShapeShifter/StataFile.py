@@ -19,6 +19,16 @@ class StataFile(SSFile):
                                                                         indexCol)
         if not transpose:
             df = df.set_index(indexCol) if indexCol in df.columns else df
+
+        print(list(df.select_dtypes(include=['object']).columns))
+        #Sometimes stata interprets columns as 'object' type which is no good (sometimes). This code may fix it?
+        type_pref = [int, float, str, bool]
+        for colname in list(df.select_dtypes(include=['object']).columns):
+            for t in type_pref:
+                try:
+                    df[colname] = df[colname].astype(t)
+                except (ValueError, TypeError) as e:
+                    pass
         df.to_stata(self.filePath, write_index=True)
         if gzipResults:
             super()._compress_results(self.filePath)

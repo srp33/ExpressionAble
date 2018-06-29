@@ -5,20 +5,50 @@ import SSFile
 
 class ShapeShifter:
 
-    def __init__(self, filePath, fileType, index='Sample'):
+    def __init__(self, filePath, fileType):
+        """
+        Creates a ShapeShifter object
+        :param filePath: string name of a file path to read and perform operations on
+        :param fileType: FileTypeEnum indicating the type of file that is being read
+        :param index:
+        """
         self.inputFile = SSFile.SSFile.factory(filePath, fileType)
         self.gzippedInput= self.__is_gzipped()
-        self.index = index
         self.outputFile= None
 
-    def export_filter_results(self, outFilePath, outFileType, filters=None, columns=[], transpose=False, includeAllColumns=False, gzipResults=False):
+    def export_filter_results(self, outFilePath, outFileType, filters=None, columns=[],
+                              transpose=False, includeAllColumns=False, gzipResults=False, index='Sample'):
+        """
+        Filters and then exports data to a file
+        :param outFilePath: Name of the file that results will be saved to
+        :param outFileType: FileTypeEnum indicating what file format results will be saved to
+        :param filters: string representing the query or filter to apply to the data set
+        :param columns: list of columns to include in the output. If blank, all columns will be included.
+        :param transpose: boolean when, if True, index and columns will be transposed in the output file
+        :param includeAllColumns: boolean indicating whether to include all columns in the output. If True, overrides columnList
+        :param gzipResults: boolean indicating whether the resulting file will be gzipped
+        :return:
+        """
+        #todo: perhaps not require the outFileType to be specified; infer it from outFilePath?
         self.outputFile = SSFile.SSFile.factory(outFilePath,outFileType)
-        #todo: swap so that it looks like this: self.inputFile.export_filter_results(self.exportFile, .......)
-        self.outputFile.export_filter_results(self.inputFile, gzippedInput=self.gzippedInput, columnList=columns, query=filters, transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults, indexCol=self.index)
+        self.outputFile.export_filter_results(self.inputFile, gzippedInput=self.gzippedInput, columnList=columns, query=filters, transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults, indexCol=index)
 
     def export_query_results(self, outFilePath, outFileType, columns: list = [],
                              continuousQueries: list = [], discreteQueries: list = [], transpose=False,
                              includeAllColumns=False, gzipResults = False):
+        """
+        Filters and exports data to a file. Similar to export_filter_results, but takes filters in the form of ContinuousQuery and DiscreteQuery objects,
+        and has slightly less flexible functionality
+        :param outFilePath: Name of the file that results will be saved to
+        :param outFileType: FileTypeEnum indicating what file format results will be saved to
+        :param columns: list of columns to include in the output. If blank, all columns will be included.
+        :param continuousQueries: list of ContinuousQuery objects representing queries on a column of continuous data
+        :param discreteQueries: list of DiscreteQuery objects representing queries on a column of discrete data
+        :param transpose: boolean when, if True, index and columns will be transposed in the output file
+        :param includeAllColumns: boolean indicating whether to include all columns in the output. If True, overrides columnList
+        :param gzipResults: boolean indicating whether the resulting file will be gzipped
+        :return:
+        """
 
         self.outputFile = SSFile.SSFile.factory(outFilePath, outFileType)
         query = self.__convert_queries_to_string(continuousQueries, discreteQueries)
@@ -26,6 +56,9 @@ class ShapeShifter:
                               transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults)
 
     def __is_gzipped(self):
+        """
+        Function for internal use. Checks if a file is gzipped based on its extension
+        """
         extensions = self.inputFile.filePath.rstrip("\n").split(".")
         if extensions[len(extensions) - 1] == 'gz':
             return True

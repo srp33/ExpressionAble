@@ -22,7 +22,7 @@ class StataFile(SSFile):
 
         print(list(df.select_dtypes(include=['object']).columns))
         #Sometimes stata interprets columns as 'object' type which is no good (sometimes). This code may fix it?
-        type_pref = [int, float, str, bool]
+        type_pref = [int, float, str]
         for colname in list(df.select_dtypes(include=['object']).columns):
             for t in type_pref:
                 try:

@@ -19,4 +19,4 @@ class GCTFile(SSFile):
                                                                         indexCol)
         toGCT(df, self.filePath)
         if gzipResults:
-            super().__compress_results(self.filePath)
+            super()._compress_results(self.filePath)

@@ -23,7 +23,7 @@ class JSONFile(SSFile):
         if not transpose:
             df = df.set_index(indexCol, drop=True) if indexCol in df.columns else df
         if gzipResults:
-            outFilePath = super().__append_gz(self.filePath)
+            outFilePath = super()._append_gz(self.filePath)
             df.to_json(path_or_buf=outFilePath, compression='gzip')
         else:
             df.to_json(path_or_buf=self.filePath)

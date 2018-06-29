@@ -23,4 +23,4 @@ class HDF5File(SSFile):
             df = df.set_index(indexCol) if indexCol in df.columns else df
         df.to_hdf(self.filePath, "group", mode='w')
         if gzipResults:
-            super().__compress_results(self.filePath)
+            super()._compress_results(self.filePath)

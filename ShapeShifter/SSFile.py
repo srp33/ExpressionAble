@@ -166,7 +166,7 @@ class SSFile:
         #	raise ColumnNotFoundError(missingColumns)
         return missingColumns
 
-    def _filter_data(self, columnList=[], query=None,
+    def _xfilter_data(self, columnList=[], query=None,
                      includeAllColumns=False, indexCol="Sample"):
         """
         Filters a data set down according to queries and requested columns
@@ -176,25 +176,81 @@ class SSFile:
         :param indexCol: string representing the name of the index column of the data set
         :return: filtered Pandas data frame
         """
-        if (len(columnList) == 0 or includeAllColumns):
-            columnList=[]
+
+        if len(columnList) == 0 and query == None:
             df = self.read_input_to_pandas(columnList, indexCol)
             if indexCol in df.columns:
                 df.set_index(indexCol, drop=True, inplace=True)
                 df.reset_index(inplace=True)
-            if query != None:
-                df=df.query(query)
             return df
-        elif len(columnList) > 0 and query == None:
+
+        elif len(columnList) > 0 and query == None and not includeAllColumns:
             if indexCol not in columnList:
                 columnList.insert(0, indexCol)
             else:
                 columnList.insert(0, columnList.pop(columnList.index(indexCol)))
             df = self.read_input_to_pandas(columnList, indexCol)
             return df
+        if includeAllColumns:
+            # columnList = self.get_column_names()
+            columnList=[]
+        else:
+            queryColumns = self.__parse_column_names_from_query(query)
+            columnList = queryColumns + columnList
+            if indexCol not in columnList:
+                columnList.insert(0, indexCol)
+            else:
+                columnList.insert(0, columnList.pop(columnList.index(indexCol)))
+        df = self.read_input_to_pandas(columnList, indexCol)
+        missingColumns = self.__check_if_columns_exist(df, columnList)
+        df = df.query(query)
+        if len(missingColumns) > 0:
+            print("Warning: the following columns were not found and therefore not included in output: " + ", ".join(
+                missingColumns))
+        return df
 
-        queryColumns = self.__parse_column_names_from_query(query)
-        columnList = queryColumns + columnList
+    def _append_gz(self, outFilePath):
+        """
+        For internal use. If a file is to be gzipped, this function appends '.gz' to the filepath if necessary.
+        """
+        if not (outFilePath[len(outFilePath) - 3] == '.' and outFilePath[len(outFilePath) - 2] == 'g' and outFilePath[
+            len(outFilePath) - 1] == 'z'):
+            outFilePath += '.gz'
+        return outFilePath
+
+    def _compress_results(self, outFilePath):
+        """
+        For internal use. Manually gzips result files if Pandas does not inherently do so for the given file type.
+        """
+        with open(outFilePath, 'rb') as f_in:
+            with gzip.open(self._append_gz(outFilePath), 'wb') as f_out:
+                f_out.writelines(f_in)
+        os.remove(outFilePath)
+
+    def __replace_index(selfs, df, indexCol):
+        if indexCol in df.columns:
+            df.set_index(indexCol, drop=True, inplace=True)
+            df.reset_index(inplace=True)
+        return df
+
+    def _filter_data(self,columnList=[], query=None,
+                     includeAllColumns=False, indexCol="Sample"):
+        if includeAllColumns:
+            columnList=[]
+            df=self.read_input_to_pandas(columnList, indexCol)
+            df=self.__replace_index(df,indexCol)
+            if query!=None:
+                df=df.query(query)
+            return df
+
+        if len(columnList)==0 and query == None:
+            df = self.read_input_to_pandas(columnList, indexCol)
+            df=self.__replace_index(df,indexCol)
+            return df
+
+        if query!=None:
+            queryColumns = self.__parse_column_names_from_query(query)
+            columnList = queryColumns + columnList
         if indexCol not in columnList:
             columnList.insert(0, indexCol)
         else:
@@ -207,24 +263,8 @@ class SSFile:
                 missingColumns))
         return df
 
-    def __append_gz(self, outFilePath):
-        """
-        For internal use. If a file is to be gzipped, this function appends '.gz' to the filepath if necessary.
-        """
-        if not (outFilePath[len(outFilePath) - 3] == '.' and outFilePath[len(outFilePath) - 2] == 'g' and outFilePath[
-            len(outFilePath) - 1] == 'z'):
-            outFilePath += '.gz'
-        return outFilePath
 
-    def __compress_results(self, outFilePath):
-        """
-        For internal use. Manually gzips result files if Pandas does not inherently do so for the given file type.
-        """
-        with open(outFilePath, 'rb') as f_in:
-            with gzip.open(self.__append_gz(outFilePath), 'wb') as f_out:
-                f_out.writelines(f_in)
-        os.remove(outFilePath)
-
+        return
 
 import ConvertARFF
 import ConvertGCT

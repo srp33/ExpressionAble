@@ -22,6 +22,6 @@ class PickleFile(SSFile):
         if not transpose:
             df = df.set_index(indexCol) if indexCol in df.columns else df
         if gzipResults:
-            df.to_pickle(super().__append_gz(self.filePath), compression='gzip')
+            df.to_pickle(super()._append_gz(self.filePath), compression='gzip')
         else:
             df.to_pickle(self.filePath)

@@ -19,6 +19,7 @@ class StataFile(SSFile):
                                                                         indexCol)
         if not transpose:
             df = df.set_index(indexCol) if indexCol in df.columns else df
+        print (df)
         df.to_stata(self.filePath, write_index=True)
         if gzipResults:
-            super().__compress_results(self.filePath)
+            super()._compress_results(self.filePath)

@@ -23,4 +23,4 @@ class MsgPackFile(SSFile):
             df = df.set_index(indexCol) if indexCol in df.columns else df
         df.to_msgpack(self.filePath)
         if gzipResults:
-            super().__compress_results(self.filePath)
+            super()._compress_results(self.filePath)

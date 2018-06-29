@@ -24,7 +24,7 @@ class ParquetFile(SSFile):
                                                                         transpose, includeAllColumns, df, includeIndex,
                                                                         indexCol)
         if gzipResults:
-            df.to_parquet(super().__append_gz(self.filePath), compression='gzip')
+            df.to_parquet(super()._append_gz(self.filePath), compression='gzip')
         else:
             df.to_parquet(self.filePath)
 

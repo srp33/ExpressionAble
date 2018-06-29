@@ -46,5 +46,5 @@ class SQLiteFile(SSFile):
             df = df.transpose()
             df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol)
         if gzipResults:
-            super().__compress_results(filePath)
+            super()._compress_results(filePath)
 import gzip

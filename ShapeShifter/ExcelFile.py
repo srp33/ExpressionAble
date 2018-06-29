@@ -28,4 +28,4 @@ class ExcelFile(SSFile):
         df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=includeIndex)
         writer.save()
         if gzipResults:
-            super().__compress_results(self.filePath)
+            super()._compress_results(self.filePath)

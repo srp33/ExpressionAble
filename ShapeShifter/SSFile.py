@@ -116,7 +116,7 @@ class SSFile:
 
         if query != None:
             columnNamesFromQuery = self.__parse_column_names_from_query(query)
-            columnList += columnNamesFromQuery
+            columnList = columnNamesFromQuery + columnList
         if indexCol not in columnList:
             columnList.insert(0, indexCol)
         else:

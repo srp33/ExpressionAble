@@ -5,7 +5,7 @@ from SSFile import SSFile
 
 class SQLiteFile(SSFile):
 
-    def read_input_to_pandas(self, columnList, indexCol):
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         from sqlalchemy import create_engine
         engine = create_engine('sqlite:///' + self.filePath)
         table = self.filePath.split('.')[0]

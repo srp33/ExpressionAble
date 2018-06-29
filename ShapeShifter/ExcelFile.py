@@ -5,7 +5,7 @@ from SSFile import SSFile
 
 class ExcelFile(SSFile):
 
-    def read_input_to_pandas(self, columnList, indexCol):
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         df = pd.read_excel(self.filePath)
         if len(columnList) > 0:
             df = df[columnList]

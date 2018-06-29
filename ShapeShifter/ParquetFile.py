@@ -7,7 +7,7 @@ class ParquetFile(SSFile):
     def __init__(self, filePath, fileType):
         super().__init__(filePath,fileType)
 
-    def read_input_to_pandas(self, columnList, indexCol):
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if len(columnList) == 0:
             df = pd.read_parquet(self.filePath)
         else:

@@ -4,7 +4,7 @@ from ConvertGCT import gctToPandas
 
 class GCTFile(SSFile):
 
-    def read_input_to_pandas(self, columnList, indexCol):
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         df = gctToPandas(self.filePath)
         if len(columnList) > 0:
             df = df[columnList]

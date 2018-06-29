@@ -6,7 +6,7 @@ from SSFile import SSFile
 
 class ARFFFile(SSFile):
 
-    def read_input_to_pandas(self, columnList, indexCol):
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         df = arffToPandas(self.filePath)
         if len(columnList) > 0:
             df = df[columnList]

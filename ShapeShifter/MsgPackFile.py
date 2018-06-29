@@ -5,7 +5,7 @@ from SSFile import SSFile
 
 class MsgPackFile(SSFile):
 
-    def read_input_to_pandas(self, columnList, indexCol):
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         df = pd.read_msgpack(self.filePath)
         df = df.reset_index()
         if len(columnList) > 0:

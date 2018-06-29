@@ -5,7 +5,7 @@ from SSFile import SSFile
 
 class CSVFile(SSFile):
 
-    def read_input_to_pandas(self, columnList, indexCol):
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if len(columnList) == 0:
             return pd.read_csv(self.filePath, sep="\t")
         return pd.read_csv(self.filePath, usecols=columnList)

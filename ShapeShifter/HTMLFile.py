@@ -5,7 +5,7 @@ from SSFile import SSFile
 
 class HTMLFile(SSFile):
 
-    def read_input_to_pandas(self, columnList, indexCol):
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         df = pd.read_html(self.filePath)[0]
         df = df.reset_index()
         if len(columnList) > 0:

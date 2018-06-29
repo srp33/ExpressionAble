@@ -13,7 +13,7 @@ class SSFile:
         self.fileType=fileType
 
 
-    def read_input_to_pandas(self, columnList, indexCol):
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         """
         Reads from a file into a Pandas data frame. Must be implemented by subclasses
         :param columnList: List of string column names to be read in. If blank, all columns will be read in

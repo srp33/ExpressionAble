@@ -5,7 +5,7 @@ from SSFile import SSFile
 
 class StataFile(SSFile):
 
-    def read_input_to_pandas(self, columnList, indexCol):
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if len(columnList) > 0:
             return pd.read_stata(self.filePath, columns=columnList)
         return pd.read_stata(self.filePath)

@@ -5,7 +5,7 @@ from SSFile import SSFile
 
 class HDF5File(SSFile):
 
-    def read_input_to_pandas(self, columnList, indexCol):
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         df = pd.read_hdf(self.filePath)
         df = df.reset_index()
         if len(columnList) > 0:

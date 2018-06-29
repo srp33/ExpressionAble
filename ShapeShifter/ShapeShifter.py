@@ -1,7 +1,4 @@
-
-
 import SSFile
-
 
 class ShapeShifter:
 
@@ -182,6 +179,7 @@ class ShapeShifter:
 
         """
         listOfColumnNames.insert(0, self.index)
+        df = self.inputFile.read_input_to_pandas(columnList=listOfColumnNames)
         df = pd.read_parquet(self.inputFile.filePath, columns=listOfColumnNames)
         df.set_index(self.index, drop=True, inplace=True)
         df = df[0:numRows]
@@ -233,14 +231,12 @@ class ShapeShifter:
         """
         Retrieves the column name, data type, and all unique values from every column in a file
 
-        :type parquetFilePath: string
-        :param parquetFilePath: filepath to a parquet file to be examined
-
         :return: Name, data type (continuous/discrete), and unique values from every column
         :rtype: dictionary where key: column name and value:ColumnInfo object containing the column name, data type (continuous/discrete), and unique values from all columns
         """
         # columnNames = getColumnNames(parquetFilePath)
         import ColumnInfo
+        df = self.inputFile.read_input_to_pandas(self.inputFile.filePath)
         df = pd.read_parquet(self.inputFile.filePath)
         columnDict = {}
         for col in df:

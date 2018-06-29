@@ -48,8 +48,9 @@ def determineExtension(fileName):
 		extension=extensions[len(extensions)-1]
 		if extension =='gz':
 			extension=extensions[len(extensions)-2]
+	else: extension = None
 	if extension== "tsv" or extension =="txt":
-                return FileTypeEnum.TSV
+		return FileTypeEnum.TSV
 	elif extension == "csv":
 		return FileTypeEnum.CSV
 	elif extension== "json":

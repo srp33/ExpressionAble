@@ -88,6 +88,46 @@ class SSFile:
         elif type == FileTypeEnum.FileTypeEnum.GCT: return GCTFile.GCTFile(filePath,type)
     factory=staticmethod(factory)
 
+    def _filter_data(self, columnList=[], query=None,
+                     includeAllColumns=False, indexCol="Sample"):
+        """
+        Filters a data set down according to queries and requested columns
+        :param columnList: List of string column names to include in the results. If blank, all columns will be included
+        :param query: String representing a query to be applied to the data set
+        :param includeAllColumns: boolean indicating whether all columns should be included. If true, overrides columnList
+        :param indexCol: string representing the name of the index column of the data set
+        :return: filtered Pandas data frame
+        """
+
+        if includeAllColumns:
+            columnList = []
+            df = self.read_input_to_pandas(columnList, indexCol)
+            self.__report_if_missing_columns(df, [indexCol])
+            df = self.__replace_index(df, indexCol)
+            if query != None:
+                df = df.query(query)
+            return df
+
+        if len(columnList) == 0 and query == None:
+            df = self.read_input_to_pandas(columnList, indexCol)
+            self.__report_if_missing_columns(df, [indexCol])
+            df = self.__replace_index(df, indexCol)
+            return df
+
+        if query != None:
+            columnNamesFromQuery = self.__parse_column_names_from_query(query)
+            columnList += columnNamesFromQuery
+        if indexCol not in columnList:
+            columnList.insert(0, indexCol)
+        else:
+            columnList.insert(0, columnList.pop(columnList.index(indexCol)))
+        df = self.read_input_to_pandas(columnList, indexCol)
+        self.__report_if_missing_columns(df, columnList)
+        if query != None:
+            df = df.query(query)
+
+        return df
+
     def _translate_null_query(self, query):
         """
         For internal use only. Because pandas does not support querying for null values by "columnname == None", this function translates such queries into valid syntax
@@ -166,48 +206,6 @@ class SSFile:
         #	raise ColumnNotFoundError(missingColumns)
         return missingColumns
 
-    def _xfilter_data(self, columnList=[], query=None,
-                     includeAllColumns=False, indexCol="Sample"):
-        """
-        Filters a data set down according to queries and requested columns
-        :param columnList: List of string column names to include in the results. If blank, all columns will be included
-        :param query: String representing a query to be applied to the data set
-        :param includeAllColumns: boolean indicating whether all columns should be included. If true, overrides columnList
-        :param indexCol: string representing the name of the index column of the data set
-        :return: filtered Pandas data frame
-        """
-
-        if len(columnList) == 0 and query == None:
-            df = self.read_input_to_pandas(columnList, indexCol)
-            if indexCol in df.columns:
-                df.set_index(indexCol, drop=True, inplace=True)
-                df.reset_index(inplace=True)
-            return df
-
-        elif len(columnList) > 0 and query == None and not includeAllColumns:
-            if indexCol not in columnList:
-                columnList.insert(0, indexCol)
-            else:
-                columnList.insert(0, columnList.pop(columnList.index(indexCol)))
-            df = self.read_input_to_pandas(columnList, indexCol)
-            return df
-        if includeAllColumns:
-            # columnList = self.get_column_names()
-            columnList=[]
-        else:
-            queryColumns = self.__parse_column_names_from_query(query)
-            columnList = queryColumns + columnList
-            if indexCol not in columnList:
-                columnList.insert(0, indexCol)
-            else:
-                columnList.insert(0, columnList.pop(columnList.index(indexCol)))
-        df = self.read_input_to_pandas(columnList, indexCol)
-        missingColumns = self.__check_if_columns_exist(df, columnList)
-        df = df.query(query)
-        if len(missingColumns) > 0:
-            print("Warning: the following columns were not found and therefore not included in output: " + ", ".join(
-                missingColumns))
-        return df
 
     def _append_gz(self, outFilePath):
         """
@@ -228,45 +226,23 @@ class SSFile:
         os.remove(outFilePath)
 
     def __replace_index(selfs, df, indexCol):
+        """
+        For internal use. If the user requests a certain column be the index, this function puts that column as the first in the data frame df
+        """
         if indexCol in df.columns:
             df.set_index(indexCol, drop=True, inplace=True)
             df.reset_index(inplace=True)
         return df
 
-    def _filter_data(self,columnList=[], query=None,
-                     includeAllColumns=False, indexCol="Sample"):
-        if includeAllColumns:
-            columnList=[]
-            df=self.read_input_to_pandas(columnList, indexCol)
-            df=self.__replace_index(df,indexCol)
-            if query!=None:
-                df=df.query(query)
-            return df
-
-        if len(columnList)==0 and query == None:
-            df = self.read_input_to_pandas(columnList, indexCol)
-            df=self.__replace_index(df,indexCol)
-            return df
-
-        if query!=None:
-            queryColumns = self.__parse_column_names_from_query(query)
-            columnList = queryColumns + columnList
-        if indexCol not in columnList:
-            columnList.insert(0, indexCol)
-        else:
-            columnList.insert(0, columnList.pop(columnList.index(indexCol)))
-        df = self.read_input_to_pandas(columnList, indexCol)
+    def __report_if_missing_columns(self,df, columnList):
+        """
+        Prints out a warning showing which of the columns in the given columnList are not found in the data frame df
+        """
         missingColumns = self.__check_if_columns_exist(df, columnList)
-        if query!=None:
-            df = df.query(query)
-
         if len(missingColumns) > 0:
             print("Warning: the following columns were not found and therefore not included in output: " + ", ".join(
                 missingColumns))
-        return df
 
-
-        return
 
 import ConvertARFF
 import ConvertGCT

@@ -20,8 +20,11 @@ class StataFile(SSFile):
         if not transpose:
             df = df.set_index(indexCol) if indexCol in df.columns else df
 
-        print(list(df.select_dtypes(include=['object']).columns))
-        #Sometimes stata interprets columns as 'object' type which is no good (sometimes). This code may fix it?
+        self.write_to_file(df, gzipResults)
+
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
+        # Sometimes stata interprets columns as 'object' type which is no good (sometimes). This code may fix it?
+        # However, as a result, boolean values are now converted to 1s and 0s
         type_pref = [int, float, str]
         for colname in list(df.select_dtypes(include=['object']).columns):
             for t in type_pref:

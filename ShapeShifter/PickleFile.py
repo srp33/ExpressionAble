@@ -21,6 +21,9 @@ class PickleFile(SSFile):
                                                                         indexCol)
         if not transpose:
             df = df.set_index(indexCol) if indexCol in df.columns else df
+        self.write_to_file(df, gzipResults)
+
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
         if gzipResults:
             df.to_pickle(super()._append_gz(self.filePath), compression='gzip')
         else:

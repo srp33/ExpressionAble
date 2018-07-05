@@ -19,6 +19,9 @@ class HTMLFile(SSFile):
         query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, gzippedInput, columnList, query,
                                                                         transpose, includeAllColumns, df, includeIndex,
                                                                         indexCol)
+        self.write_to_file(df, gzipResults, null=null)
+
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
         html = df.to_html(na_rep=null, index=False)
         if gzipResults:
             html = html.encode()
@@ -28,4 +31,6 @@ class HTMLFile(SSFile):
             outFile = open(self.filePath, "w")
             outFile.write(html)
             outFile.close()
+
+
 import gzip

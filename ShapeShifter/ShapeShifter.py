@@ -28,7 +28,7 @@ class ShapeShifter:
         """
         #todo: perhaps not require the outFileType to be specified; infer it from outFilePath?
         self.outputFile = SSFile.SSFile.factory(outFilePath,outFileType)
-        self.outputFile.export_filter_results(self.inputFile, gzippedInput=self.gzippedInput, columnList=columns, query=filters, transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults, indexCol=index)
+        self.outputFile.export_filter_results(self.inputFile, gzippedInput=self.inputFile.isGzipped, columnList=columns, query=filters, transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults, indexCol=index)
 
     def export_query_results(self, outFilePath, outFileType, columns: list = [],
                              continuousQueries: list = [], discreteQueries: list = [], transpose=False,
@@ -51,6 +51,118 @@ class ShapeShifter:
         query = self.__convert_queries_to_string(continuousQueries, discreteQueries)
         self.export_filter_results( columns=columns, filters=query,
                               transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults)
+    def peek_by_column_names(self, listOfColumnNames, numRows=10, indexCol="Sample"):
+        """
+        Takes a look at a portion of the file by showing only the requested columns
+        :param listOfColumnNames: List of columns that will be given in the output
+        :param numRows:
+        :param indexCol:
+        :return:
+        """
+        listOfColumnNames.insert(0, indexCol)
+        df = self.inputFile.read_input_to_pandas(columnList=listOfColumnNames, indexCol = indexCol)
+        #df = pd.read_parquet(self.inputFile.filePath, columns=listOfColumnNames)
+        df.set_index(self.index, drop=True, inplace=True)
+        df = df[0:numRows]
+        return df
+
+    def merge_files(self, fileList, outFilePath, outFileType, gzipResults=False):
+        outFile = SSFile.SSFile.factory(outFilePath, outFileType)
+
+        SSFileList=[]
+
+        #create a file object for every file path passed in
+        for file in fileList:
+            SSFileList.append(SSFile.SSFile.factory(file,self.__determine_extension(file)))
+
+        #unzip if necessary
+        for file in SSFileList:
+            if file.isGzipped:
+                file.filePath=gzip.open(file.filePath)
+
+        if len(SSFileList) < 1:
+            print("Error: there must be at least one input file to build a parquet file")
+            return
+
+        df1 = SSFileList[0].read_input_to_pandas()
+
+        if len(SSFileList) == 1:
+            outFile.write_to_file(df1, gzipResults=gzipResults)
+            return
+        for i in range(0, len(SSFileList) - 1):
+            df2 = SSFileList[i + 1].read_input_to_pandas()
+            df1 = pd.merge(df1, df2, how='inner')
+        outFile.write_to_file(df1, gzipResults=gzipResults)
+
+
+        return
+    #merge_files=staticmethod(merge_files)
+
+
+    def get_column_info(self, columnName: str, sizeLimit: int = None):
+        """
+        Retrieves a specified column's name, data type, and all its unique values from a parquet file
+
+        :type parquetFilePath: string
+        :param parquetFilePath: filepath to a parquet file to be examined
+
+        :type columnName: string
+        :param columnName: the name of the column about which information is being obtained
+
+        :type sizeLimit: int
+        :param sizeLimit: limits the number of unique values returned to be no more than this number
+
+        :return: Name, data type (continuous/discrete), and unique values from specified column
+        :rtype: ColumnInfo object
+        """
+        import ColumnInfo
+        columnList = [columnName]
+        #df = pd.read_parquet(self.inputFile.filePath, columns=columnList)
+        df = self.inputFile.read_input_to_pandas(columnList=columnList)
+
+        # uniqueValues = set()
+        # for index, row in df.iterrows():
+        # 	try:
+        # 		uniqueValues.add(row[columnName])
+        # 	except (TypeError, KeyError) as e:
+        # 		return None
+        # 	if sizeLimit != None:
+        # 		if len(uniqueValues)>=sizeLimit:
+        # 			break
+        # uniqueValues = list(uniqueValues)
+
+        uniqueValues = df[columnName].unique().tolist()
+        # uniqueValues.remove(None)
+        # Todo: There is probably a better way to do this...
+        i = 0
+        while uniqueValues[i] == None:
+            i += 1
+        if isinstance(uniqueValues[i], str) or isinstance(uniqueValues[i], bool):
+            return ColumnInfo.ColumnInfo(columnName, "discrete", uniqueValues)
+        else:
+            return ColumnInfo.ColumnInfo(columnName, "continuous", uniqueValues)
+
+    def get_all_columns_info(self):
+        """
+        Retrieves the column name, data type, and all unique values from every column in a file
+
+        :return: Name, data type (continuous/discrete), and unique values from every column
+        :rtype: dictionary where key: column name and value:ColumnInfo object containing the column name, data type (continuous/discrete), and unique values from all columns
+        """
+        # columnNames = getColumnNames(parquetFilePath)
+        import ColumnInfo
+        df = self.inputFile.read_input_to_pandas(self.inputFile.filePath)
+        columnDict = {}
+        for col in df:
+            uniqueValues = df[col].unique().tolist()
+            i = 0
+            while uniqueValues[i] == None:
+                i += 1
+            if isinstance(uniqueValues[i], str) or isinstance(uniqueValues[i], bool):
+                columnDict[col] = ColumnInfo.ColumnInfo(col, "discrete", uniqueValues)
+            else:
+                columnDict[col] = ColumnInfo.ColumnInfo(col, "continuous", uniqueValues)
+        return columnDict
 
     def __is_gzipped(self):
         """
@@ -106,6 +218,47 @@ class ShapeShifter:
         elif operator == OperatorEnum.OperatorEnum.NotEquals:
             return "!="
 
+    def __determine_extension(self,fileName):
+        extensions = fileName.rstrip("\n").split(".")
+        if len(extensions) > 1:
+            extension = extensions[len(extensions) - 1]
+            if extension == 'gz':
+                extension = extensions[len(extensions) - 2]
+        else:
+            extension = None
+        if extension == "tsv" or extension == "txt":
+            return FileTypeEnum.TSV
+        elif extension == "csv":
+            return FileTypeEnum.CSV
+        elif extension == "json":
+            return FileTypeEnum.JSON
+        elif extension == "xlsx":
+            return FileTypeEnum.Excel
+        elif extension == "hdf" or extension == "h5":
+            return FileTypeEnum.HDF5
+        # elif extension=="feather":
+        #	return FileTypeEnum.Feather
+        elif extension == "pq":
+            return FileTypeEnum.Parquet
+        elif extension == "mp":
+            return FileTypeEnum.MsgPack
+        elif extension == "dta":
+            return FileTypeEnum.Stata
+        elif extension == "pkl":
+            return FileTypeEnum.Pickle
+        elif extension == "html":
+            return FileTypeEnum.HTML
+        elif extension == "db":
+            return FileTypeEnum.SQLite
+        elif extension == "arff":
+            return FileTypeEnum.ARFF
+        elif extension == "gct":
+            return FileTypeEnum.GCT
+        else:
+            print(
+                "Error: Extension on " + fileName + " not recognized. Please use appropriate file extensions or explicitly specify file type using the -i or -o flags")
+
+
 
 ########################################################################################################################
 
@@ -122,18 +275,7 @@ class ShapeShifter:
         :rtype: list
 
         """
-        import pyarrow.parquet as pq
-        p = pq.ParquetFile(self.inputFile.filePath)
-        columnNames = p.schema.names
-        # delete 'Sample' from schema
-        del columnNames[0]
-
-        # delete extraneous other schema that the parquet file tacks on at the end
-        if '__index_level_' in columnNames[len(columnNames) - 1]:
-            del columnNames[len(columnNames) - 1]
-        if 'Unnamed:' in columnNames[len(columnNames) - 1]:
-            del columnNames[len(columnNames) - 1]
-        return columnNames
+        return self.inputFile.get_column_names(self.gzippedInput)
 
 
     def peek(self, numRows=10, numCols=10):
@@ -164,90 +306,8 @@ class ShapeShifter:
         df = df.iloc[0:numRows, 0:numCols]
         return df
 
-    def peek_by_column_names(self, listOfColumnNames, numRows=10):
-        """
-        Peeks into a parquet file by looking at a specific set of columns
 
-        :type parquetFilePath: string
-        :param parquetFilePath: filepath to a parquet file to be examined
 
-        :type numRows: int
-        :param numRows: the number of rows the returned Pandas dataframe will contain
-
-        :return: The first numRows of all the listed columns in the given parquet file
-        :rtype: Pandas dataframe
-
-        """
-        listOfColumnNames.insert(0, self.index)
-        df = self.inputFile.read_input_to_pandas(columnList=listOfColumnNames)
-        df = pd.read_parquet(self.inputFile.filePath, columns=listOfColumnNames)
-        df.set_index(self.index, drop=True, inplace=True)
-        df = df[0:numRows]
-        return df
-
-    def get_column_info(self, columnName: str, sizeLimit: int = None):
-        """
-        Retrieves a specified column's name, data type, and all its unique values from a parquet file
-
-        :type parquetFilePath: string
-        :param parquetFilePath: filepath to a parquet file to be examined
-
-        :type columnName: string
-        :param columnName: the name of the column about which information is being obtained
-
-        :type sizeLimit: int
-        :param sizeLimit: limits the number of unique values returned to be no more than this number
-
-        :return: Name, data type (continuous/discrete), and unique values from specified column
-        :rtype: ColumnInfo object
-        """
-        import ColumnInfo
-        columnList = [columnName]
-        df = pd.read_parquet(self.inputFile.filePath, columns=columnList)
-
-        # uniqueValues = set()
-        # for index, row in df.iterrows():
-        # 	try:
-        # 		uniqueValues.add(row[columnName])
-        # 	except (TypeError, KeyError) as e:
-        # 		return None
-        # 	if sizeLimit != None:
-        # 		if len(uniqueValues)>=sizeLimit:
-        # 			break
-        # uniqueValues = list(uniqueValues)
-
-        uniqueValues = df[columnName].unique().tolist()
-        # uniqueValues.remove(None)
-        # Todo: There is probably a better way to do this...
-        i = 0
-        while uniqueValues[i] == None:
-            i += 1
-        if isinstance(uniqueValues[i], str) or isinstance(uniqueValues[i], bool):
-            return ColumnInfo.ColumnInfo(columnName, "discrete", uniqueValues)
-        else:
-            return ColumnInfo.ColumnInfo(columnName, "continuous", uniqueValues)
-
-    def get_all_columns_info(self):
-        """
-        Retrieves the column name, data type, and all unique values from every column in a file
-
-        :return: Name, data type (continuous/discrete), and unique values from every column
-        :rtype: dictionary where key: column name and value:ColumnInfo object containing the column name, data type (continuous/discrete), and unique values from all columns
-        """
-        # columnNames = getColumnNames(parquetFilePath)
-        import ColumnInfo
-        df = self.inputFile.read_input_to_pandas(self.inputFile.filePath)
-        df = pd.read_parquet(self.inputFile.filePath)
-        columnDict = {}
-        for col in df:
-            uniqueValues = df[col].unique().tolist()
-            i = 0
-            while uniqueValues[i] == None:
-                i += 1
-            if isinstance(uniqueValues[i], str) or isinstance(uniqueValues[i], bool):
-                columnDict[col] = ColumnInfo.ColumnInfo(col, "discrete", uniqueValues)
-            else:
-                columnDict[col] = ColumnInfo.ColumnInfo(col, "continuous", uniqueValues)
-        return columnDict
-
+from FileTypeEnum import FileTypeEnum
+import gzip
 import pandas as pd

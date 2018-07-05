@@ -11,6 +11,7 @@ class SSFile:
     def __init__(self, filePath, fileType):
         self.filePath=filePath
         self.fileType=fileType
+        self.isGzipped= self.__is_gzipped()
 
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
@@ -20,7 +21,7 @@ class SSFile:
         :param indexCol: String name of the column representing the index of the data set
         :return: Pandas data frame with the requested data
         """
-        raise NotImplementedError("This method should have been implemented, but has not been")
+        raise NotImplementedError("Reading from this file type is not currently supported.")
 
     def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
         """
@@ -34,7 +35,7 @@ class SSFile:
         :param gzipResults: boolean indicating whether the resulting file will be gzipped
         :param indexCol: string name of the index column of the data set
         """
-        raise NotImplementedError("This method should have been implemented, but has not been")
+        raise NotImplementedError("Writing to this file type is not currently supported.")
 
     def _prep_for_export(self, inputSSFile, gzippedInput, columnList, query, transpose, includeAllColumns, df, includeIndex, indexCol):
         """
@@ -60,6 +61,7 @@ class SSFile:
             inputSSFile.filePath=gzip.open(inputSSFile.filePath)
         df = inputSSFile._filter_data(columnList=columnList, query=query,
                                       includeAllColumns=includeAllColumns, indexCol=indexCol)
+
         if transpose:
             df = df.set_index(indexCol) if indexCol in df.columns else df
             df = df.transpose()
@@ -87,6 +89,17 @@ class SSFile:
         elif type == FileTypeEnum.FileTypeEnum.ARFF: return ARFFFile.ARFFFile(filePath,type)
         elif type == FileTypeEnum.FileTypeEnum.GCT: return GCTFile.GCTFile(filePath,type)
     factory=staticmethod(factory)
+
+    def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA'):
+        raise NotImplementedError("Writing to this file type is not currently supported.")
+    def __is_gzipped(self):
+        """
+        Function for internal use. Checks if a file is gzipped based on its extension
+        """
+        extensions = self.filePath.rstrip("\n").split(".")
+        if extensions[len(extensions) - 1] == 'gz':
+            return True
+        return False
 
     def _filter_data(self, columnList=[], query=None,
                      includeAllColumns=False, indexCol="Sample"):
@@ -144,25 +157,16 @@ class SSFile:
             query = query.replace(match, col + "!=" + col + " ")
         return query
 
-    def get_column_names(self) -> list:
+    def get_column_names(self, gzippedInput) -> list:
         """
         Retrieves all column names from a data set stored in a parquet file
+        :param gzippedInput: boolean indicating whether the file is gzipped
 
         :return: All column names
         :rtype: list
         """
-        import pyarrow.parquet as pq
-        p = pq.ParquetFile(self.filePath)
-        columnNames = p.schema.names
-        # delete 'Sample' from schema
-        del columnNames[0]
+        raise NotImplementedError("This method should have been implemented, but has not been")
 
-        # delete extraneous other schema that the parquet file tacks on at the end
-        if '__index_level_' in columnNames[len(columnNames) - 1]:
-            del columnNames[len(columnNames) - 1]
-        if 'Unnamed:' in columnNames[len(columnNames) - 1]:
-            del columnNames[len(columnNames) - 1]
-        return columnNames
 
     def __parse_column_names_from_query(self, query):
         """

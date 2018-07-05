@@ -20,7 +20,12 @@ class ARFFFile(SSFile):
                                                                         transpose, includeAllColumns, df, includeIndex,
                                                                         indexCol)
 
+        self.write_to_file(df, gzipResults, includeIndex, null)
+
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
         toARFF(df, self.filePath)
         if gzipResults:
             super()._compress_results(self.filePath)
+
+
 import gzip

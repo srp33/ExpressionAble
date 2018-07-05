@@ -21,6 +21,9 @@ class HDF5File(SSFile):
                                                                         indexCol)
         if not transpose:
             df = df.set_index(indexCol) if indexCol in df.columns else df
+        self.write_to_file(df, gzipResults)
+
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
         df.to_hdf(self.filePath, "group", mode='w')
         if gzipResults:
             super()._compress_results(self.filePath)

@@ -25,7 +25,7 @@ class HTMLFile(SSFile):
         html = df.to_html(na_rep=null, index=False)
         if gzipResults:
             html = html.encode()
-            with gzip.open(self.filePath, 'wb') as f:
+            with gzip.open(super()._append_gz(self.filePath), 'wb') as f:
                 f.write(html)
         else:
             outFile = open(self.filePath, "w")

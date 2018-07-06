@@ -66,22 +66,34 @@ class ShapeShifter:
         df = df[0:numRows]
         return df
 
-    def merge_files(self, fileList, outFilePath, outFileType, gzipResults=False):
+    def merge_files(self, fileList, outFilePath, outFileType, gzipResults=False, on= None):
+        """
+        Merges multiple ShapeShifter-compatible files into a single file
+
+        :param fileList: List of file paths representing files that will be merged
+        :param outFilePath: File path where merged files will be stored
+        :param outFileType: FileTypeEnum representing the type of file that the merged file will be stored as
+        :param gzipResults: If True, merged file will be gzipped
+        :param on: Column or index level names to join on. These must be found in all files.
+                If on is None and not merging on indexes then this defaults to the intersection of the columns in all.
+        """
         outFile = SSFile.SSFile.factory(outFilePath, outFileType)
 
         SSFileList=[]
 
+
         #create a file object for every file path passed in
         for file in fileList:
             SSFileList.append(SSFile.SSFile.factory(file,self.__determine_extension(file)))
+        #SSFileList.insert(0,self.inputFile) #This is if we include the base file
 
-        #unzip if necessary
-        for file in SSFileList:
-            if file.isGzipped:
-                file.filePath=gzip.open(file.filePath)
+        #unzip if necessary fixme: may require unique treatment for every file type
+        #for file in SSFileList:
+        #    if file.isGzipped:
+        #        file.filePath=gzip.open(file.filePath)
 
         if len(SSFileList) < 1:
-            print("Error: there must be at least one input file to build a parquet file")
+            print("Error: there must be at least one input file to merge.")
             return
 
         df1 = SSFileList[0].read_input_to_pandas()
@@ -91,7 +103,10 @@ class ShapeShifter:
             return
         for i in range(0, len(SSFileList) - 1):
             df2 = SSFileList[i + 1].read_input_to_pandas()
-            df1 = pd.merge(df1, df2, how='inner')
+            if on==None:
+                df1 = pd.merge(df1, df2, how='inner')
+            else:
+                df1=pd.merge(df1,df2, how='inner', on=on)
         outFile.write_to_file(df1, gzipResults=gzipResults)
 
 
@@ -255,6 +270,7 @@ class ShapeShifter:
         elif extension == "gct":
             return FileTypeEnum.GCT
         else:
+            #todo: this should throw an actual error
             print(
                 "Error: Extension on " + fileName + " not recognized. Please use appropriate file extensions or explicitly specify file type using the -i or -o flags")
 

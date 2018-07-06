@@ -57,8 +57,9 @@ class SSFile:
         #this function is used for every file's export_filter_results except SQLite
         if query != None:
             query = self._translate_null_query(query)
-        if gzippedInput:
-            inputSSFile.filePath=gzip.open(inputSSFile.filePath)
+        #fixme: may require unique treatment for every file type. Some of pandas read functions can take file objects, others cannot.
+        #if gzippedInput:
+        #    inputSSFile.filePath=gzip.open(inputSSFile.filePath)
         df = inputSSFile._filter_data(columnList=columnList, query=query,
                                       includeAllColumns=includeAllColumns, indexCol=indexCol)
 
@@ -220,14 +221,23 @@ class SSFile:
             outFilePath += '.gz'
         return outFilePath
 
+    def _remove_gz(self, outFilePath):
+        """
+        For internal use. If a file is to be gzipped, this function appends '.gz' to the filepath if necessary.
+        """
+        if (outFilePath[len(outFilePath) - 3] == '.' and outFilePath[len(outFilePath) - 2] == 'g' and outFilePath[
+            len(outFilePath) - 1] == 'z'):
+            outFilePath=outFilePath[:-3]
+        return outFilePath
+
     def _compress_results(self, outFilePath):
         """
         For internal use. Manually gzips result files if Pandas does not inherently do so for the given file type.
         """
-        with open(outFilePath, 'rb') as f_in:
+        with open(self._remove_gz(outFilePath), 'rb') as f_in:
             with gzip.open(self._append_gz(outFilePath), 'wb') as f_out:
                 f_out.writelines(f_in)
-        os.remove(outFilePath)
+        os.remove(self._remove_gz(outFilePath))
 
     def __replace_index(selfs, df, indexCol):
         """

@@ -20,6 +20,6 @@ class GCTFile(SSFile):
         self.write_to_file(df, gzipResults)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
-        toGCT(df, self.filePath)
+        toGCT(df, self._remove_gz(self.filePath))
         if gzipResults:
             super()._compress_results(self.filePath)

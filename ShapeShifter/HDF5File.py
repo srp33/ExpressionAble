@@ -24,6 +24,6 @@ class HDF5File(SSFile):
         self.write_to_file(df, gzipResults)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
-        df.to_hdf(self.filePath, "group", mode='w')
+        df.to_hdf(super()._remove_gz(self.filePath), "group", mode='w')
         if gzipResults:
             super()._compress_results(self.filePath)

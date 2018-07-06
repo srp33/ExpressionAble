@@ -27,7 +27,7 @@ class ExcelFile(SSFile):
                     df.shape))
             print("Data beyond the size limit will be truncated")
         import xlsxwriter
-        writer = pd.ExcelWriter(self.filePath, engine='xlsxwriter')
+        writer = pd.ExcelWriter(super()._remove_gz(self.filePath), engine='xlsxwriter')
         df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=includeIndex)
         writer.save()
         if gzipResults:

@@ -24,6 +24,6 @@ class MsgPackFile(SSFile):
         self.write_to_file(df, gzipResults)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
-        df.to_msgpack(self.filePath)
+        df.to_msgpack(super()._remove_gz(self.filePath))
         if gzipResults:
             super()._compress_results(self.filePath)

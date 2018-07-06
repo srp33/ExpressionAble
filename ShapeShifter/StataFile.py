@@ -32,6 +32,6 @@ class StataFile(SSFile):
                     df[colname] = df[colname].astype(t)
                 except (ValueError, TypeError) as e:
                     pass
-        df.to_stata(self.filePath, write_index=True)
+        df.to_stata(super()._remove_gz(self.filePath), write_index=True)
         if gzipResults:
             super()._compress_results(self.filePath)

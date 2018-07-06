@@ -23,7 +23,7 @@ class ARFFFile(SSFile):
         self.write_to_file(df, gzipResults, includeIndex, null)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
-        toARFF(df, self.filePath)
+        toARFF(df, super()._remove_gz(self.filePath))
         if gzipResults:
             super()._compress_results(self.filePath)
 

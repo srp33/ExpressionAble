@@ -37,7 +37,7 @@ class SQLiteFile(SSFile):
                 len(df.columns)) + " columns. Extra data has been truncated.")
             df=df.iloc[:,0:2000]
         from sqlalchemy import create_engine
-        engine = create_engine('sqlite:///' + filePath)
+        engine = create_engine('sqlite:///' + super()._remove_gz(filePath))
         table = filePath.split('.')[0]
         tableList = table.split('/')
         table = tableList[len(tableList) - 1]
@@ -61,7 +61,7 @@ class SQLiteFile(SSFile):
                 len(df.columns)) + " columns. Extra data has been truncated.")
             df=df.iloc[:,0:2000]
         from sqlalchemy import create_engine
-        engine = create_engine('sqlite:///' + filePath)
+        engine = create_engine('sqlite:///' + super()._remove_gz(filePath))
         table = filePath.split('.')[0]
         tableList = table.split('/')
         table = tableList[len(tableList) - 1]

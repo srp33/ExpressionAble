@@ -385,8 +385,11 @@ def readInputToPandas(inputFilePath, inputFileType, columnList, indexCol):
 			df=df[columnList]
 		return df
 	elif inputFileType == FileTypeEnum.Stata:
+		t1=time.time()
 		if len(columnList)>0:
 			return pd.read_stata(inputFilePath, columns=columnList)
+		t2=time.time()
+		print(str(t2-t1))
 		return pd.read_stata(inputFilePath)
 	elif inputFileType == FileTypeEnum.Pickle:
 		df=pd.read_pickle(inputFilePath)

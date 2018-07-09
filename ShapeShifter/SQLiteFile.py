@@ -24,7 +24,7 @@ class SQLiteFile(SSFile):
         filePath=self.filePath #needs to be stored separately as a string, can't be turned to a file object
         if query != None:
             query = super()._translate_null_query(query)
-        if inputSSFile.gzippedInput:
+        if inputSSFile.isGzipped:
             inputSSFile.filePath=gzip.open(inputSSFile.filePath)
         df = inputSSFile._filter_data(columnList=columnList, query=query,
                                       includeAllColumns=includeAllColumns, indexCol=indexCol)

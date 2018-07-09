@@ -81,15 +81,15 @@ query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, gzi
                                                                         indexCol)
         self.write_to_file(df, gzipResults)
 ```
-##Additional steps
-In addition to implementing the class for you file type, there are two more small steps before your class will work with ShapeShifter.
-First, you must add an enum to FileTypeEnum.py that will represent your file type. Then, you must add a clause to SSFile.factory
+##Connecting Your File Type to ShapeShifter
+In addition to implementing the class for you file type, you must hook your file type's class into ShapeShifter so it can use it.
+You need to add a clause to SSFile.factory
 that will be used to construct an file object of your type. If I were adding support for a GCT file, my code would look like  this:
 ```python
 def factory(filePath, type):
-    if type ==......
+    if type.lower() ==......
     ...
-    elif type == FileTypeEnum.FileTypeEnum.GCT: return GCTFile.GCTFile(filePath,type)
+    elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
 ```
 
 

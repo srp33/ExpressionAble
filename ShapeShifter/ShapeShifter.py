@@ -55,14 +55,14 @@ class ShapeShifter:
         """
         Takes a look at a portion of the file by showing only the requested columns
         :param listOfColumnNames: List of columns that will be given in the output
-        :param numRows:
+        :param numRows: The number of rows that will be shown with the requested columns in the output
         :param indexCol:
         :return:
         """
         listOfColumnNames.insert(0, indexCol)
         df = self.inputFile.read_input_to_pandas(columnList=listOfColumnNames, indexCol = indexCol)
         #df = pd.read_parquet(self.inputFile.filePath, columns=listOfColumnNames)
-        df.set_index(self.index, drop=True, inplace=True)
+        df.set_index(indexCol, drop=True, inplace=True)
         df = df[0:numRows]
         return df
 
@@ -242,33 +242,33 @@ class ShapeShifter:
         else:
             extension = None
         if extension == "tsv" or extension == "txt":
-            return FileTypeEnum.TSV
+            return 'tsv'
         elif extension == "csv":
-            return FileTypeEnum.CSV
+            return 'csv'
         elif extension == "json":
-            return FileTypeEnum.JSON
+            return 'json'
         elif extension == "xlsx":
-            return FileTypeEnum.Excel
+            return 'excel'
         elif extension == "hdf" or extension == "h5":
-            return FileTypeEnum.HDF5
+            return 'hdf5'
         # elif extension=="feather":
         #	return FileTypeEnum.Feather
         elif extension == "pq":
-            return FileTypeEnum.Parquet
+            return 'parquet'
         elif extension == "mp":
-            return FileTypeEnum.MsgPack
+            return 'msgpack'
         elif extension == "dta":
-            return FileTypeEnum.Stata
+            return 'stata'
         elif extension == "pkl":
-            return FileTypeEnum.Pickle
+            return 'pickle'
         elif extension == "html":
-            return FileTypeEnum.HTML
+            return 'html'
         elif extension == "db":
-            return FileTypeEnum.SQLite
+            return 'sqlite'
         elif extension == "arff":
-            return FileTypeEnum.ARFF
+            return 'arff'
         elif extension == "gct":
-            return FileTypeEnum.GCT
+            return 'gct'
         else:
             #todo: this should throw an actual error
             print(

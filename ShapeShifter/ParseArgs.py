@@ -13,70 +13,73 @@ import time
 import sys
 
 def determineFileType(fileType):
-	if fileType== "CSV":
-		return FileTypeEnum.CSV
-	elif fileType=="TSV":
-		return FileTypeEnum.TSV
-	elif fileType == "JSON":
-		return FileTypeEnum.JSON
-	elif fileType== "Excel":
-		return FileTypeEnum.Excel
-	elif fileType== "HDF5":
-		return FileTypeEnum.HDF5
+	if fileType.lower()== "csv":
+		return 'csv'
+	elif fileType.lower()=="tsv":
+		return 'tsv'
+	elif fileType.lower() == "json":
+		return 'json'
+	elif fileType.lower() == "excel":
+		return 'excel'
+	elif fileType.lower() == "hdf5":
+		return 'hdf5'
 	#elif fileType=="Feather":
 	#	return FileTypeEnum.Feather
-	elif fileType =="Parquet":
-		return FileTypeEnum.Parquet
-	elif fileType =="MsgPack":
-		return FileTypeEnum.MsgPack
-	elif fileType == "Stata":
-		return FileTypeEnum.Stata
-	elif fileType =="Pickle":
-		return FileTypeEnum.Pickle
-	elif fileType =="HTML":
-		return FileTypeEnum.HTML
-	elif fileType =="SQLite":
-		return FileTypeEnum.SQLite
-	elif fileType == "ARFF":
-		return FileTypeEnum.ARFF
-	elif fileType == "GCT":
-		return FileTypeEnum.GCT
+	elif fileType.lower() =="parquet":
+		return 'parquet'
+	elif fileType.lower() =="msgpack":
+		return 'msgpack'
+	elif fileType.lower() == "stata":
+		return 'stata'
+	elif fileType.lower() =="pickle":
+		return 'pickle'
+	elif fileType.lower() =="html":
+		return 'html'
+	elif fileType.lower() =="sqlite":
+		return 'sqlite'
+	elif fileType.lower() == "arff":
+		return 'arff'
+	elif fileType.lower() == "gct":
+		return 'gct'
 
 def determineExtension(fileName):
-	extensions= fileName.rstrip("\n").split(".")
-	if len(extensions)>1:
-		extension=extensions[len(extensions)-1]
-		if extension =='gz':
-			extension=extensions[len(extensions)-2]
-	else: extension = None
-	if extension== "tsv" or extension =="txt":
-		return FileTypeEnum.TSV
+	extensions = fileName.rstrip("\n").split(".")
+	if len(extensions) > 1:
+		extension = extensions[len(extensions) - 1]
+		extension = extension.lower()
+		if extension == 'gz':
+			extension = extensions[len(extensions) - 2]
+			extension=extension.lower()
+	else:
+		extension = None
+	if extension == "tsv" or extension == "txt":
+		return 'tsv'
 	elif extension == "csv":
-		return FileTypeEnum.CSV
-	elif extension== "json":
-		return FileTypeEnum.JSON
-	elif extension== "xlsx":
-		return FileTypeEnum.Excel
-	elif extension== "hdf" or extension=="h5":
-		return FileTypeEnum.HDF5
-	#elif extension=="feather":
+		return 'csv'
+	elif extension == "json":
+		return 'json'
+	elif extension == "xlsx":
+		return 'excel'
+	elif extension == "hdf" or extension == "h5":
+		return 'hdf5'
+	# elif extension=="feather":
 	#	return FileTypeEnum.Feather
-	elif extension =="pq":
-		return FileTypeEnum.Parquet
-	elif extension =="mp":
-		return FileTypeEnum.MsgPack
+	elif extension == "pq":
+		return 'parquet'
+	elif extension == "mp":
+		return 'msgpack'
 	elif extension == "dta":
-		return FileTypeEnum.Stata
-	elif extension =="pkl":
-		return FileTypeEnum.Pickle
-	elif extension =="html":
-		return FileTypeEnum.HTML
-	elif extension=="db":
-		return FileTypeEnum.SQLite
+		return 'stata'
+	elif extension == "pkl":
+		return 'pickle'
+	elif extension == "html":
+		return 'html'
+	elif extension == "db":
+		return 'sqlite'
 	elif extension == "arff":
-		return FileTypeEnum.ARFF
+		return 'arff'
 	elif extension == "gct":
-		return FileTypeEnum.GCT
+		return 'gct'
 	else:
 		print("Error: Extension on " + fileName+ " not recognized. Please use appropriate file extensions or explicitly specify file type using the -i or -o flags")
 		sys.exit()

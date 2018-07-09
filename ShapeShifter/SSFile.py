@@ -76,19 +76,19 @@ class SSFile:
         :param type: FileTypeEnum representing the type of file
         :return: SSFile subclass object
         """
-        if type == FileTypeEnum.FileTypeEnum.Parquet: return ParquetFile.ParquetFile(filePath, type)
-        elif type == FileTypeEnum.FileTypeEnum.TSV: return TSVFile.TSVFile(filePath,type)
-        elif type == FileTypeEnum.FileTypeEnum.CSV: return CSVFile.CSVFile(filePath,type)
-        elif type == FileTypeEnum.FileTypeEnum.JSON: return JSONFile.JSONFile(filePath,type)
-        elif type == FileTypeEnum.FileTypeEnum.Excel: return ExcelFile.ExcelFile(filePath,type)
-        elif type == FileTypeEnum.FileTypeEnum.HDF5: return HDF5File.HDF5File(filePath,type)
-        elif type == FileTypeEnum.FileTypeEnum.Pickle: return PickleFile.PickleFile(filePath,type)
-        elif type == FileTypeEnum.FileTypeEnum.MsgPack: return MsgPackFile.MsgPackFile(filePath, type)
-        elif type == FileTypeEnum.FileTypeEnum.Stata: return StataFile.StataFile(filePath,type)
-        elif type == FileTypeEnum.FileTypeEnum.SQLite: return SQLiteFile.SQLiteFile(filePath,type)
-        elif type == FileTypeEnum.FileTypeEnum.HTML: return HTMLFile.HTMLFile(filePath,type)
-        elif type == FileTypeEnum.FileTypeEnum.ARFF: return ARFFFile.ARFFFile(filePath,type)
-        elif type == FileTypeEnum.FileTypeEnum.GCT: return GCTFile.GCTFile(filePath,type)
+        if type.lower() == 'parquet': return ParquetFile.ParquetFile(filePath, type)
+        elif type.lower() == 'tsv': return TSVFile.TSVFile(filePath,type)
+        elif type.lower() == 'csv': return CSVFile.CSVFile(filePath,type)
+        elif type.lower() == 'json': return JSONFile.JSONFile(filePath,type)
+        elif type.lower() == 'excel': return ExcelFile.ExcelFile(filePath,type)
+        elif type.lower() == 'hdf5': return HDF5File.HDF5File(filePath,type)
+        elif type.lower() == 'pickle': return PickleFile.PickleFile(filePath,type)
+        elif type.lower() == 'msgpack': return MsgPackFile.MsgPackFile(filePath, type)
+        elif type.lower() == 'stata': return StataFile.StataFile(filePath,type)
+        elif type.lower() == 'sqlite': return SQLiteFile.SQLiteFile(filePath,type)
+        elif type.lower() == 'html': return HTMLFile.HTMLFile(filePath,type)
+        elif type.lower() == 'arff': return ARFFFile.ARFFFile(filePath,type)
+        elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
     factory=staticmethod(factory)
 
     def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA'):

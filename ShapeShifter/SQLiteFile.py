@@ -18,12 +18,13 @@ class SQLiteFile(SSFile):
         df = pd.read_sql(query, engine)
         return df
 
-    def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
+    def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,
+                              gzipResults=False, indexCol="Sample"):
 
         filePath=self.filePath #needs to be stored separately as a string, can't be turned to a file object
         if query != None:
             query = super()._translate_null_query(query)
-        if gzippedInput:
+        if inputSSFile.gzippedInput:
             inputSSFile.filePath=gzip.open(inputSSFile.filePath)
         df = inputSSFile._filter_data(columnList=columnList, query=query,
                                       includeAllColumns=includeAllColumns, indexCol=indexCol)

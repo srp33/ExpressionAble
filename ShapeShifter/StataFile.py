@@ -10,13 +10,13 @@ class StataFile(SSFile):
             return pd.read_stata(self.filePath, columns=columnList)
         return pd.read_stata(self.filePath)
 
-    def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
+    def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,
+                              gzipResults=False, indexCol="Sample"):
         df = None
         includeIndex = False
         null = 'NA'
-        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, gzippedInput, columnList, query,
-                                                                        transpose, includeAllColumns, df, includeIndex,
-                                                                        indexCol)
+        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, columnList, query, transpose,
+                                                                        includeAllColumns, df, includeIndex, indexCol)
         if not transpose:
             df = df.set_index(indexCol) if indexCol in df.columns else df
 

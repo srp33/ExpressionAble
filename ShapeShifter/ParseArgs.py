@@ -198,7 +198,7 @@ if args.output_file_type:
 isTransposed = False
 if args.transpose:
 	isTransposed=True
-	if outFileType == FileTypeEnum.Feather or outFileType == FileTypeEnum.Parquet or outFileType == FileTypeEnum.Stata:
+	if outFileType == 'feather' or outFileType == 'parquet' or outFileType == 'stata':
 		print("Error: Parquet and Stata file types do not support transposing. Either choose a different output file type or remove the --transpose flag")
 		sys.exit()
 colList=[]

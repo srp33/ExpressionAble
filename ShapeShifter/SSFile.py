@@ -16,18 +16,18 @@ class SSFile:
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         """
-        Reads from a file into a Pandas data frame. Must be implemented by subclasses
+        Reads from a file into a Pandas data frame. File may be gzipped. Must be implemented by subclasses
         :param columnList: List of string column names to be read in. If blank, all columns will be read in
         :param indexCol: String name of the column representing the index of the data set
         :return: Pandas data frame with the requested data
         """
         raise NotImplementedError("Reading from this file type is not currently supported.")
 
-    def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
+    def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,
+                              gzipResults=False, indexCol="Sample"):
         """
         Filters and then exports data to a file
         :param inputSSFile: SSFile object representing the file to be read and filtered
-        :param gzippedInput: boolean indicating if the inputSSFile is gzipped
         :param columnList: list of columns to include in the output. If blank, all columns will be included.
         :param query: string representing the query or filter to apply to the data set
         :param transpose: boolean indicating whether the results will be transposed
@@ -37,13 +37,13 @@ class SSFile:
         """
         raise NotImplementedError("Writing to this file type is not currently supported.")
 
-    def _prep_for_export(self, inputSSFile, gzippedInput, columnList, query, transpose, includeAllColumns, df, includeIndex, indexCol):
+    def _prep_for_export(self, inputSSFile, columnList, query, transpose, includeAllColumns, df, includeIndex,
+                         indexCol):
         """
         Prepares a file to be exported by checking query syntax, unzipping the input, filtering, and transposing the data. This function is used
         in every file type's export_filter_results function with the exception of SQLiteFile
 
         :param inputSSFile: SSFile containing the data to be filtered
-        :param gzippedInput: boolean indicating if inputSSFile is gzipped
         :param columnList: list of column names to be included in the output. If the list is empty, all columns will be included
         :param query: string representing the query or filter to be applied to the data set
         :param transpose: boolean indicating if the resulting data should be transposed
@@ -67,6 +67,7 @@ class SSFile:
             df = df.set_index(indexCol) if indexCol in df.columns else df
             df = df.transpose()
             includeIndex = True
+        #TODO: remove returning inputSSFile for every file type, it is no longer needed since gzip is taken care of elsewhere
         return query, inputSSFile, df, includeIndex
 
     def factory(filePath, type):

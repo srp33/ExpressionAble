@@ -28,7 +28,9 @@ class ShapeShifter:
         """
         #todo: perhaps not require the outFileType to be specified; infer it from outFilePath?
         self.outputFile = SSFile.SSFile.factory(outFilePath,outFileType)
-        self.outputFile.export_filter_results(self.inputFile, gzippedInput=self.inputFile.isGzipped, columnList=columns, query=filters, transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults, indexCol=index)
+        self.outputFile.export_filter_results(self.inputFile, columnList=columns, query=filters, transpose=transpose,
+                                              includeAllColumns=includeAllColumns, gzipResults=gzipResults,
+                                              indexCol=index)
 
     def export_query_results(self, outFilePath, outFileType, columns: list = [],
                              continuousQueries: list = [], discreteQueries: list = [], transpose=False,

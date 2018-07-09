@@ -10,13 +10,13 @@ class GCTFile(SSFile):
             df = df[columnList]
         return df
 
-    def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
+    def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,
+                              gzipResults=False, indexCol="Sample"):
         df = None
         includeIndex = False
         null = 'NA'
-        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, gzippedInput, columnList, query,
-                                                                        transpose, includeAllColumns, df, includeIndex,
-                                                                        indexCol)
+        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, columnList, query, transpose,
+                                                                        includeAllColumns, df, includeIndex, indexCol)
         self.write_to_file(df, gzipResults)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):

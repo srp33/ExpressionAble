@@ -51,7 +51,7 @@ class ShapeShifter:
 
         self.outputFile = SSFile.SSFile.factory(outFilePath, outFileType)
         query = self.__convert_queries_to_string(continuousQueries, discreteQueries)
-        self.export_filter_results( columns=columns, filters=query,
+        self.outputFile.export_filter_results(self.inputFile, columns=columns, query=query,
                               transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults)
     def peek_by_column_names(self, listOfColumnNames, numRows=10, indexCol="Sample"):
         """

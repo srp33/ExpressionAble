@@ -49,7 +49,8 @@ to a file. "export_filter_results" uses the two previously-mentioned functions t
 ```python
 def read_input_to_pandas(self, columnList=[], indexCol="Sample")
 ```
-This function must provide means for reading in your desired file type stored at the location self.filePath. 
+This function must provide means for reading in your desired file type stored at the location self.filePath. The file may be gzipped, which can be checked 
+using self.isGzipped.
 If passed a list of desired columns, this function should return a Pandas data frame containing the data on your file only for the selected columns. 
 If the list of columns is empty, it should return the entire data set from the file in a Pandas data frame.
 Note: the returned data frame should be un-indexed.

@@ -16,6 +16,7 @@ class ParquetFile(SSFile):
                 df=pd.read_hdf(super()._remove_gz(self.filePath))
             else:
                 df = pd.read_hdf(super()._remove_gz(self.filePath), columns=columnList)
+            #delete the unzipped file that was created by super()._gunzip()
             os.remove(super()._remove_gz(self.filePath))
 
         if len(columnList) == 0:

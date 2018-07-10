@@ -72,7 +72,7 @@ class SSFile:
         """
         Constructs the appropriate subclass object based on the type of file passed in
         :param filePath: string representing a file's path
-        :param type: FileTypeEnum representing the type of file
+        :param type: string representing the type of file
         :return: SSFile subclass object
         """
         if type.lower() == 'parquet': return ParquetFile.ParquetFile(filePath, type)

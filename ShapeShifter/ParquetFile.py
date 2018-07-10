@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 
 from SSFile import SSFile
@@ -8,6 +10,14 @@ class ParquetFile(SSFile):
         super().__init__(filePath,fileType)
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+        if self.isGzipped:
+            super()._gunzip()
+            if len(columnList)==0:
+                df=pd.read_hdf(super()._remove_gz(self.filePath))
+            else:
+                df = pd.read_hdf(super()._remove_gz(self.filePath), columns=columnList)
+            os.remove(super()._remove_gz(self.filePath))
+
         if len(columnList) == 0:
             df = pd.read_parquet(self.filePath)
         else:
@@ -44,4 +54,3 @@ class ParquetFile(SSFile):
         if 'Unnamed:' in columnNames[len(columnNames) - 1]:
             del columnNames[len(columnNames) - 1]
         return columnNames
-import gzip

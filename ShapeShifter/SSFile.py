@@ -1,6 +1,4 @@
-import pandas as pd
-
-
+import shutil
 
 
 class SSFile:
@@ -240,6 +238,13 @@ class SSFile:
                 f_out.writelines(f_in)
         os.remove(self._remove_gz(outFilePath))
 
+    def _gunzip(self):
+        """
+        Takes a gzipped file with extension 'gz' and unzips it to a file location without the 'gz' extension
+        """
+        with gzip.open(self.filePath, 'rb') as f_in:
+            with open(self._remove_gz(self.filePath), 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
     def __replace_index(selfs, df, indexCol):
         """
         For internal use. If the user requests a certain column be the index, this function puts that column as the first in the data frame df
@@ -259,16 +264,12 @@ class SSFile:
                 missingColumns))
 
 
-import ConvertARFF
-import ConvertGCT
 import gzip
-import time
 import os
 import re
 import ARFFFile
 import CSVFile
 import ExcelFile
-import FileTypeEnum
 import GCTFile
 import HDF5File
 import HTMLFile

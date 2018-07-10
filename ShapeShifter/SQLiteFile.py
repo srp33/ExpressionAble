@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 
 from SSFile import SSFile
@@ -7,8 +9,12 @@ class SQLiteFile(SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         from sqlalchemy import create_engine
-        engine = create_engine('sqlite:///' + self.filePath)
-        table = self.filePath.split('.')[0]
+        filePath=self.filePath
+        if self.isGzipped:
+            super()._gunzip()
+            filePath=super()._remove_gz(self.filePath)
+        engine = create_engine('sqlite:///' + filePath)
+        table = filePath.split('.')[0]
         tableList = table.split('/')
         table = tableList[len(tableList) - 1]
         query = "SELECT * FROM " + table
@@ -16,6 +22,8 @@ class SQLiteFile(SSFile):
             query = "SELECT " + ", ".join(columnList) + " FROM " + table
 
         df = pd.read_sql(query, engine)
+        if self.isGzipped:
+            os.remove(filePath)
         return df
 
     def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,
@@ -36,7 +44,7 @@ class SQLiteFile(SSFile):
             #TODO: implement code below that doesn't raise sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) too many SQL variables
             print("Warning: SQLite supports a maximum of 2,000 columns. Your data has " + str(
                 len(df.columns)) + " columns. Extra data has been truncated.")
-            df=df.iloc[:,0:2000]
+            df=df.iloc[0:200,0:10]
         from sqlalchemy import create_engine
         engine = create_engine('sqlite:///' + super()._remove_gz(filePath))
         table = filePath.split('.')[0]
@@ -60,7 +68,7 @@ class SQLiteFile(SSFile):
             #TODO: implement code below that doesn't raise sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) too many SQL variables
             print("Warning: SQLite supports a maximum of 2,000 columns. Your data has " + str(
                 len(df.columns)) + " columns. Extra data has been truncated.")
-            df=df.iloc[:,0:2000]
+            df=df.iloc[:,0:700]
         from sqlalchemy import create_engine
         engine = create_engine('sqlite:///' + super()._remove_gz(filePath))
         table = filePath.split('.')[0]

@@ -1,4 +1,4 @@
-import gzip
+import os
 
 import pandas as pd
 
@@ -9,8 +9,9 @@ class HDF5File(SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if self.isGzipped:
-            with gzip.open(self.filePath) as path:
-                df=pd.read_hdf(path.read())
+            super()._gunzip()
+            df=pd.read_hdf(super()._remove_gz(self.filePath))
+            os.remove(super()._remove_gz(self.filePath))
         else:
             df = pd.read_hdf(self.filePath)
         df = df.reset_index()

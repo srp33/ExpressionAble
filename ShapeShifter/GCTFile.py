@@ -1,11 +1,19 @@
-from SSFile import SSFile
-from ConvertGCT import toGCT
+import os
+
 from ConvertGCT import gctToPandas
+from ConvertGCT import toGCT
+from SSFile import SSFile
+
 
 class GCTFile(SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
-        df = gctToPandas(self.filePath)
+        if self.isGzipped:
+            super()._gunzip()
+            df= gctToPandas(super()._remove_gz(self.filePath))
+            os.remove(super()._remove_gz(self.filePath))
+        else:
+            df = gctToPandas(self.filePath)
         if len(columnList) > 0:
             df = df[columnList]
         return df

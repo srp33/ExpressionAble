@@ -52,12 +52,9 @@ class SSFile:
         :return: updated query, inputSSFile, df, includeIndex. These updated values will be used by export_filter_results
         """
 
-        #this function is used for every file's export_filter_results except SQLite
         if query != None:
             query = self._translate_null_query(query)
-        #fixme: may require unique treatment for every file type. Some of pandas read functions can take file objects, others cannot.
-        #if gzippedInput:
-        #    inputSSFile.filePath=gzip.open(inputSSFile.filePath)
+
         df = inputSSFile._filter_data(columnList=columnList, query=query,
                                       includeAllColumns=includeAllColumns, indexCol=indexCol)
 
@@ -88,9 +85,18 @@ class SSFile:
         elif type.lower() == 'html': return HTMLFile.HTMLFile(filePath,type)
         elif type.lower() == 'arff': return ARFFFile.ARFFFile(filePath,type)
         elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
+        else:
+            print("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
     factory=staticmethod(factory)
 
     def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA'):
+        """
+        Writes a Pandas data frame to a file
+        :param df: Pandas data frame to be written to file
+        :param gzipResults: boolean indicating whether the written file will be gzipped
+        :param includeIndex: boolean indicating whether the index column should be written to the file
+        :param null: string representing how null or None values should be represented in the output file
+        """
         raise NotImplementedError("Writing to this file type is not currently supported.")
     def __is_gzipped(self):
         """
@@ -157,10 +163,9 @@ class SSFile:
             query = query.replace(match, col + "!=" + col + " ")
         return query
 
-    def get_column_names(self, gzippedInput) -> list:
+    def get_column_names(self) -> list:
         """
         Retrieves all column names from a data set stored in a parquet file
-        :param gzippedInput: boolean indicating whether the file is gzipped
 
         :return: All column names
         :rtype: list
@@ -235,7 +240,8 @@ class SSFile:
         """
         with open(self._remove_gz(outFilePath), 'rb') as f_in:
             with gzip.open(self._append_gz(outFilePath), 'wb') as f_out:
-                f_out.writelines(f_in)
+                #f_out.writelines(f_in)
+                shutil.copyfileobj(f_in,f_out)
         os.remove(self._remove_gz(outFilePath))
 
     def _gunzip(self):

@@ -2,14 +2,17 @@ import SSFile
 
 class ShapeShifter:
 
-    def __init__(self, filePath, fileType):
+    def __init__(self, filePath, fileType=None):
         """
         Creates a ShapeShifter object
         :param filePath: string name of a file path to read and perform operations on
         :param fileType: FileTypeEnum indicating the type of file that is being read
         :param index:
         """
-        self.inputFile = SSFile.SSFile.factory(filePath, fileType)
+        if fileType==None:
+            self.inputFile=SSFile.SSFile.factory(filePath, self.__determine_extension(filePath))
+        else:
+            self.inputFile = SSFile.SSFile.factory(filePath, fileType)
         self.gzippedInput= self.__is_gzipped()
         self.outputFile= None
 
@@ -18,7 +21,7 @@ class ShapeShifter:
         """
         Filters and then exports data to a file
         :param outFilePath: Name of the file that results will be saved to
-        :param outFileType: FileTypeEnum indicating what file format results will be saved to
+        :param outFileType: string indicating what file format results will be saved to
         :param filters: string representing the query or filter to apply to the data set
         :param columns: list of columns to include in the output. If blank, all columns will be included.
         :param transpose: boolean when, if True, index and columns will be transposed in the output file
@@ -39,7 +42,7 @@ class ShapeShifter:
         Filters and exports data to a file. Similar to export_filter_results, but takes filters in the form of ContinuousQuery and DiscreteQuery objects,
         and has slightly less flexible functionality
         :param outFilePath: Name of the file that results will be saved to
-        :param outFileType: FileTypeEnum indicating what file format results will be saved to
+        :param outFileType: string indicating what file format results will be saved to
         :param columns: list of columns to include in the output. If blank, all columns will be included.
         :param continuousQueries: list of ContinuousQuery objects representing queries on a column of continuous data
         :param discreteQueries: list of DiscreteQuery objects representing queries on a column of discrete data
@@ -74,10 +77,10 @@ class ShapeShifter:
 
         :param fileList: List of file paths representing files that will be merged
         :param outFilePath: File path where merged files will be stored
-        :param outFileType: FileTypeEnum representing the type of file that the merged file will be stored as
+        :param outFileType: string representing the type of file that the merged file will be stored as
         :param gzipResults: If True, merged file will be gzipped
         :param on: Column or index level names to join on. These must be found in all files.
-                If on is None and not merging on indexes then this defaults to the intersection of the columns in all.
+                    If on is None and not merging on indexes then this defaults to the intersection of the columns in all.
         """
         outFile = SSFile.SSFile.factory(outFilePath, outFileType)
 
@@ -88,11 +91,6 @@ class ShapeShifter:
         for file in fileList:
             SSFileList.append(SSFile.SSFile.factory(file,self.__determine_extension(file)))
         #SSFileList.insert(0,self.inputFile) #This is if we include the base file
-
-        #unzip if necessary fixme: may require unique treatment for every file type
-        #for file in SSFileList:
-        #    if file.isGzipped:
-        #        file.filePath=gzip.open(file.filePath)
 
         if len(SSFileList) < 1:
             print("Error: there must be at least one input file to merge.")
@@ -118,10 +116,7 @@ class ShapeShifter:
 
     def get_column_info(self, columnName: str, sizeLimit: int = None):
         """
-        Retrieves a specified column's name, data type, and all its unique values from a parquet file
-
-        :type parquetFilePath: string
-        :param parquetFilePath: filepath to a parquet file to be examined
+        Retrieves a specified column's name, data type, and all its unique values from a  file
 
         :type columnName: string
         :param columnName: the name of the column about which information is being obtained
@@ -136,17 +131,6 @@ class ShapeShifter:
         columnList = [columnName]
         #df = pd.read_parquet(self.inputFile.filePath, columns=columnList)
         df = self.inputFile.read_input_to_pandas(columnList=columnList)
-
-        # uniqueValues = set()
-        # for index, row in df.iterrows():
-        # 	try:
-        # 		uniqueValues.add(row[columnName])
-        # 	except (TypeError, KeyError) as e:
-        # 		return None
-        # 	if sizeLimit != None:
-        # 		if len(uniqueValues)>=sizeLimit:
-        # 			break
-        # uniqueValues = list(uniqueValues)
 
         uniqueValues = df[columnName].unique().tolist()
         # uniqueValues.remove(None)
@@ -168,7 +152,7 @@ class ShapeShifter:
         """
         # columnNames = getColumnNames(parquetFilePath)
         import ColumnInfo
-        df = self.inputFile.read_input_to_pandas(self.inputFile.filePath)
+        df = self.inputFile.read_input_to_pandas()
         columnDict = {}
         for col in df:
             uniqueValues = df[col].unique().tolist()
@@ -293,10 +277,10 @@ class ShapeShifter:
         :rtype: list
 
         """
-        return self.inputFile.get_column_names(self.gzippedInput)
+        return self.inputFile.get_column_names()
 
 
-    def peek(self, numRows=10, numCols=10):
+    def peek(self, numRows=5, numCols=5):
         """
         Takes a look at the first few rows and columns of a parquet file and returns a pandas dataframe corresponding to the number of requested rows and columns
 
@@ -316,16 +300,13 @@ class ShapeShifter:
         if (numCols > len(allCols)):
             numCols = len(allCols)
         selectedCols = []
-        selectedCols.append(self.index)
+        #selectedCols.append(self.index)
         for i in range(0, numCols):
-            selectedCols.append(allCols[i])
-        df = pd.read_parquet(self.inputFile.filePath, columns=selectedCols)
-        df.set_index(self.index, drop=True, inplace=True)
+             selectedCols.append(allCols[i])
+        df = self.inputFile.read_input_to_pandas(columnList=selectedCols)
+        #df.set_index(self.index, drop=True, inplace=True)
         df = df.iloc[0:numRows, 0:numCols]
         return df
 
 
-
-from FileTypeEnum import FileTypeEnum
-import gzip
 import pandas as pd

@@ -1,5 +1,3 @@
-import os
-
 import pandas as pd
 
 from SSFile import SSFile
@@ -10,21 +8,21 @@ class ParquetFile(SSFile):
         super().__init__(filePath,fileType)
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
-        if self.isGzipped:
-            super()._gunzip()
-            if len(columnList)==0:
-                df=pd.read_hdf(super()._remove_gz(self.filePath))
+        # if self.isGzipped:
+        #     super()._gunzip()
+        #     if len(columnList)==0:
+        #         df=pd.read_parquet(super()._remove_gz(self.filePath))
+        #     else:
+        #         df = pd.read_parquet(super()._remove_gz(self.filePath), columns=columnList)
+        #     #delete the unzipped file that was created by super()._gunzip()
+        #     os.remove(super()._remove_gz(self.filePath))
+        if True:
+            if len(columnList) == 0:
+                df = pd.read_parquet(self.filePath)
             else:
-                df = pd.read_hdf(super()._remove_gz(self.filePath), columns=columnList)
-            #delete the unzipped file that was created by super()._gunzip()
-            os.remove(super()._remove_gz(self.filePath))
-
-        if len(columnList) == 0:
-            df = pd.read_parquet(self.filePath)
-        else:
-            df = pd.read_parquet(self.filePath, columns=columnList)
-        if df.index.name == indexCol:
-            df.reset_index(inplace=True)
+                df = pd.read_parquet(self.filePath, columns=columnList)
+            if df.index.name == indexCol:
+                df.reset_index(inplace=True)
         return df
 
     def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,
@@ -42,7 +40,7 @@ class ParquetFile(SSFile):
         else:
             df.to_parquet(self.filePath)
 
-    def get_column_names(self, gzippedInput):
+    def get_column_names(self):
         import pyarrow.parquet as pq
         p = pq.ParquetFile(self.filePath)
         columnNames = p.schema.names

@@ -26,8 +26,8 @@ class TSVFile(SSFile.SSFile):
         else:
             df.to_csv(path_or_buf=self.filePath, sep='\t', na_rep=null, index=includeIndex)
 
-    def get_column_names(self, gzippedInput):
-        if gzippedInput:
+    def get_column_names(self):
+        if self.isGzipped:
             f=gzip.open(self.filePath,'r')
             line =f.readline().decode().rstrip('\n')
 

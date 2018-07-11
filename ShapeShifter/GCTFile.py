@@ -6,6 +6,7 @@ from SSFile import SSFile
 class GCTFile(SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+        # probably don't need this section since GCT is read in pretty much the same way CSV is
         # if self.isGzipped:
         #     super()._gunzip()
         #     df= gctToPandas(super()._remove_gz(self.filePath))

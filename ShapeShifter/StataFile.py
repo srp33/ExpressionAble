@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 
 from SSFile import SSFile
@@ -6,6 +8,14 @@ from SSFile import SSFile
 class StataFile(SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+        if self.isGzipped:
+            super()._gunzip()
+            if len(columnList)>0:
+                df=pd.read_stata(super()._remove_gz(self.filePath), columns=columnList)
+            else:
+                df = pd.read_stata(super()._remove_gz(self.filePath))
+            os.remove(super()._remove_gz(self.filePath))
+            return df
         if len(columnList) > 0:
             return pd.read_stata(self.filePath, columns=columnList)
         return pd.read_stata(self.filePath)

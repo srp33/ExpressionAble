@@ -1,4 +1,5 @@
 import shutil
+import tempfile
 
 
 class SSFile:
@@ -234,23 +235,27 @@ class SSFile:
             outFilePath=outFilePath[:-3]
         return outFilePath
 
-    def _compress_results(self, outFilePath):
+    def _gzip_results(self, tempFilePath, outFilePath):
         """
         For internal use. Manually gzips result files if Pandas does not inherently do so for the given file type.
         """
-        with open(self._remove_gz(outFilePath), 'rb') as f_in:
+        with open(tempFilePath, 'rb') as f_in:
             with gzip.open(self._append_gz(outFilePath), 'wb') as f_out:
                 #f_out.writelines(f_in)
                 shutil.copyfileobj(f_in,f_out)
-        os.remove(self._remove_gz(outFilePath))
+        os.remove(tempFilePath)
 
-    def _gunzip(self):
+    def _gunzip_to_temp_file(self):
         """
-        Takes a gzipped file with extension 'gz' and unzips it to a file location without the 'gz' extension
+        Takes a gzipped file with extension 'gz' and unzips it to a temporary file location so it can be read into pandas
         """
         with gzip.open(self.filePath, 'rb') as f_in:
-            with open(self._remove_gz(self.filePath), 'wb') as f_out:
-                shutil.copyfileobj(f_in, f_out)
+            # with open(self._remove_gz(self.filePath), 'wb') as f_out:
+            #     shutil.copyfileobj(f_in, f_out)
+            f_out=tempfile.NamedTemporaryFile(delete=False)
+            shutil.copyfileobj(f_in, f_out)
+            f_out.close()
+        return f_out
     def __replace_index(selfs, df, indexCol):
         """
         For internal use. If the user requests a certain column be the index, this function puts that column as the first in the data frame df

@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 import pandas as pd
 
@@ -9,12 +10,12 @@ class StataFile(SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if self.isGzipped:
-            super()._gunzip()
+            tempFile = super()._gunzip_to_temp_file()
             if len(columnList)>0:
-                df=pd.read_stata(super()._remove_gz(self.filePath), columns=columnList)
+                df=pd.read_stata(tempFile.name, columns=columnList)
             else:
-                df = pd.read_stata(super()._remove_gz(self.filePath))
-            os.remove(super()._remove_gz(self.filePath))
+                df=pd.read_stata(tempFile.name)
+            os.remove(tempFile.name)
             return df
         if len(columnList) > 0:
             return pd.read_stata(self.filePath, columns=columnList)
@@ -42,6 +43,12 @@ class StataFile(SSFile):
                     df[colname] = df[colname].astype(t)
                 except (ValueError, TypeError) as e:
                     pass
-        df.to_stata(super()._remove_gz(self.filePath), write_index=True)
+
         if gzipResults:
-            super()._compress_results(self.filePath)
+            #write to temp file
+            tempFile = tempfile.NamedTemporaryFile(delete=False)
+            df.to_stata(tempFile.name, write_index=True)
+            tempFile.close()
+            super()._gzip_results(tempFile.name, self.filePath)
+        else:
+            df.to_stata(self.filePath, write_index=True)

@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 import pandas as pd
 
@@ -9,9 +10,9 @@ class HDF5File(SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if self.isGzipped:
-            super()._gunzip()
-            df=pd.read_hdf(super()._remove_gz(self.filePath))
-            os.remove(super()._remove_gz(self.filePath))
+            tempFile = super()._gunzip_to_temp_file()
+            df=pd.read_hdf(tempFile.name)
+            os.remove(tempFile.name)
         else:
             df = pd.read_hdf(self.filePath)
         df = df.reset_index()
@@ -31,6 +32,10 @@ class HDF5File(SSFile):
         self.write_to_file(df, gzipResults)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
-        df.to_hdf(super()._remove_gz(self.filePath), "group", mode='w')
         if gzipResults:
-            super()._compress_results(self.filePath)
+            tempFile = tempfile.NamedTemporaryFile(delete=False)
+            df.to_hdf(tempFile.name, "group", mode='w')
+            tempFile.close()
+            super()._gzip_results(tempFile.name, self.filePath)
+        else:
+            df.to_hdf(super()._remove_gz(self.filePath), "group", mode='w')

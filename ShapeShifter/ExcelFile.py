@@ -1,4 +1,5 @@
 import gzip
+import tempfile
 
 import pandas as pd
 
@@ -33,9 +34,14 @@ class ExcelFile(SSFile):
                 "WARNING: Excel supports a maximum of 16,384 columns and 1,048,576 rows. The dimensions of your data are " + str(
                     df.shape))
             print("Data beyond the size limit will be truncated")
-        import xlsxwriter
-        writer = pd.ExcelWriter(super()._remove_gz(self.filePath), engine='xlsxwriter')
-        df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=includeIndex)
-        writer.save()
         if gzipResults:
-            super()._compress_results(self.filePath)
+            tempFile = tempfile.NamedTemporaryFile(delete=False)
+            writer = pd.ExcelWriter(tempFile.name, engine='xlsxwriter')
+            df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=includeIndex)
+            writer.save()
+            tempFile.close()
+            super()._gzip_results(self.filePath)
+        else:
+            writer = pd.ExcelWriter(super()._remove_gz(self.filePath), engine='xlsxwriter')
+            df.to_excel(writer, sheet_name='Sheet1', na_rep=null, index=includeIndex)
+            writer.save()

@@ -21,7 +21,23 @@ to a file. "export_filter_results" uses the two previously-mentioned functions t
 def read_input_to_pandas(self, columnList=[], indexCol="Sample")
 ```
 This function must provide means for reading in your desired file type stored at the location self.filePath. The file may be gzipped, which can be checked 
-using self.isGzipped.
+using self.isGzipped. One way to read in a gzipped file is to temporarily unzip it using SSFile._gunzip_to_temp_file()
+and then delete the temporary file. If I were reading from an HDF5 file, the code might look like this:
+
+```python
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+        if self.isGzipped:
+            tempFile = super()._gunzip_to_temp_file()
+            df=pd.read_hdf(tempFile.name)
+            os.remove(tempFile.name)
+        else:
+            df = pd.read_hdf(self.filePath)
+        df = df.reset_index()
+        if len(columnList) > 0:
+            df = df[columnList]
+        return df
+```
+
 If passed a list of desired columns, this function should return a Pandas data frame containing the data on your file only for the selected columns. 
 If the list of columns is empty, it should return the entire data set from the file in a Pandas data frame.
 Note: the returned data frame should be un-indexed.
@@ -30,14 +46,19 @@ Note: the returned data frame should be un-indexed.
 def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA')
 ```
 This function must provide means for writing data stored in a Pandas data frame to the location stored at self.filePath. 
-If gzipResults is True, the file created should be gzipped. One way to do this is to export the file normally, and then gzip the file. 
-To do this, the data should first be written to a file which does not have a '.gz' extension. Then, you can use SSFile._compress_results to gzip that file. 
-If I were writing to a GCT file, the code for this function might look like this:
+If gzipResults is True, the file created should be gzipped. One way to do this is to export the file to a temporary file, and then gzip that file. 
+To do this, you can create a tempfile.NamedTemporaryFile(delete=False), write your data frame to that file path, close the temporary file, and then
+use SSFile._gzip_results() to gzip that temporary file to your desired file path. 
+If I were writing to a MsgPack file, the code for this function might look like this:
 ```python
-def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
-    to_GCT(df, filePath = super()._remove_gz(self.filePath))
-    if gzipResults:
-        super()._compress_results(self.filePath)
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
+        if gzipResults:
+            tempFile =tempfile.NamedTemporaryFile(delete=False)
+            df.to_msgpack(tempFile.name)
+            tempFile.close()
+            super()._gzip_results(tempFile.name, self.filePath)
+        else:
+            df.to_msgpack(super()._remove_gz(self.filePath))
 ```
 'includeIndex' indicates whether or not the index column should be written to the file or not. Whether it should or not will depend on your own implementation and whether or not you
 want Pandas' default index stored in your file. 'null' is an optional parameter which indicates how 'None' should be represented in your file.

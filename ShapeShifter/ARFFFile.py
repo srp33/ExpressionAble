@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 from ConvertARFF import arffToPandas
 from ConvertARFF import toARFF
@@ -9,9 +10,9 @@ class ARFFFile(SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if self.isGzipped:
-            super()._gunzip()
-            df= arffToPandas(super()._remove_gz(self.filePath))
-            os.remove(super()._remove_gz(self.filePath))
+            tempFile = super()._gunzip_to_temp_file()
+            df= arffToPandas(tempFile.name)
+            os.remove(tempFile.name)
         else:
             df = arffToPandas(self.filePath)
         if len(columnList) > 0:
@@ -29,9 +30,14 @@ class ARFFFile(SSFile):
         self.write_to_file(df, gzipResults, includeIndex, null)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
-        toARFF(df, super()._remove_gz(self.filePath))
         if gzipResults:
-            super()._compress_results(self.filePath)
+            tempFile = tempfile.NamedTemporaryFile(delete=False)
+            toARFF(df, tempFile.name)
+            tempFile.close()
+            super()._gzip_results(tempFile.name, self.filePath)
+        else:
+            toARFF(df, super()._remove_gz(self.filePath))
+
 
 
 

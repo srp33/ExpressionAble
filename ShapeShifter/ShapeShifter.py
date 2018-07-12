@@ -280,12 +280,9 @@ class ShapeShifter:
         return self.inputFile.get_column_names()
 
 
-    def peek(self, numRows=5, numCols=5):
+    def peek(self, numRows=10, numCols=10):
         """
         Takes a look at the first few rows and columns of a parquet file and returns a pandas dataframe corresponding to the number of requested rows and columns
-
-        :type parquetFilePath: string
-        :param parquetFilePath: filepath to a parquet file to be examined
 
         :type numRows: int
         :param numRows: the number of rows the returned Pandas dataframe will contain
@@ -296,15 +293,19 @@ class ShapeShifter:
         :return: The first numRows and numCols in the given parquet file
         :rtype: Pandas dataframe
         """
-        allCols = self.get_column_names()
-        if (numCols > len(allCols)):
-            numCols = len(allCols)
-        selectedCols = []
-        #selectedCols.append(self.index)
-        for i in range(0, numCols):
-             selectedCols.append(allCols[i])
-        df = self.inputFile.read_input_to_pandas(columnList=selectedCols)
-        #df.set_index(self.index, drop=True, inplace=True)
+        #TODO: Optimize peek for every file type by writing a get_column_names() function for every file type
+        # allCols = self.get_column_names()
+
+        # selectedCols = []
+        # selectedCols.append(self.index)
+        # for i in range(0, numCols):
+        #      selectedCols.append(allCols[i])
+        # df = self.inputFile.read_input_to_pandas(columnList=selectedCols)
+        # df.set_index(self.index, drop=True, inplace=True)
+
+        df=self.inputFile.read_input_to_pandas()
+        if (numCols > len(df.columns)):
+             numCols = len(df.columns)
         df = df.iloc[0:numRows, 0:numCols]
         return df
 

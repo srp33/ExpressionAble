@@ -1,3 +1,5 @@
+import tempfile
+
 from ConvertGCT import gctToPandas
 from ConvertGCT import toGCT
 from SSFile import SSFile
@@ -27,6 +29,10 @@ class GCTFile(SSFile):
         self.write_to_file(df, gzipResults)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
-        toGCT(df, self._remove_gz(self.filePath))
         if gzipResults:
-            super()._compress_results(self.filePath)
+            tempFile = tempfile.NamedTemporaryFile(delete=False)
+            toGCT(df, tempFile.name)
+            tempFile.close()
+            super()._gzip_results(tempFile.name, self.filePath)
+        else:
+            toGCT(df, self._remove_gz(self.filePath))

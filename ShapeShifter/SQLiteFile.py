@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 import pandas as pd
 
@@ -11,8 +12,8 @@ class SQLiteFile(SSFile):
         from sqlalchemy import create_engine
         filePath=self.filePath
         if self.isGzipped:
-            super()._gunzip()
-            filePath=super()._remove_gz(self.filePath)
+            tempFile = super()._gunzip_to_temp_file()
+            filePath= tempFile.name
         engine = create_engine('sqlite:///' + filePath)
         table = filePath.split('.')[0]
         tableList = table.split('/')
@@ -46,19 +47,34 @@ class SQLiteFile(SSFile):
                 len(df.columns)) + " columns. Extra data has been truncated.")
             df=df.iloc[0:200,0:10]
         from sqlalchemy import create_engine
-        engine = create_engine('sqlite:///' + super()._remove_gz(filePath))
-        table = filePath.split('.')[0]
-        tableList = table.split('/')
-        table = tableList[len(tableList) - 1]
-        if not transpose:
-            df = df.set_index(indexCol) if indexCol in df.columns else df
-            df.to_sql(table, engine, index=True, if_exists="replace")
-        else:
-            df = df.set_index(indexCol) if indexCol in df.columns else df
-            df = df.transpose()
-            df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=100000)
         if gzipResults:
-            super()._compress_results(filePath)
+            tempFile = tempfile.NamedTemporaryFile(delete=False)
+            engine = create_engine('sqlite:///' + tempFile.name)
+            table = filePath.split('.')[0]
+            tableList = table.split('/')
+            table = tableList[len(tableList) - 1]
+            if not transpose:
+                df = df.set_index(indexCol) if indexCol in df.columns else df
+                df.to_sql(table, engine, index=True, if_exists="replace")
+            else:
+                df = df.set_index(indexCol) if indexCol in df.columns else df
+                df = df.transpose()
+                df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=100000)
+            tempFile.close()
+            super()._gzip_results(tempFile.name, filePath)
+
+        else:
+            engine = create_engine('sqlite:///' + super()._remove_gz(filePath))
+            table = filePath.split('.')[0]
+            tableList = table.split('/')
+            table = tableList[len(tableList) - 1]
+            if not transpose:
+                df = df.set_index(indexCol) if indexCol in df.columns else df
+                df.to_sql(table, engine, index=True, if_exists="replace")
+            else:
+                df = df.set_index(indexCol) if indexCol in df.columns else df
+                df = df.transpose()
+                df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=100000)
 
     def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA'):
         filePath = self.filePath
@@ -70,13 +86,20 @@ class SQLiteFile(SSFile):
                 len(df.columns)) + " columns. Extra data has been truncated.")
             df=df.iloc[:,0:700]
         from sqlalchemy import create_engine
-        engine = create_engine('sqlite:///' + super()._remove_gz(filePath))
-        table = filePath.split('.')[0]
-        tableList = table.split('/')
-        table = tableList[len(tableList) - 1]
-
-        df.to_sql(table, engine, index=True, if_exists="replace")
-
         if gzipResults:
-            super()._compress_results(filePath)
+            tempFile= tempfile.NamedTemporaryFile(delete=False)
+            engine = create_engine('sqlite:///' + tempFile.name)
+            table = filePath.split('.')[0]
+            tableList = table.split('/')
+            table = tableList[len(tableList) - 1]
+            df.to_sql(table,engine, index=True, if_exists="replace")
+            tempFile.close()
+            super()._gzip_results(tempFile.name, filePath)
+        else:
+            engine = create_engine('sqlite:///' + super()._remove_gz(filePath))
+            table = filePath.split('.')[0]
+            tableList = table.split('/')
+            table = tableList[len(tableList) - 1]
+            df.to_sql(table, engine, index=True, if_exists="replace")
+
 import gzip

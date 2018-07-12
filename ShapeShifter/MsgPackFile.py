@@ -1,4 +1,5 @@
 import gzip
+import tempfile
 
 import pandas as pd
 
@@ -30,6 +31,10 @@ class MsgPackFile(SSFile):
         self.write_to_file(df, gzipResults)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
-        df.to_msgpack(super()._remove_gz(self.filePath))
         if gzipResults:
-            super()._compress_results(self.filePath)
+            tempFile =tempfile.NamedTemporaryFile(delete=False)
+            df.to_msgpack(tempFile.name)
+            tempFile.close()
+            super()._gzip_results(tempFile.name, self.filePath)
+        else:
+            df.to_msgpack(super()._remove_gz(self.filePath))

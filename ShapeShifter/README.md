@@ -1,4 +1,4 @@
-#Adding Support for Additional File Types in ShapeShifter
+# Adding Support for Additional File Types in ShapeShifter
 
 Currently, ShapeShifter supports working with files in the following formats: CSV, TSV, JSON, Excel, HDF5, Parquet, MsgPack, Stata, Pickle, HTML, SQLite, ARFF, and GCT. This file explains what steps must be taken to expand ShapeShifter to work with other types of files.
 
@@ -74,7 +74,7 @@ query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, gzi
                                                                         indexCol)
         self.write_to_file(df, gzipResults)
 ```
-##Connecting Your File Type to ShapeShifter
+## Connecting Your File Type to ShapeShifter
 In addition to implementing the class for you file type, you must hook your file type's class into ShapeShifter so it can use it.
 You need to add a clause to SSFile.factory
 that will be used to construct an file object of your type. If I were adding support for a GCT file, my code would look like  this:

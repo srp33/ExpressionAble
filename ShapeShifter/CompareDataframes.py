@@ -1,8 +1,12 @@
-import pandas as pd
 import sys
-from ConvertARFF import toARFF
+
+import pandas as pd
+
+import ShapeShifter
 from ConvertARFF import arffToPandas
-from ConvertGCT import gctToPandas 
+from ConvertGCT import gctToPandas
+
+
 def readFileIntoPandas(fileName):
         extension= fileName.rstrip("\n").split(".")
         if len(extension)>1:
@@ -46,13 +50,12 @@ f1 = sys.argv[1]
 f2 = sys.argv[2]
 
 try:
-	df1= readFileIntoPandas(f1)
+    ss1 = ShapeShifter.ShapeShifter(f1)
+    ss2 = ShapeShifter.ShapeShifter(f2)
 
-	df2= readFileIntoPandas(f2)
-	#print(list(df1.columns.values))
-	#print(list(df2.columns.values))
-	#print(df1.null1)
-	#print(df2.null1)
+    df1 = ss1.inputFile.read_input_to_pandas()
+	df2 = ss2.inputFile.read_input_to_pandas()
+
 	if df1.equals(df2):
 		print(f1 + " and " +f2+ ": PASS")
 	else:

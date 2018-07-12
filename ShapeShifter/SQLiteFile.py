@@ -13,8 +13,10 @@ class SQLiteFile(SSFile):
         filePath=self.filePath
         if self.isGzipped:
             tempFile = super()._gunzip_to_temp_file()
-            filePath= tempFile.name
-        engine = create_engine('sqlite:///' + filePath)
+            engine = create_engine('sqlite:///'+tempFile.name)
+            #filePath= tempFile.name
+        else:
+            engine = create_engine('sqlite:///' + filePath)
         table = filePath.split('.')[0]
         tableList = table.split('/')
         table = tableList[len(tableList) - 1]

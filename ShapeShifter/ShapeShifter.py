@@ -6,8 +6,8 @@ class ShapeShifter:
         """
         Creates a ShapeShifter object
         :param filePath: string name of a file path to read and perform operations on
-        :param fileType: FileTypeEnum indicating the type of file that is being read
-        :param index:
+        :param fileType: string indicating the type of file that is being read
+
         """
         if fileType==None:
             self.inputFile=SSFile.SSFile.factory(filePath, self.__determine_extension(filePath))
@@ -90,11 +90,13 @@ class ShapeShifter:
         #create a file object for every file path passed in
         for file in fileList:
             SSFileList.append(SSFile.SSFile.factory(file,self.__determine_extension(file)))
-        #SSFileList.insert(0,self.inputFile) #This is if we include the base file
+
 
         if len(SSFileList) < 1:
             print("Error: there must be at least one input file to merge.")
             return
+
+        SSFileList.insert(0,self.inputFile) #This is if we include the base file
 
         df1 = SSFileList[0].read_input_to_pandas()
 

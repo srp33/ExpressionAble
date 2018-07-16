@@ -66,13 +66,16 @@ class SSFile:
         #TODO: remove returning inputSSFile for every file type, it is no longer needed since gzip is taken care of elsewhere
         return query, inputSSFile, df, includeIndex
 
-    def factory(filePath, type):
+    def factory(filePath, type=None):
         """
         Constructs the appropriate subclass object based on the type of file passed in
         :param filePath: string representing a file's path
         :param type: string representing the type of file
         :return: SSFile subclass object
         """
+        if type==None:
+            type = SSFile.__determine_extension(filePath)
+
         if type.lower() == 'parquet': return ParquetFile.ParquetFile(filePath, type)
         elif type.lower() == 'tsv': return TSVFile.TSVFile(filePath,type)
         elif type.lower() == 'csv': return CSVFile.CSVFile(filePath,type)
@@ -87,8 +90,50 @@ class SSFile:
         elif type.lower() == 'arff': return ARFFFile.ARFFFile(filePath,type)
         elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
         else:
-            print("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
+            raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
+            #print("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
     factory=staticmethod(factory)
+
+    def __determine_extension(fileName):
+        extensions = fileName.rstrip("\n").split(".")
+        if len(extensions) > 1:
+            extension = extensions[len(extensions) - 1]
+            if extension == 'gz':
+                extension = extensions[len(extensions) - 2]
+        else:
+            extension = None
+        if extension == "tsv" or extension == "txt":
+            return 'tsv'
+        elif extension == "csv":
+            return 'csv'
+        elif extension == "json":
+            return 'json'
+        elif extension == "xlsx":
+            return 'excel'
+        elif extension == "hdf" or extension == "h5":
+            return 'hdf5'
+        # elif extension=="feather":
+        #	return FileTypeEnum.Feather
+        elif extension == "pq":
+            return 'parquet'
+        elif extension == "mp":
+            return 'msgpack'
+        elif extension == "dta":
+            return 'stata'
+        elif extension == "pkl":
+            return 'pickle'
+        elif extension == "html":
+            return 'html'
+        elif extension == "db":
+            return 'sqlite'
+        elif extension == "arff":
+            return 'arff'
+        elif extension == "gct":
+            return 'gct'
+        else:
+            raise Exception("Error: Extension on " + fileName + " not recognized. Please use appropriate file extensions or explicitly specify file type.")
+
+    __determine_extension = staticmethod(__determine_extension)
 
     def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA'):
         """

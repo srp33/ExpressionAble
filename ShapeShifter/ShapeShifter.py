@@ -9,14 +9,12 @@ class ShapeShifter:
         :param fileType: string indicating the type of file that is being read
 
         """
-        if fileType==None:
-            self.inputFile=SSFile.SSFile.factory(filePath, self.__determine_extension(filePath))
-        else:
-            self.inputFile = SSFile.SSFile.factory(filePath, fileType)
+
+        self.inputFile = SSFile.SSFile.factory(filePath, fileType)
         self.gzippedInput= self.__is_gzipped()
         self.outputFile= None
 
-    def export_filter_results(self, outFilePath, outFileType, filters=None, columns=[],
+    def export_filter_results(self, outFilePath, outFileType=None, filters=None, columns=[],
                               transpose=False, includeAllColumns=False, gzipResults=False, index='Sample'):
         """
         Filters and then exports data to a file
@@ -35,7 +33,7 @@ class ShapeShifter:
                                               includeAllColumns=includeAllColumns, gzipResults=gzipResults,
                                               indexCol=index)
 
-    def export_query_results(self, outFilePath, outFileType, columns: list = [],
+    def export_query_results(self, outFilePath, outFileType=None, columns: list = [],
                              continuousQueries: list = [], discreteQueries: list = [], transpose=False,
                              includeAllColumns=False, gzipResults = False):
         """
@@ -71,7 +69,7 @@ class ShapeShifter:
         df = df[0:numRows]
         return df
 
-    def merge_files(self, fileList, outFilePath, outFileType, gzipResults=False, on= None):
+    def merge_files(self, fileList, outFilePath, outFileType=None, gzipResults=False, on= None):
         """
         Merges multiple ShapeShifter-compatible files into a single file
 
@@ -83,38 +81,77 @@ class ShapeShifter:
                     If on is None and not merging on indexes then this defaults to the intersection of the columns in all.
         """
         outFile = SSFile.SSFile.factory(outFilePath, outFileType)
-
         SSFileList=[]
-
-
         #create a file object for every file path passed in
         for file in fileList:
-            SSFileList.append(SSFile.SSFile.factory(file,self.__determine_extension(file)))
-
+            SSFileList.append(SSFile.SSFile.factory(file))
 
         if len(SSFileList) < 1:
             print("Error: there must be at least one input file to merge.")
             return
 
-        SSFileList.insert(0,self.inputFile) #This is if we include the base file
-
+        SSFileList.insert(0,self.inputFile)
         df1 = SSFileList[0].read_input_to_pandas()
 
+        #we keep track of how often a column name appears and will change the names to avoid duplicates if necessary
+        #the exception is whatever columns they want to merge on - we don't keep track of those
+        columnDict={}
+        self.__increment_columnname_counters(columnDict, df1, on)
         if len(SSFileList) == 1:
             outFile.write_to_file(df1, gzipResults=gzipResults)
             return
         for i in range(0, len(SSFileList) - 1):
             df2 = SSFileList[i + 1].read_input_to_pandas()
+            if on !=None:
+                self.__increment_columnname_counters(columnDict, df2, on)
+                self.__rename_common_columns(columnDict, df1, df2, on)
+            #perform merge
             if on==None:
                 df1 = pd.merge(df1, df2, how='inner')
             else:
                 df1=pd.merge(df1,df2, how='inner', on=on)
         outFile.write_to_file(df1, gzipResults=gzipResults)
-
-
         return
-    #merge_files=staticmethod(merge_files)
 
+    def __increment_columnname_counters(self, columnDict, df, on):
+        """
+        Function for internal use. Adds column names to a dictionary or increments its counter if it is already there
+        :param columnDict: dictionary with column names as keys and ints as counters representing how many files the column name appears in
+        :param df: Pandas data frame whose column names will be examined
+        :param on: column name or list of column names that data frames will be merged on
+        """
+        for colName in list(df.columns.values):
+            if colName in columnDict:
+                columnDict[colName] += 1
+            elif colName not in columnDict and (colName != on or colName not in on):
+                columnDict[colName] = 1
+
+    def __rename_common_columns(self, columnDict, df1, df2, on):
+        """
+        Function for internal use. Renames common columns between two data frames to distinguish them, so long as the columns are not part of 'on'
+        :param columnDict: dictionary with column names as keys and ints as counters representing how many files the column name appears in
+        :param df1: first Pandas data frame whose columns may be renamed
+        :param df2: second Pandas data frame whose columns may be renamed
+        :param on: column name or list of column names that the data frames will be merged on
+        """
+        commonColumns={}
+        for colName in list(df1.columns.values):
+            if colName == on or (isinstance(on, list) and colName in on):
+                pass
+            elif colName in columnDict and columnDict[colName] > 1:
+                newColumnName = colName + '_' + str(columnDict[colName] - 1)
+                commonColumns[colName]=newColumnName
+        if len(commonColumns)>0:
+            df1.rename(columns=commonColumns, inplace=True)
+        commonColumns = {}
+        for colName in list(df2.columns.values):
+            if colName == on or (isinstance(on, list) and colName in on):
+                pass
+            elif colName in columnDict and columnDict[colName] > 1:
+                newColumnName = colName + '_' + str(columnDict[colName])
+                commonColumns[colName]=newColumnName
+        if len(commonColumns)>0:
+            df2.rename(columns=commonColumns, inplace=True)
 
     def get_column_info(self, columnName: str, sizeLimit: int = None):
         """
@@ -220,47 +257,6 @@ class ShapeShifter:
             return "<="
         elif operator == OperatorEnum.OperatorEnum.NotEquals:
             return "!="
-
-    def __determine_extension(self,fileName):
-        extensions = fileName.rstrip("\n").split(".")
-        if len(extensions) > 1:
-            extension = extensions[len(extensions) - 1]
-            if extension == 'gz':
-                extension = extensions[len(extensions) - 2]
-        else:
-            extension = None
-        if extension == "tsv" or extension == "txt":
-            return 'tsv'
-        elif extension == "csv":
-            return 'csv'
-        elif extension == "json":
-            return 'json'
-        elif extension == "xlsx":
-            return 'excel'
-        elif extension == "hdf" or extension == "h5":
-            return 'hdf5'
-        # elif extension=="feather":
-        #	return FileTypeEnum.Feather
-        elif extension == "pq":
-            return 'parquet'
-        elif extension == "mp":
-            return 'msgpack'
-        elif extension == "dta":
-            return 'stata'
-        elif extension == "pkl":
-            return 'pickle'
-        elif extension == "html":
-            return 'html'
-        elif extension == "db":
-            return 'sqlite'
-        elif extension == "arff":
-            return 'arff'
-        elif extension == "gct":
-            return 'gct'
-        else:
-            #todo: this should throw an actual error
-            print(
-                "Error: Extension on " + fileName + " not recognized. Please use appropriate file extensions or explicitly specify file type using the -i or -o flags")
 
 
 

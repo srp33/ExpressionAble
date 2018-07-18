@@ -91,10 +91,14 @@ class SSFile:
         elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
         else:
             raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
-            #print("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
     factory=staticmethod(factory)
 
     def __determine_extension(fileName):
+        """
+        Determines the file type of a given file based off its extension
+        :param fileName: Name of a file whose extension will be examined
+        :return: string representing the file type indicated by the file's extension
+        """
         extensions = fileName.rstrip("\n").split(".")
         if len(extensions) > 1:
             extension = extensions[len(extensions) - 1]
@@ -112,8 +116,6 @@ class SSFile:
             return 'excel'
         elif extension == "hdf" or extension == "h5":
             return 'hdf5'
-        # elif extension=="feather":
-        #	return FileTypeEnum.Feather
         elif extension == "pq":
             return 'parquet'
         elif extension == "mp":
@@ -264,7 +266,7 @@ class SSFile:
 
     def _append_gz(self, outFilePath):
         """
-        For internal use. If a file is to be gzipped, this function appends '.gz' to the filepath if necessary.
+        For internal use. If a file is to be gzipped, this function appends '.gz' to the file path if necessary.
         """
         if not (outFilePath[len(outFilePath) - 3] == '.' and outFilePath[len(outFilePath) - 2] == 'g' and outFilePath[
             len(outFilePath) - 1] == 'z'):
@@ -273,7 +275,7 @@ class SSFile:
 
     def _remove_gz(self, outFilePath):
         """
-        For internal use. If a file is to be gzipped, this function appends '.gz' to the filepath if necessary.
+        For internal use. If a file is to be gzipped, this function removes '.gz' to the file path if necessary.
         """
         if (outFilePath[len(outFilePath) - 3] == '.' and outFilePath[len(outFilePath) - 2] == 'g' and outFilePath[
             len(outFilePath) - 1] == 'z'):

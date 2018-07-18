@@ -84,10 +84,23 @@ def factory(filePath, type):
     ...
     elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
 ```
+Finally, a clause should be added in the SSFile.__determine_extension function that indicates what file extension or extensions correspond to your file type.
+This method should return the name of your file type when a file name has the extension related to your file type. The purpose 
+of this function is so that ShapeShifter can infer file types based on file extensions. If I were adding support for Parquet files, whose file extension is '.pq', my code would look like this:
 
+```python
+def __determine_extension(fileName):
+        ...
+        if extension == ...
+        ...
+        elif extension == 'pq':
+            return 'parquet'
+```
 
 ## Running the tests
-
+Point them to my scripts that run tests, explain how they can run them, and tell them what type of things need to be tested.
+Explain how to ensure that my scripts perform tests on their file type. They will probably need to create a test file.
+Explain how to commit their code to a branch and make a pull request. Use WishBuilder instructions as an example
 Explain how to run the automated tests for this system
 
 ### Break down into end to end tests

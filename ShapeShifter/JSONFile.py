@@ -1,5 +1,3 @@
-import gzip
-
 import pandas as pd
 
 from SSFile import SSFile
@@ -10,9 +8,10 @@ class JSONFile(SSFile):
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         df = pd.read_json(self.filePath)
         df = df.reset_index()
-        if len(columnList) > 0:
-            columnList[columnList.index(indexCol)] = 'index'
-            df = df[columnList]
+        columns=columnList.copy()
+        if len(columns) > 0:
+            columns[columns.index(indexCol)] = 'index'
+            df = df[columns]
         return df
 
     def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,

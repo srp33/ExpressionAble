@@ -27,7 +27,6 @@ class ShapeShifter:
         :param gzipResults: boolean indicating whether the resulting file will be gzipped
         :return:
         """
-        #todo: perhaps not require the outFileType to be specified; infer it from outFilePath?
         self.outputFile = SSFile.SSFile.factory(outFilePath,outFileType)
         self.outputFile.export_filter_results(self.inputFile, columnList=columns, query=filters, transpose=transpose,
                                               includeAllColumns=includeAllColumns, gzipResults=gzipResults,

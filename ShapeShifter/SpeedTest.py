@@ -71,7 +71,7 @@ for i in range(0,len(filetypes)):
             seconds = '0'
         else:
             t1 = time.time()
-            df = df.query(metabricFilters[j])
+            df = df.query(mediumFilters[j])
             t2 = time.time()
             seconds = str(t2 - t1)
         line = "Filter\t" + filetypes[i] + "\tMedium\t" + filterDescriptions[j] + "\t" + seconds + "\n"

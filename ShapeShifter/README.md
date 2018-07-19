@@ -66,13 +66,17 @@ want Pandas' default index stored in your file. 'null' is an optional parameter 
 def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
 ```
 This function uses 'read_input_to_pandas' to read 'inputSSFile' into a Pandas data frame, preps the data by filtering and transposing, then using 'write_to_file' to export the filtered data.
+
 Most likely, all of the necessary work in this function can be performed by SSFile._prep_for_export, which can be called like this, and then exported:
 
 ```python
-query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, gzippedInput, columnList, query,
+def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
+    df=None
+    includeIndex=False
+    query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, gzippedInput, columnList, query,
                                                                         transpose, includeAllColumns, df, includeIndex,
                                                                         indexCol)
-        self.write_to_file(df, gzipResults)
+    self.write_to_file(df, gzipResults)
 ```
 ## Connecting Your File Type to ShapeShifter
 In addition to implementing the class for you file type, you must hook your file type's class into ShapeShifter so it can use it.

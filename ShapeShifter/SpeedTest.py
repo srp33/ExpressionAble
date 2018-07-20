@@ -116,18 +116,19 @@ for i in range(0,len(filetypes)):
 
 #Write METABRIC file
 for i in range(0,len(filetypes)):
-    for j in range(0, len(filterDescriptions)):
-        print("Writing METABRIC to " + filetypes[i] + ": " +str(j))
-        fileName = "Tests/Speed/METABRIC/metabric.pq"
-        inFile = SSFile.factory(fileName)
-        outFile = SSFile.factory("Tests/Speed/Output/METABRICOutput"+str(j)+"." + extensions[i])
-        df = inFile._filter_data(columnList=metabricColumns[j], query=metabricFilters[j])
-        t1 = time.time()
-        outFile.write_to_file(df)
-        t2=time.time()
-        seconds = str(t2-t1)
-        line = "Write\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
-        outputLines.append(line)
+    if filetypes[i]!='Stata' and filetypes[i]!='JSON' and filetypes[i]!='Stata':
+        for j in range(0, len(filterDescriptions)):
+            print("Writing METABRIC to " + filetypes[i] + ": " +str(j))
+            fileName = "Tests/Speed/METABRIC/metabric.pq"
+            inFile = SSFile.factory(fileName)
+            outFile = SSFile.factory("Tests/Speed/Output/METABRICOutput"+str(j)+"." + extensions[i])
+            df = inFile._filter_data(columnList=metabricColumns[j], query=metabricFilters[j])
+            t1 = time.time()
+            outFile.write_to_file(df)
+            t2=time.time()
+            seconds = str(t2-t1)
+            line = "Write\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
+            outputLines.append(line)
 
 #Read Tall file
 for i in range(0,len(filetypes)):

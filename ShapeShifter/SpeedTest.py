@@ -15,7 +15,7 @@ mediumFilters=[None,"discrete10=='hot'", "int10>20", "discrete10=='hot' and int1
 mediumColumns=[[],['Sample','discrete10'],['Sample','int10'],['Sample','discrete10','int10'],['Sample','discrete10','discrete20'],['Sample','int10','int20'],['Sample','discrete10','discrete20','int10','int20']]
 metabricColumns = [[],['Sample','OS_STATUS'], ['Sample','A1BG'], ['Sample','OS_STATUS','A1BG'], ['Sample','OS_STATUS', 'HORMONE_THERAPY'], ['Sample','A1BG', 'A1CF'], ['Sample','OS_STATUS', 'HORMONE_THERAPY','A1BG', 'A1CF'] ]
 metabricFilters=[None,"OS_STATUS=='LIVING'", 'A1BG>5.8', "OS_STATUS=='LIVING' and A1BG>5.8", "OS_STATUS=='LIVING' and HORMONE_THERAPY=='YES'", 'A1BG>5.8 and A1CF>5.8', "OS_STATUS=='LIVING' and HORMONE_THERAPY=='YES' and A1BG>5.8 and A1CF>5.8"]
-tallColumns = [[],['Sample','int2'], ['Sample','discrete2'], ['Sample','discrete2','int2'], ['Sample','discrete2','discrete4'], ['Sample','int2','int4'], ['Sample','discrete2','discrete4', 'int2','int4']]
+tallColumns = [[], ['Sample','discrete2'],['Sample','int2'], ['Sample','discrete2','int2'], ['Sample','discrete2','discrete4'], ['Sample','int2','int4'], ['Sample','discrete2','discrete4', 'int2','int4']]
 tallFilters = [None,"discrete2=='hot'", "int2>20", "discrete2=='hot' and int2>20", "discrete2=='hot' and discrete4=='cold'", "int2>20 and int4<70", "discrete2=='hot' and discrete4=='cold' and int2>20 and int4<70"]
 header='Operation\tFormat\tSize\tFilter\tSeconds\n'
 

@@ -5,9 +5,9 @@ from SSFile import SSFile
 #add tests for reading the whole file and a tall dataset (10 cols, 1 million rows)
 #later, support open science framework for storing large files
 #seperate filter logic for timing
-#currently excluding ARFF, SQLite (db) and HTML
-filetypes = ['CSV','Excel','GCT','HDF5','JSON','MsgPack','Parquet','Pickle','Stata','TSV']
-extensions=['csv','xlsx','gct','hdf','json','mp','pq','pkl','dta','tsv']
+#currently excluding ARFF, SQLite (db) and HTML. We do not test Excel on METABRIC
+filetypes = ['Parquet', 'CSV','Excel','GCT','HDF5','JSON','MsgPack','Pickle','Stata','TSV']
+extensions=['pq','csv','xlsx','gct','hdf','json','mp','pkl','dta','tsv']
 filterDescriptions=['read_whole_file','1_categorical','1_numeric','1_of_each','2_categorical','2_numeric','2_of_each']
 smallFilters=[None,"discrete1=='hot'","float1>2","discrete1=='hot' and float1>2", "discrete1=='hot' and discrete2=='blue'", "float1>2 and float2<10", "discrete1=='hot' and discrete2=='blue' and float1>2 and float2<10"]
 smallColumns=[[],['Sample','discrete1'],['Sample','float1'],['Sample','discrete1','float1'],['Sample','discrete1','discrete2'],['Sample','float1','float2'],['Sample','discrete1','discrete2','float1','float2']]
@@ -93,24 +93,25 @@ for i in range(0,len(filetypes)):
 
 #Read METABRIC file
 for i in range(0,len(filetypes)):
-    for j in range(0, len(filterDescriptions)):
-        fileName = "Tests/Speed/METABRIC/metabric." +extensions[i]
-        metabricFile = SSFile.factory(fileName)
-        t1=time.time()
-        df=metabricFile.read_input_to_pandas(columnList=metabricColumns[j])
-        t2=time.time()
-        seconds = str(t2-t1)
-        line = "Read\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
-        outputLines.append(line)
-        if metabricFilters[j] == None:
-            seconds = '0'
-        else:
-            t1 = time.time()
-            df = df.query(metabricFilters[j])
-            t2 = time.time()
-            seconds = str(t2 - t1)
-        line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-        filterLines.append(line)
+    if filetypes[i]!='Excel':
+        for j in range(0, len(filterDescriptions)):
+            fileName = "Tests/Speed/METABRIC/metabric." +extensions[i]
+            metabricFile = SSFile.factory(fileName)
+            t1=time.time()
+            df=metabricFile.read_input_to_pandas(columnList=metabricColumns[j])
+            t2=time.time()
+            seconds = str(t2-t1)
+            line = "Read\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
+            outputLines.append(line)
+            if metabricFilters[j] == None:
+                seconds = '0'
+            else:
+                t1 = time.time()
+                df = df.query(metabricFilters[j])
+                t2 = time.time()
+                seconds = str(t2 - t1)
+            line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+            filterLines.append(line)
 
 #Write METABRIC file
 for i in range(0,len(filetypes)):

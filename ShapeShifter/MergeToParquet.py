@@ -1,8 +1,9 @@
-import pyarrow.parquet as pq
-import pyarrow as pa
 import pandas as pd
 import gzip
-import sys
+import gzip
+
+import pandas as pd
+
 
 def isGzipped(inputFile):
 	if len(inputFile)<3:
@@ -41,4 +42,4 @@ def buildParquet(inputFiles, outputFile):
 		df1 = pd.merge(df1,df2,how='inner')
 	df1.to_parquet(outputFile)
 
-buildParquet(["TsvData/METABRIC/data.tsv","TsvData/METABRIC/converted_metadata.txt"],"METABRIC.pq")
+buildParquet(["TsvData/METABRIC/data.tsv","TsvData/METABRIC/converted_metadata.txt"],"metabric.pq")

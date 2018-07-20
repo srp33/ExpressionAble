@@ -93,8 +93,9 @@ for i in range(0,len(filetypes)):
 
 #Read METABRIC file
 for i in range(0,len(filetypes)):
-    if filetypes[i]!='Excel':
+    if filetypes[i]!='Excel' and filetypes[i]!='JSON' and filetypes[i]!='Stata':
         for j in range(0, len(filterDescriptions)):
+            print("Reading METABRIC from " + filetypes[i] +": " +str(j))
             fileName = "Tests/Speed/METABRIC/metabric." +extensions[i]
             metabricFile = SSFile.factory(fileName)
             t1=time.time()
@@ -116,6 +117,7 @@ for i in range(0,len(filetypes)):
 #Write METABRIC file
 for i in range(0,len(filetypes)):
     for j in range(0, len(filterDescriptions)):
+        print("Writing METABRIC to " + filetypes[i] + ": " +str(j))
         fileName = "Tests/Speed/METABRIC/metabric.pq"
         inFile = SSFile.factory(fileName)
         outFile = SSFile.factory("Tests/Speed/Output/METABRICOutput"+str(j)+"." + extensions[i])

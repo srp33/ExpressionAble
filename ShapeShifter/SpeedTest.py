@@ -21,7 +21,7 @@ header='Operation\tFormat\tSize\tFilter\tSeconds\n'
 
 outputLines=[]
 filterLines=[]
-Read small file
+#Read small file
 for i in range(0,len(filetypes)):
     for j in range(0, len(filterDescriptions)):
         fileName = "Tests/Speed/Small/SmallTest." +extensions[i]

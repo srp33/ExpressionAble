@@ -21,114 +21,114 @@ header='Operation\tFormat\tSize\tFilter\tSeconds\n'
 
 outputLines=[]
 filterLines=[]
-#Read small file
-# for i in range(0,len(filetypes)):
-#     for j in range(0, len(filterDescriptions)):
-#         fileName = "Tests/Speed/Small/SmallTest." +extensions[i]
-#         smallFile = SSFile.factory(fileName)
-#         t1=time.time()
-#         df=smallFile.read_input_to_pandas(columnList=smallColumns[j])
-#         t2=time.time()
-#         seconds = str(t2-t1)
-#         line = "Read\t"+filetypes[i]+"\tSmall\t"+filterDescriptions[j]+"\t"+seconds+"\n"
-#         outputLines.append(line)
-#         if smallFilters[j]==None:
-#             seconds='0'
-#         else:
-#             t1 = time.time()
-#             df = df.query(smallFilters[j])
-#             t2 = time.time()
-#             seconds = str(t2 - t1)
-#         line = "Filter\t" + filetypes[i] + "\tSmall\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-#         filterLines.append(line)
-#
-# #Write small file
-# for i in range(0,len(filetypes)):
-#     for j in range(0, len(filterDescriptions)):
-#         fileName = "Tests/Speed/Small/SmallTest.pq"
-#         inFile = SSFile.factory(fileName)
-#         outFile = SSFile.factory("Tests/Speed/Output/smallOutput"+str(j)+"." + extensions[i])
-#         df = inFile._filter_data(columnList=smallColumns[j], query=smallFilters[j])
-#         t1 = time.time()
-#         outFile.write_to_file(df)
-#         t2=time.time()
-#         seconds = str(t2-t1)
-#         line = "Write\t"+filetypes[i]+"\tSmall\t"+filterDescriptions[j]+"\t"+seconds+"\n"
-#         outputLines.append(line)
-#
-# #Read medium file
-# for i in range(0,len(filetypes)):
-#     for j in range(0, len(filterDescriptions)):
-#         fileName = "Tests/Speed/Medium/MediumTest." +extensions[i]
-#         mediumFile = SSFile.factory(fileName)
-#         t1=time.time()
-#         df=mediumFile.read_input_to_pandas(columnList=mediumColumns[j])
-#         t2=time.time()
-#         seconds = str(t2-t1)
-#         line = "Read\t"+filetypes[i]+"\tMedium\t"+filterDescriptions[j]+"\t"+seconds+"\n"
-#         outputLines.append(line)
-#         if mediumFilters[j] == None:
-#             seconds = '0'
-#         else:
-#             t1 = time.time()
-#             df = df.query(mediumFilters[j])
-#             t2 = time.time()
-#             seconds = str(t2 - t1)
-#         line = "Filter\t" + filetypes[i] + "\tMedium\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-#         filterLines.append(line)
-#
-# #Write medium file
-# for i in range(0,len(filetypes)):
-#     for j in range(0, len(filterDescriptions)):
-#         fileName = "Tests/Speed/Medium/MediumTest.pq"
-#         inFile = SSFile.factory(fileName)
-#         outFile = SSFile.factory("Tests/Speed/Output/MediumOutput"+str(j)+"." + extensions[i])
-#         df = inFile._filter_data(columnList=mediumColumns[j], query=mediumFilters[j])
-#         t1 = time.time()
-#         outFile.write_to_file(df)
-#         t2=time.time()
-#         seconds = str(t2-t1)
-#         line = "Write\t"+filetypes[i]+"\tMedium\t"+filterDescriptions[j]+"\t"+seconds+"\n"
-#         outputLines.append(line)
-#
-# #Read METABRIC file
-# for i in range(0,len(filetypes)):
-#     if filetypes[i]!='Excel' and filetypes[i]!='JSON' and filetypes[i]!='Stata':
-#         for j in range(0, len(filterDescriptions)):
-#             print("Reading METABRIC from " + filetypes[i] +": " +str(j))
-#             fileName = "Tests/Speed/METABRIC/metabric." +extensions[i]
-#             metabricFile = SSFile.factory(fileName)
-#             t1=time.time()
-#             df=metabricFile.read_input_to_pandas(columnList=metabricColumns[j])
-#             t2=time.time()
-#             seconds = str(t2-t1)
-#             line = "Read\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
-#             outputLines.append(line)
-#             if metabricFilters[j] == None:
-#                 seconds = '0'
-#             else:
-#                 t1 = time.time()
-#                 df = df.query(metabricFilters[j])
-#                 t2 = time.time()
-#                 seconds = str(t2 - t1)
-#             line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-#             filterLines.append(line)
-#
-# #Write METABRIC file
-# for i in range(0,len(filetypes)):
-#     if filetypes[i]!='Excel' and filetypes[i]!='JSON' and filetypes[i]!='Stata':
-#         for j in range(0, len(filterDescriptions)):
-#             print("Writing METABRIC to " + filetypes[i] + ": " +str(j))
-#             fileName = "Tests/Speed/METABRIC/metabric.pq"
-#             inFile = SSFile.factory(fileName)
-#             outFile = SSFile.factory("Tests/Speed/Output/METABRICOutput"+str(j)+"." + extensions[i])
-#             df = inFile._filter_data(columnList=metabricColumns[j], query=metabricFilters[j])
-#             t1 = time.time()
-#             outFile.write_to_file(df)
-#             t2=time.time()
-#             seconds = str(t2-t1)
-#             line = "Write\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
-#             outputLines.append(line)
+Read small file
+for i in range(0,len(filetypes)):
+    for j in range(0, len(filterDescriptions)):
+        fileName = "Tests/Speed/Small/SmallTest." +extensions[i]
+        smallFile = SSFile.factory(fileName)
+        t1=time.time()
+        df=smallFile.read_input_to_pandas(columnList=smallColumns[j])
+        t2=time.time()
+        seconds = str(t2-t1)
+        line = "Read\t"+filetypes[i]+"\tSmall\t"+filterDescriptions[j]+"\t"+seconds+"\n"
+        outputLines.append(line)
+        if smallFilters[j]==None:
+            seconds='0'
+        else:
+            t1 = time.time()
+            df = df.query(smallFilters[j])
+            t2 = time.time()
+            seconds = str(t2 - t1)
+        line = "Filter\t" + filetypes[i] + "\tSmall\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+        filterLines.append(line)
+
+#Write small file
+for i in range(0,len(filetypes)):
+    for j in range(0, len(filterDescriptions)):
+        fileName = "Tests/Speed/Small/SmallTest.pq"
+        inFile = SSFile.factory(fileName)
+        outFile = SSFile.factory("Tests/Speed/Output/smallOutput"+str(j)+"." + extensions[i])
+        df = inFile._filter_data(columnList=smallColumns[j], query=smallFilters[j])
+        t1 = time.time()
+        outFile.write_to_file(df)
+        t2=time.time()
+        seconds = str(t2-t1)
+        line = "Write\t"+filetypes[i]+"\tSmall\t"+filterDescriptions[j]+"\t"+seconds+"\n"
+        outputLines.append(line)
+
+#Read medium file
+for i in range(0,len(filetypes)):
+    for j in range(0, len(filterDescriptions)):
+        fileName = "Tests/Speed/Medium/MediumTest." +extensions[i]
+        mediumFile = SSFile.factory(fileName)
+        t1=time.time()
+        df=mediumFile.read_input_to_pandas(columnList=mediumColumns[j])
+        t2=time.time()
+        seconds = str(t2-t1)
+        line = "Read\t"+filetypes[i]+"\tMedium\t"+filterDescriptions[j]+"\t"+seconds+"\n"
+        outputLines.append(line)
+        if mediumFilters[j] == None:
+            seconds = '0'
+        else:
+            t1 = time.time()
+            df = df.query(mediumFilters[j])
+            t2 = time.time()
+            seconds = str(t2 - t1)
+        line = "Filter\t" + filetypes[i] + "\tMedium\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+        filterLines.append(line)
+
+#Write medium file
+for i in range(0,len(filetypes)):
+    for j in range(0, len(filterDescriptions)):
+        fileName = "Tests/Speed/Medium/MediumTest.pq"
+        inFile = SSFile.factory(fileName)
+        outFile = SSFile.factory("Tests/Speed/Output/MediumOutput"+str(j)+"." + extensions[i])
+        df = inFile._filter_data(columnList=mediumColumns[j], query=mediumFilters[j])
+        t1 = time.time()
+        outFile.write_to_file(df)
+        t2=time.time()
+        seconds = str(t2-t1)
+        line = "Write\t"+filetypes[i]+"\tMedium\t"+filterDescriptions[j]+"\t"+seconds+"\n"
+        outputLines.append(line)
+
+#Read METABRIC file
+for i in range(0,len(filetypes)):
+    if filetypes[i]!='Excel' and filetypes[i]!='JSON' and filetypes[i]!='Stata':
+        for j in range(0, len(filterDescriptions)):
+            print("Reading METABRIC from " + filetypes[i] +": " +str(j))
+            fileName = "Tests/Speed/METABRIC/metabric." +extensions[i]
+            metabricFile = SSFile.factory(fileName)
+            t1=time.time()
+            df=metabricFile.read_input_to_pandas(columnList=metabricColumns[j])
+            t2=time.time()
+            seconds = str(t2-t1)
+            line = "Read\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
+            outputLines.append(line)
+            if metabricFilters[j] == None:
+                seconds = '0'
+            else:
+                t1 = time.time()
+                df = df.query(metabricFilters[j])
+                t2 = time.time()
+                seconds = str(t2 - t1)
+            line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+            filterLines.append(line)
+
+#Write METABRIC file
+for i in range(0,len(filetypes)):
+    if filetypes[i]!='Excel' and filetypes[i]!='JSON' and filetypes[i]!='Stata':
+        for j in range(0, len(filterDescriptions)):
+            print("Writing METABRIC to " + filetypes[i] + ": " +str(j))
+            fileName = "Tests/Speed/METABRIC/metabric.pq"
+            inFile = SSFile.factory(fileName)
+            outFile = SSFile.factory("Tests/Speed/Output/METABRICOutput"+str(j)+"." + extensions[i])
+            df = inFile._filter_data(columnList=metabricColumns[j], query=metabricFilters[j])
+            t1 = time.time()
+            outFile.write_to_file(df)
+            t2=time.time()
+            seconds = str(t2-t1)
+            line = "Write\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
+            outputLines.append(line)
 
 #Read Tall file
 for i in range(0,len(filetypes)):

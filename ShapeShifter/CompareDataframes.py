@@ -38,10 +38,11 @@ try:
             temp2=df2.iloc[i,j]
             if temp!=temp2:
                 print(f1 + " and " + f2 + ": FAIL: Values differ at row " +str(df1.index[i]) + " and column \'"+str(df1.columns[j])+"\'")
-                print(f1 + " value: " + str(temp))
-                print(f2 + " value: " + str(temp2))
+                print("\t"+f1 + " value: " + str(temp))
+                print("\t"+f2 + " value: " + str(temp2))
                 sys.exit()
-
+    
+    print(f1 + " and " +f2 + ": PASS")
 
     # if df1.equals(df2):
     #     print(f1 + " and " +f2+ ": PASS")

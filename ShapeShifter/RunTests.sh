@@ -11,6 +11,7 @@ fileNames=("NoChange" "SimpleTranspose" "FloatFilter" "IntFilter" "DiscreteFilte
 filterList=("" "-t" "-f \"float1 > 9.1\"" "-f \"int2 <= 12\"" "-f \"discrete1 = hot\"" "-f \"discrete1 = hot medium\"" "-f \"bool1 = True\"" "-f \"Sample = A\"" "-f \"Sample = A\" \"float1 < 2\" \"int1 > 3\" \"discrete2 = blue\" \"bool1 = True\"" "-f \"float1 < 8\" -c int1" "-f \"float1 < 8\" -c int1 discrete1 bool1 float2" "-f \"float1 < 8\" -a")
 
 extensions=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "html" "db" "arff" "gct")
+extensions2=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
 
 #echo for loop!
 #for i in ${!fileNames[*]}; do
@@ -64,10 +65,13 @@ do
 done
 
 echo Comparing other file type output with key...
-for i in "${extensions[@]}"
+for i in "${extensions2[@]}"
 do
 	python3 CompareDataframes.py $keyDir2/MultiFilter.tsv $outputDir2/MultiFilter.$i
 done
 
-
-
+echo Testing reading from gzipped files...
+for i in "${extensions2[@]}"
+do
+	python3 CompareDataframes.py $inputFile1 Tests/InputData/GzippedInput/gzipped.$i.gz
+done

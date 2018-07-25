@@ -32,15 +32,18 @@ for i in range(0,len(filetypes)):
         seconds = str(t2-t1)
         line = "Read\t"+filetypes[i]+"\tSmall\t"+filterDescriptions[j]+"\t"+seconds+"\n"
         outputLines.append(line)
+        printFilterLine=True
         if smallFilters[j]==None:
-            seconds='0'
+            #print NA instead
+            printFilterLine = False
         else:
             t1 = time.time()
             df = df.query(smallFilters[j])
             t2 = time.time()
             seconds = str(t2 - t1)
-        line = "Filter\t" + filetypes[i] + "\tSmall\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-        filterLines.append(line)
+        if printFilterLine:
+            line = "Filter\t" + filetypes[i] + "\tSmall\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+            filterLines.append(line)
 
 #Write small file
 for i in range(0,len(filetypes)):
@@ -67,15 +70,17 @@ for i in range(0,len(filetypes)):
         seconds = str(t2-t1)
         line = "Read\t"+filetypes[i]+"\tMedium\t"+filterDescriptions[j]+"\t"+seconds+"\n"
         outputLines.append(line)
+        printFilterLine = True
         if mediumFilters[j] == None:
-            seconds = '0'
+            printFilterLine = False
         else:
             t1 = time.time()
             df = df.query(mediumFilters[j])
             t2 = time.time()
             seconds = str(t2 - t1)
-        line = "Filter\t" + filetypes[i] + "\tMedium\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-        filterLines.append(line)
+        if printFilterLine:
+            line = "Filter\t" + filetypes[i] + "\tMedium\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+            filterLines.append(line)
 
 #Write medium file
 for i in range(0,len(filetypes)):
@@ -104,18 +109,21 @@ for i in range(0,len(filetypes)):
             seconds = str(t2-t1)
             line = "Read\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
             outputLines.append(line)
+            printFilterLine = True
             if metabricFilters[j] == None:
-                seconds = '0'
+                printFilterLine = False
             else:
                 t1 = time.time()
                 df = df.query(metabricFilters[j])
                 t2 = time.time()
                 seconds = str(t2 - t1)
-            line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-            filterLines.append(line)
+            if printFilterLine:
+                line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+                filterLines.append(line)
 
 #Write METABRIC file
 for i in range(0,len(filetypes)):
+    #put in row for every case explaining why the results aren't there: either super_slow or technical
     if filetypes[i]!='Excel' and filetypes[i]!='JSON' and filetypes[i]!='Stata':
         for j in range(0, len(filterDescriptions)):
             print("Writing METABRIC to " + filetypes[i] + ": " +str(j))
@@ -141,15 +149,17 @@ for i in range(0,len(filetypes)):
         seconds = str(t2-t1)
         line = "Read\t"+filetypes[i]+"\tTall\t"+filterDescriptions[j]+"\t"+seconds+"\n"
         outputLines.append(line)
+        printFilterLine = True
         if tallFilters[j] == None:
-            seconds = '0'
+            printFilterLine = False
         else:
             t1 = time.time()
             df = df.query(tallFilters[j])
             t2 = time.time()
             seconds = str(t2 - t1)
-        line = "Filter\t" + filetypes[i] + "\tTall\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-        filterLines.append(line)
+        if printFilterLine:
+            line = "Filter\t" + filetypes[i] + "\tTall\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+            filterLines.append(line)
 
 #Write Tall file
 for i in range(0,len(filetypes)):

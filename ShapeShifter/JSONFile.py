@@ -8,6 +8,7 @@ class JSONFile(SSFile):
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         df = pd.read_json(self.filePath)
         df = df.reset_index()
+        #todo: name the index column "Sample" instead of "index" and give a warning indicating that happened
         columns=columnList.copy()
         if len(columns) > 0:
             columns[columns.index(indexCol)] = 'index'

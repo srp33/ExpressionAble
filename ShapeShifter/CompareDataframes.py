@@ -3,20 +3,11 @@ import sys
 import ShapeShifter
 
 
-def compareDataframes(df1,df2):
-    if len(df1.index) != len(df2.index) or len(df1.columns) != len(df2.columns):
-        print("FAIL: dimensions differ")
-        return
+def standardizeNullValue(x):
+    if x==None or x=='None' or x=='':
+        x==None
+    return x
 
-    for i in range(0,len(df1.index)):
-        for j in range(0, len(df1.columns)):
-            temp=df1.iloc[i,j]
-            temp2=df2.iloc[i,j]
-            if temp!=temp2:
-                print("FAIL: Values differ at row " +str(df1.index[i]) + " and column \'"+str(df1.columns[j])+"\'")
-                print("File 1 value: " + str(temp))
-                print("File 2 value: " + str(temp2))
-                return
 
 f1 = sys.argv[1]
 f2 = sys.argv[2]
@@ -36,6 +27,8 @@ try:
         for j in range(0, len(df1.columns)):
             temp=df1.iloc[i,j]
             temp2=df2.iloc[i,j]
+            temp=standardizeNullValue(temp)
+            temp2=standardizeNullValue(temp2)
             if temp!=temp2:
                 print(f1 + " and " + f2 + ": FAIL: Values differ at row " +str(df1.index[i]) + " and column \'"+str(df1.columns[j])+"\'")
                 print("\t"+f1 + " value: " + str(temp))

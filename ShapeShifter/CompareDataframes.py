@@ -4,8 +4,8 @@ import ShapeShifter
 
 
 def standardizeNullValue(x):
-    if x==None or x=='None' or x=='':
-        x==None
+    if x==None or x=='None' or x=='' or x=='nan' or x=='NaN':
+        x=None
     return x
 
 

@@ -1,10 +1,12 @@
+import math
 import sys
+from numbers import Number
 
 import ShapeShifter
 
 
 def standardizeNullValue(x):
-    if x==None or x=='None' or x=='' or x=='nan' or x=='NaN':
+    if x==None or x=='None' or x=='' or x=='nan' or x=='NaN' or (isinstance(x, Number) and math.isnan(x)):
         x=None
     return x
 

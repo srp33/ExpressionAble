@@ -36,12 +36,12 @@ class StataFile(SSFile):
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
         # Sometimes stata interprets columns as 'object' type which is no good (sometimes). This code may fix it?
         # However, as a result, boolean values are now converted to 1s and 0s
-        #todo: print a warning about converting booleans to 1's and 0's
         type_pref = [int, float, str]
         for colname in list(df.select_dtypes(include=['object']).columns):
             for t in type_pref:
                 try:
                     df[colname] = df[colname].astype(t)
+                    print("Warning: True/False values may have been converted to 1/0 in output")
                 except (ValueError, TypeError) as e:
                     pass
 

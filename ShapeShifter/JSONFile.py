@@ -13,6 +13,7 @@ class JSONFile(SSFile):
         if len(columns) > 0:
             columns[columns.index(indexCol)] = 'index'
             df = df[columns]
+        df.rename(columns={'index':'Sample'}, inplace=True)
         return df
 
     def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,

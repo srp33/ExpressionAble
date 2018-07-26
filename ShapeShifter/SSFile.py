@@ -245,6 +245,10 @@ class SSFile:
                     # check for duplicates
                     if arg not in colList and arg != "True" and arg != "False":
                         colList.append(arg)
+        #check if any columns begin with a number
+        for col in colList:
+            if col[0].isdigit():
+                raise Exception("Error: columns whose names begin with numbers cannot be queried on")
         return colList
 
 

@@ -42,13 +42,12 @@ class SQLiteFile(SSFile):
         null = 'NA'
         includeIndex = False
         if len(df.columns) > 2000:
-            #print("Error: SQLite supports a maximum of 2,000 columns. Your data has " + str(len(df.columns)) + " columns.")
-            #return
-            #TODO: implement code below that doesn't raise sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) too many SQL variables
-            print("Warning: SQLite supports a maximum of 2,000 columns. Your data has " + str(
+            print("Warning: SQLite supports a maximum of 999 columns. Your data has " + str(
                 len(df.columns)) + " columns. Extra data has been truncated.")
-            df=df.iloc[0:200,0:10]
+            df=df.iloc[:,0:999]
+        chunksize = 999//len(df.columns)
         from sqlalchemy import create_engine
+
         if gzipResults:
             tempFile = tempfile.NamedTemporaryFile(delete=False)
             engine = create_engine('sqlite:///' + tempFile.name)
@@ -57,11 +56,12 @@ class SQLiteFile(SSFile):
             table = tableList[len(tableList) - 1]
             if not transpose:
                 df = df.set_index(indexCol) if indexCol in df.columns else df
-                df.to_sql(table, engine, index=True, if_exists="replace")
+
+                df.to_sql(table, engine, index=True, if_exists="replace", chunksize=chunksize)
             else:
                 df = df.set_index(indexCol) if indexCol in df.columns else df
                 df = df.transpose()
-                df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=100000)
+                df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=chunksize)
             tempFile.close()
             super()._gzip_results(tempFile.name, filePath)
 
@@ -72,29 +72,27 @@ class SQLiteFile(SSFile):
             table = tableList[len(tableList) - 1]
             if not transpose:
                 df = df.set_index(indexCol) if indexCol in df.columns else df
-                df.to_sql(table, engine, index=True, if_exists="replace")
+                df.to_sql(table, engine, if_exists='replace', chunksize=chunksize)
             else:
                 df = df.set_index(indexCol) if indexCol in df.columns else df
                 df = df.transpose()
-                df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=100000)
+                df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=chunksize)
 
     def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA'):
         filePath = self.filePath
         if len(df.columns) > 2000:
-            #print("Error: SQLite supports a maximum of 2,000 columns. Your data has " + str(len(df.columns)) + " columns.")
-            #return
-            #TODO: implement code below that doesn't raise sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) too many SQL variables
-            print("Warning: SQLite supports a maximum of 2,000 columns. Your data has " + str(
+            print("Warning: SQLite supports a maximum of 999 columns. Your data has " + str(
                 len(df.columns)) + " columns. Extra data has been truncated.")
-            df=df.iloc[:,0:700]
+            df=df.iloc[:,0:999]
         from sqlalchemy import create_engine
+        chunksize = 999 // len(df.columns)
         if gzipResults:
             tempFile= tempfile.NamedTemporaryFile(delete=False)
             engine = create_engine('sqlite:///' + tempFile.name)
             table = filePath.split('.')[0]
             tableList = table.split('/')
             table = tableList[len(tableList) - 1]
-            df.to_sql(table,engine, index=True, if_exists="replace")
+            df.to_sql(table,engine, index=True, if_exists="replace", chunksize=chunksize)
             tempFile.close()
             super()._gzip_results(tempFile.name, filePath)
         else:
@@ -102,6 +100,6 @@ class SQLiteFile(SSFile):
             table = filePath.split('.')[0]
             tableList = table.split('/')
             table = tableList[len(tableList) - 1]
-            df.to_sql(table, engine, index=True, if_exists="replace")
+            df.to_sql(table, engine, index=True, if_exists="replace", chunksize=chunksize)
 
 import gzip

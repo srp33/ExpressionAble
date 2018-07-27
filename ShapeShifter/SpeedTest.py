@@ -114,11 +114,21 @@ for i in range(0,len(filetypes)):
                 seconds = str(t2 - t1)
             line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + seconds + "\n"
             filterLines.append(line)
+    else:
+        for j in range(0, len(filterDescriptions)):
+            if filetypes[i]=='JSON':
+                reason = 'NA_super_slow'
+            else:
+                reason = 'NA_technical'
+            line = "Read\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + reason + "\n"
+            outputLines.append(line)
+            line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + reason + "\n"
+            filterLines.append(line)
 
 #Write METABRIC file
 for i in range(0,len(filetypes)):
     #put in row for every case explaining why the results aren't there: either super_slow or technical
-    if filetypes[i]!='Excel' and filetypes[i]!='JSON' and filetypes[i]!='Stata' and filetypes!='SQLite':
+    if filetypes[i]!='Excel' and filetypes[i]!='JSON' and filetypes[i]!='Stata' and filetypes[i]!='SQLite':
         for j in range(0, len(filterDescriptions)):
             print("Writing METABRIC to " + filetypes[i] + ": " +str(j))
             fileName = "Tests/Speed/METABRIC/metabric.pq"

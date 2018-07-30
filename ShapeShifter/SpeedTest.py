@@ -5,7 +5,7 @@ from SSFile import SSFile
 #add tests for reading the whole file and a tall data set (10 cols, 1 million rows)
 #later, support open science framework for storing large files
 #seperate filter logic for timing
-#currently excluding ARFF, SQLite (db) and HTML. We do not test Excel and Stata on METABRIC
+#currently excluding ARFF and HTML. We do not test Excel and Stata on METABRIC
 filetypes = ['Parquet', 'CSV','Excel','GCT','HDF5','JSON','MsgPack','Pickle','SQLite', 'Stata','TSV']
 extensions=['pq','csv','xlsx','gct','hdf','json','mp','pkl','db', 'dta','tsv']
 filterDescriptions=['read_whole_file','1_categorical','1_numeric','1_of_each','2_categorical','2_numeric','2_of_each']
@@ -147,7 +147,7 @@ for i in range(0,len(filetypes)):
                 line = "Write\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+"NA_super_slow"+"\n"
             else:
                 line = "Write\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + "NA_technical" + "\n"
-
+            filterLines.append(line)
 #Read Tall file
 for i in range(0,len(filetypes)):
     for j in range(0, len(filterDescriptions)):

@@ -21,7 +21,7 @@ class ShapeShifter:
         :param outFilePath: Name of the file that results will be saved to
         :param outFileType: string indicating what file format results will be saved to
         :param filters: string representing the query or filter to apply to the data set
-        :param columns: list of columns to include in the output. If blank, all columns will be included.
+        :param columns: list of columns to include in the output. If blank and no filter is specified, all columns will be included.
         :param transpose: boolean when, if True, index and columns will be transposed in the output file
         :param includeAllColumns: boolean indicating whether to include all columns in the output. If True, overrides columnList
         :param gzipResults: boolean indicating whether the resulting file will be gzipped

@@ -102,10 +102,29 @@ def __determine_extension(fileName):
 ```
 
 ## Running the tests
+In order to determine whether your file class properly works with ShapeShifter, it will need to pass a test that reads your data and performs
+a filter on various data types before exporting the results. It will then need to pass a test that verifies that gzipped files of your type can be properly
+read as well. To use the testing scripts to perform such tests, you will first need to create a file of your type that is equivalent to
+[this TSV file](https://github.com/srp33/ShapeShifter/blob/master/ShapeShifter/Tests/InputData/UnitTest.tsv). This preferably should be done
+by hand to ensure accuracy. You will also need to provide a gzipped version of this file.
+Once you have your file ready, use ShapeShifter or the ParseArgs command-line tool to perform the following filter and produce an output file:
+```python
+#Example for using ShapeShifter to produce the output file, if I were testing ARFF format
+your_shapeshifter = ShapeShifter('your_unit_test.arff')
+your_shapeshifter.export_filter_results(outFilePath='results.arff', filters="Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True")
+
+```
+```bash
+#Example for using the ParseArgs command-line tool to produce the output file, if I were testing ARFF format
+python3 ParseArgs.py your_unit_test.arff results.arff -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
+```
+
 Point them to my scripts that run tests, explain how they can run them, and tell them what type of things need to be tested.
 Explain how to ensure that my scripts perform tests on their file type. They will probably need to create a test file.
 Explain how to commit their code to a branch and make a pull request. Use WishBuilder instructions as an example
 Explain how to run the automated tests for this system
+
+[Link to unit test TSV file](https://github.com/srp33/ShapeShifter/blob/master/ShapeShifter/Tests/InputData/UnitTest.tsv)
 
 ### Break down into end to end tests
 

@@ -1,4 +1,3 @@
-import os
 import tempfile
 
 import pandas as pd
@@ -25,8 +24,8 @@ class SQLiteFile(SSFile):
             query = "SELECT " + ", ".join(columnList) + " FROM " + table
 
         df = pd.read_sql(query, engine)
-        if self.isGzipped:
-            os.remove(filePath)
+        # if self.isGzipped:
+        #     os.remove(filePath)
         return df
 
     def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,

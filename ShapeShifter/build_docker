@@ -1,0 +1,20 @@
+#!/bin/bash
+
+tmpDir=/tmp/buildSS
+
+mkdir -p $tmpDir
+rm -rf $tmpDir/*
+
+cp Dockerfile $tmpDir/
+cp RunTests.sh $tmpDir/
+cp VERSION $tmpDir/
+
+cd $tmpDir
+
+docker build -t srp33/shapeshifter:version$(cat VERSION) .
+ 
+mkdir TestOutput
+
+docker run -i --rm -v $(pwd)/TestOutput:/TestOutput  srp33/shapeshifter:version$(cat VERSION) /RunTests.sh
+
+cd -

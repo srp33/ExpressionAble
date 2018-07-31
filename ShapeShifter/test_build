@@ -1,5 +1,0 @@
-#!/bin/bash
-
-version=$(cat VERSION)
-
-sudo docker build -t srp33/ShapeShifter:version${version} .

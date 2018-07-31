@@ -2,7 +2,8 @@
 
 Currently, ShapeShifter supports working with files in the following formats: CSV, TSV, JSON, Excel, HDF5, Parquet, MsgPack, Stata, Pickle, HTML, SQLite, ARFF, and GCT. This file explains what steps must be taken to expand ShapeShifter to work with other types of files.
 
-
+## Create your own branch of ShapeShifter
+.......
 ## Adding a file type to ShapeShifter
 
 All ShapeShifter-supported file types are associated with a class that inherits from SSFile.SSFile. 
@@ -67,7 +68,8 @@ def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], 
 ```
 This function uses 'read_input_to_pandas' to read 'inputSSFile' into a Pandas data frame, preps the data by filtering and transposing, then using 'write_to_file' to export the filtered data.
 
-Most likely, all of the necessary work in this function can be performed by SSFile._prep_for_export, which can be called like this, and then exported:
+Most likely, all of the necessary work in this function can be performed by SSFile._prep_for_export, which can be called like this, and then exported. Unless your file type has
+special behavior when transposing, your code may very well be exactly what is below:
 
 ```python
 def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
@@ -118,15 +120,36 @@ your_shapeshifter.export_filter_results(outFilePath='results.arff', filters="Sam
 #Example for using the ParseArgs command-line tool to produce the output file, if I were testing ARFF format
 python3 ParseArgs.py your_unit_test.arff results.arff -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
 ```
+Now you can use the CompareDataframes.py script to check whether or not your result file is correct. To do so, I would execute the following program, putting your result file and the 
+key file as the arguments on the command line:
+```bash
+python3 CompareDataframes.py results.arff Tests/OutputData/Parquet1ToOtherFormatsKey/MultiFilter.tsv
+```
+The script will output if the test passed, or why it failed.
 
-Point them to my scripts that run tests, explain how they can run them, and tell them what type of things need to be tested.
-Explain how to ensure that my scripts perform tests on their file type. They will probably need to create a test file.
-Explain how to commit their code to a branch and make a pull request. Use WishBuilder instructions as an example
-Explain how to run the automated tests for this system
+The second test is performed in a similar manner, except it compares your gzipped file against against the full unit test file:
 
-[Link to unit test TSV file](https://github.com/srp33/ShapeShifter/blob/master/ShapeShifter/Tests/InputData/UnitTest.tsv)
+```bash
+python3 CompareDataframes.py gzipped.arff.gz Tests/InputData/UnitTest.tsv
+```
+If these tests pass, congratulations! Now they must be added into the testing suite which will be run every time a commit is made.
+First, you must add your gzipped file to the proper location in the Tests folder: Tests/InputData/GzippedInput. In order for the test to work,
+your file MUST be named 'gzipped.arff.gz', substituting 'arff' for your specific file extension.
+Then you must make two small additions to the testing script 'RunTests.sh'. Near the top of the file is a list named 'extensions' which lists the file extensions being tested.
+Add your file extension, in quotes, to the list. Finally, you must add a line to the section of code indicated by the comment, "#exporting queries to other file types". 
+If the file type I were adding were ARFF, whose extension is .arff, I would add the following line of code to the script:
+```bash
+python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.arff -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
+``` 
+Otherwise, replace the '.arff' extension with the extension of your file type.
 
-### Break down into end to end tests
+Now that your file type is tested with all the others, you can verify that your code has been successfully integrated into ShapeShifter by running the test script:
+```bash
+bash RunTests.sh
+```
+If all the tests pass, you are ready to submit a pull request and officially integrate your code into ShapeShifter!
+
+## Submitting a pull request
 
 Explain what these tests test and why
 

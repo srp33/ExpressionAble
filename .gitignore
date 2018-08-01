@@ -1,5 +1,9 @@
 ParquetData/
 TsvData/
+BigData/
+METABRIC/
+Output/
+Tall/
 Parquet1ToTsv/
 Parquet1ToOtherFormats/
 argsExample.py

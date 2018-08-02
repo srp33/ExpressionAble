@@ -8,9 +8,11 @@ import ShapeShifter
 def standardizeNullValue(x):
     if x==None or x=='None' or x=='' or x=='nan' or x=='NaN' or (isinstance(x, Number) and math.isnan(x)):
         x=None
+
+    if isinstance(x,Number) and x>0.3 and x<0.30001:
+        x=0.3
+
     return x
-
-
 f1 = sys.argv[1]
 f2 = sys.argv[2]
 

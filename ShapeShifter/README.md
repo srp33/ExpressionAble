@@ -13,10 +13,10 @@ Or, if you have previously cloned the ShapeShifter git repository, make sure it 
 ```bash
 git pull origin master
 ```
-Create a new branch on your copy of the git repository (see below). Replace `<new-branch-name>` with the name of the file
+Create a new branch on your copy of the git repository (see below). Replace `new-branch-name` with the name of the file
 type you will be implementing:
 ```bash
-git checkout -b <new-branch-name>
+git checkout -b new-branch-name
 ```
 Now you are ready to use ShapeShifter code and begin work on your file type!
 
@@ -46,19 +46,20 @@ def read_input_to_pandas(self, columnList=[], indexCol="Sample")
 ```
 This function must provide means for reading in your desired file type stored at the location `self.filePath`. The file may be gzipped, which can be checked 
 using `self.isGzipped`. One way to read in a gzipped file is to temporarily unzip it using `SSFile._gunzip_to_temp_file()`
-and then delete the temporary file. If I were reading from an HDF5 file, the code might look like this:
+and then delete the temporary file. If I were reading from an ARFF file, and I had written a function `arffToPandas(filePath)` that takes an ARFF file
+and puts it in a Pandas data frame, the code might look like the example below. In your code, you would replace `arffToPandas`
+with a function or some code that reads your file into a Pandas data frame:
 
 ```python
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if self.isGzipped:
             tempFile = super()._gunzip_to_temp_file()
             #read the unzipped tempfile into a dataframe
-            df=pd.read_hdf(path_or_buf = tempFile.name)
+            df = arffToPandas(tempFile.name)
             #delete the tempfile
             os.remove(tempFile.name)
         else:
-            df = pd.read_hdf(path_or_buf = self.filePath)
-        df = df.reset_index()
+            df = arffToPandas(self.filePath)
         #reduce the dataframe to only the requested columns
         if len(columnList) > 0:
             df = df[columnList]
@@ -76,7 +77,8 @@ This function must provide means for writing data stored in a Pandas data frame 
 If gzipResults is True, the file created should be gzipped. One way to do this is to export the file to a temporary file, and then gzip that file. 
 To do this, you can create a `tempfile.NamedTemporaryFile(delete=False)`, write your data frame to that file path, close the temporary file, and then
 use `SSFile._gzip_results()` to gzip that temporary file to your desired file path. 
-If I were writing to a MsgPack file, the code for this function might look like this:
+If I were writing to a MsgPack file, the code for this function might look like the example below. In your code, you would
+replace `df.to_msgpack` with a function or code you wrote that writes your data frame to your file type:
 ```python
 import tempfile
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
@@ -180,12 +182,12 @@ If all the tests pass, you are ready to submit a pull request and officially int
 
 ## Submitting a pull request
 Add, commit, and push your changes to the branch that you created earlier. 
-Replace <message> with a brief messages that describes the work you have done. 
-Replace <new-branch-name> with the name of the branch you created previously:
+Replace `message` with a brief messages that describes the work you have done. 
+Replace `new-branch-name` with the name of the branch you created previously:
 ```bash
 git add --all
-git commit -m "<message>"
-git push origin <new-branch-name>
+git commit -m "message"
+git push origin new-branch-name
 ```
 Go [here](https://github.com/srp33/ShapeShifter/compare?expand=1) to create a GitHub pull request. Put "master" as the base branch 
 and your new branch as the compare branch. Click on "Create pull request". We will then check to make sure your code is working properly.

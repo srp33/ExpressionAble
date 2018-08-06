@@ -44,7 +44,8 @@ to a file. `export_filter_results` uses the two previously-mentioned functions t
 ```python
 def read_input_to_pandas(self, columnList=[], indexCol="Sample")
 ```
-This function must provide means for reading in your desired file type stored at the location `self.filePath`. The file may be gzipped, which can be checked 
+This function must provide means for reading your desired file type stored at the location `self.filePath` into a Pandas data frame. 
+This function must return a Pandas data frame that contains the information stored in the file. The file may be gzipped, which can be checked 
 using `self.isGzipped`. One way to read in a gzipped file is to temporarily unzip it using `SSFile._gunzip_to_temp_file()`
 and then delete the temporary file. If I were reading from an ARFF file, and I had written a function `arffToPandas(filePath)` that takes an ARFF file
 and puts it in a Pandas data frame, the code might look like the example below. In your code, you would replace `arffToPandas`
@@ -96,7 +97,7 @@ want Pandas' default index stored in your file. `null` is an optional parameter 
 ```python
 def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
 ```
-This function uses `read_input_to_pandas` to read `inputSSFile` into a Pandas data frame, preps the data by filtering and transposing, then using `write_to_file` to export the filtered data.
+This function uses `read_input_to_pandas` to read `inputSSFile` into a Pandas data frame, preps the data by filtering and transposing, and then uses your `write_to_file` to export the filtered data.
 
 Most likely, all of the necessary work in this function can be performed by `SSFile._prep_for_export()`, which can be called like as shown below, and then exported. Unless your file type has
 special behavior when transposing, your code may very well be exactly the following:

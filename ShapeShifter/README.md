@@ -3,6 +3,12 @@
 Currently, ShapeShifter supports working with files in the following formats: CSV, TSV, JSON, Excel, HDF5, Parquet, MsgPack, Stata, Pickle, HTML, SQLite, ARFF, and GCT. This file explains what steps must be taken to expand ShapeShifter to work with other types of files.
 
 ## Getting Started
+If you are unfamiliar with object-oriented programming, classes, and inheritance in python, your time would be well spent
+working through a few tutorials before you get going. I personally recommend [this tutorial](https://www.tutorialspoint.com/python/python_classes_objects.htm)
+and [these interactive exercises](https://www.learnpython.org/en/Classes_and_Objects) to help you out.
+Since you will need to implement your own classes that inherit from and use preexisting code, this README will make much more sense
+if you are comfortable with those principles.
+
 First, you will need to clone the ShapeShifter git repository to have access to its files:
 ```bash
 git clone https://github.com/srp33/ShapeShifter.git
@@ -30,17 +36,22 @@ from SSFile import SSFile
 class ARFFFile(SSFile):
     ...
 ``` 
-At a minimum, such a class must implement and override the following three SSFile functions:
+If I were implementing support for reading in a file of my chosen type to ShapeShifter, I would at a minimum
+override and implement this function:
 
 ```python
 def read_input_to_pandas(self, columnList=[], indexCol="Sample")
-
+```
+If I were implementing support for writing/exporting data to a file of my chosen type from ShapeShifter, I would
+at a minimum override and implement these functions:
+```python
 def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA')
 
 def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
 ```
 The two most significant functions are reading a file into a Pandas data frame and writing the contents of a Pandas data frame
 to a file. `export_filter_results` uses the two previously-mentioned functions to allow ShapeShifter to filter or alter the data set.
+## Function Details
 ```python
 def read_input_to_pandas(self, columnList=[], indexCol="Sample")
 ```
@@ -55,7 +66,7 @@ with a function or some code that reads your file into a Pandas data frame:
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if self.isGzipped:
             tempFile = super()._gunzip_to_temp_file()
-            #read the unzipped tempfile into a dataframe
+            #read the unzipped tempfile into a dataframe using YOUR function
             df = arffToPandas(tempFile.name)
             #delete the tempfile
             os.remove(tempFile.name)
@@ -85,7 +96,7 @@ import tempfile
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
         if gzipResults:
             tempFile =tempfile.NamedTemporaryFile(delete=False)
-            #write the dataframe to MsgPack at file location tempFile.name
+            #write the dataframe to MsgPack at file location tempFile.name using YOUR function
             df.to_msgpack(path = tempFile.name)
             tempFile.close()
             super()._gzip_results(tempFilePath = tempFile.name, outFilePath = self.filePath)
@@ -98,9 +109,11 @@ want Pandas' default index stored in your file. `null` is an optional parameter 
 def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
 ```
 This function uses `read_input_to_pandas` to read `inputSSFile` into a Pandas data frame, preps the data by filtering and transposing, and then uses your `write_to_file` to export the filtered data.
-
-Most likely, all of the necessary work in this function can be performed by `SSFile._prep_for_export()`, which can be called like as shown below, and then exported. Unless your file type has
-special behavior when transposing, your code may very well be exactly the following:
+If you are not supporting writing to your file type, then this function will not be necessary to write.
+Most likely, all of that necessary work in this function can be performed by `SSFile._prep_for_export()`, which can be called like as shown below, and then exported. 
+`_prep_for_export()` will take care of some dirty work like dealing with the filters and transposing data if necessary.
+Unless your file type has
+special behavior when transposing, your code will most likely be exactly the following:
 
 ```python
 def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
@@ -115,7 +128,8 @@ def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], 
 In addition to implementing the class for you file type, you must hook your file type's class into ShapeShifter so it can use it.
 You need to add a clause to `SSFile.factory()`
 that will be used to construct an file object of your type. The `type` parameter is a string that corresponds to
-the name of your file type. If such a string is given, you should then return a file object of your type with the given `filePath` and `type`. If I were adding support for a GCT file, my code would look like  this:
+the name of your file type. If such a string is given, you should then return a file object of your type with the given `filePath` and `type`. If I were adding support for a GCT file, my code would look like the example below.
+You sh:
 ```python
 def factory(filePath, type):
     if type.lower() ==......
@@ -136,11 +150,18 @@ def __determine_extension(fileName):
 ```
 
 ## Running the tests
-In order to determine whether your file class properly works with ShapeShifter, it will need to pass a test that reads your data and performs
-a filter on various data types before exporting the results. It will then need to pass a test that verifies that gzipped files of your type can be properly
-read as well. To use the testing scripts to perform such tests, you will first need to create a file of your type that is equivalent to
-[this TSV file](https://github.com/srp33/ShapeShifter/blob/master/ShapeShifter/Tests/InputData/UnitTest.tsv). This preferably should be done
-by hand to ensure accuracy. You will also need to provide a gzipped version of this file.
+In order to determine whether your file class properly works with ShapeShifter, it will need to pass tests
+that check if the `read_input_to_pandas` and `export_filter_results` work properly.
+If you are only supporting reading your file type into ShapeShifter, only follow instructions for "Tests for reading files".
+If you are only supporting exporting to your file type from ShapeShifter, only follow instructions for "Tests for writing to files" 
+
+
+ 
+### Tests for reading files
+First, create a file of your type that is equivalent to [this TSV file](https://github.com/srp33/ShapeShifter/blob/master/ShapeShifter/Tests/InputData/UnitTest.tsv). This preferably should be done
+by hand to ensure accuracy. This file must be named `input.tsv`, except you should replace the extension `tsv` with
+
+You will also need to provide a gzipped version of this file.
 Once you have your file ready, use ShapeShifter or the ParseArgs command-line tool to perform the following filter and produce an output file:
 ```python
 #Example for using ShapeShifter to produce the output file, if I were testing ARFF format

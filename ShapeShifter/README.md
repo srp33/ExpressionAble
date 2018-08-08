@@ -149,11 +149,12 @@ def __determine_extension(fileName):
             return 'parquet'
 ```
 
-## Running the tests
+## Adding Necessary Tests
 In order to determine whether your file class properly works with ShapeShifter, it will need to pass tests
 that check if the `read_input_to_pandas` and `write_to_file` work properly.
 If you are only supporting reading your file type into ShapeShifter, only follow instructions for "Tests for reading files".
-If you are only supporting exporting to your file type from ShapeShifter, only follow instructions for "Tests for writing to files" 
+If you are only supporting exporting to your file type from ShapeShifter, only follow instructions for "Tests for writing to files". 
+These tests will be run every time code is committed to GitHub to ensure that new code does not break previously-working code 
 
 
  
@@ -162,7 +163,21 @@ First, create a file of your type that is equivalent to [this TSV file](https://
 by hand to ensure accuracy. This file must be named `input.tsv`, except you should replace the extension `tsv` with the appropriate extension for
 your file type.
 
-You will also need to provide a gzipped version of this file.
+You will also need to provide a gzipped version of this same file. It must be named `gzipped.tsv.gz`, except you should replace the
+middle extension `tsv` with the appropriate extension for your file type.
+
+Now that you have the files created, they must be placed in the appropriate testing folder. Move your input file into the folder
+`Tests/InputData/InputToRead`. Move your gzipped file to `Tests/InputData/GzippedInput`.
+
+In order for the test script to check your files for accuracy, you must add a small item to the file `RunTests.sh`
+Near the top of the file is a list named `extensionsForReading` that lists all the file extensions for files being tested.
+add your file type's extension, in quotes, to the list. Now when the testing suite is run, it will include tests for reading
+your file and its gzipped version.
+
+### Tests for writing to files
+
+NOTE THIS IS UNFINISHED SORRY
+
 Once you have your file ready, use ShapeShifter or the ParseArgs command-line tool to perform the following filter and produce an output file:
 ```python
 #Example for using ShapeShifter to produce the output file, if I were testing ARFF format
@@ -190,10 +205,7 @@ If these tests pass, congratulations! Now they must be added into the testing su
 First, you must add your gzipped file to the proper location in the `Tests` folder: `Tests/InputData/GzippedInput/`. In order for the test to work,
 your file MUST be named `gzipped.arff.gz`, substituting 'arff' for your specific file extension.
 Then you must make two small additions to the testing script `RunTests.sh`. Near the top of the file is a list named `extensions` which lists the file extensions being tested.
-Add your file extension, in quotes, to the list. Finally, you must add a line to the section of code indicated by the comment `#exporting queries to other file types`. 
-If the file type I were adding were ARFF, whose extension is .arff, I would add the following line of code to the script:
-```bash
-python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.arff -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
+
 ``` 
 Otherwise, replace the '.arff' extension with the extension of your file type.
 

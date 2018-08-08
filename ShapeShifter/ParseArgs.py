@@ -170,6 +170,9 @@ def buildAllQueries(queryList, discreteQueryList, continuousQueryList):
 			print(query+": query is malformed")	
 
 #t1=time.time()
+import warnings
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 parser = argparse.ArgumentParser(description = "Import, filter, and transform data into a format of your choice!")
 
 parser.add_argument("input_file", help = "Data file to be imported, filtered, and/or transformed")

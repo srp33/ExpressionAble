@@ -1,25 +1,32 @@
 #!/bin/bash
 
+#set -euo pipefail
+
 inputFile1="Tests/InputData/InputParquet1.pq"
 outputDir1="Tests/OutputData/Parquet1ToTsv"
 outputDir2="Tests/OutputData/Parquet1ToOtherFormats"
 keyDir1="Tests/OutputData/Parquet1ToTsvKey"
 keyDir2="Tests/OutputData/Parquet1ToOtherFormatsKey"
+results=ssTestResults.txt
 
 fileNames=("NoChange" "SimpleTranspose" "FloatFilter" "IntFilter" "DiscreteFilter" "DiscreteDoubleFilter" "BooleanFilter" "SampleFilter" "MultiFilter" "ColumnsOnly" "FilterWithColumn" "FilterWithManyColumns" "FilterWithAllColumns" "NullFilter1" "NullFilter2" "SetIndex")
 
 filterList=("" "-t" "-f \"float1 > 9.1\"" "-f \"int2 <= 12\"" "-f \"discrete1 = hot\"" "-f \"discrete1 = hot medium\"" "-f \"bool1 = True\"" "-f \"Sample = A\"" "-f \"Sample = A\" \"float1 < 2\" \"int1 > 3\" \"discrete2 = blue\" \"bool1 = True\"" "-f \"float1 < 8\" -c int1" "-f \"float1 < 8\" -c int1 discrete1 bool1 float2" "-f \"float1 < 8\" -a")
 
 
-extensions=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
+extensionsForReading=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
+extensionsForWriting=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
 
 
 rm $outputDir1/*
 rm $outputDir2/*
 
+#redirect all output to a file
+rm -f $results
+
 #list of queries
 echo Building output files...
-python3 ParseArgs.py $inputFile1 $outputDir1/NoChange.tsv
+python3 ParseArgs.py $inputFile1 $outputDir1/NoChange.tsv #| grep -v "RuntimeWarning" | tee -a $results
 python3 ParseArgs.py $inputFile1 $outputDir1/SimpleTranspose.tsv -t
 python3 ParseArgs.py $inputFile1 $outputDir1/FloatFilter.tsv -f "float1 > 9.1"
 python3 ParseArgs.py $inputFile1 $outputDir1/IntFilter.tsv -f "int2 <= 12"
@@ -54,20 +61,34 @@ python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.gct -f "Sample == 'A' a
 
 
 #compare with key
-echo Comparing tsv output with key...
+echo Testing filters on TSV files...
 for i in "${fileNames[@]}"
 do
 	python3 CompareFiles.py $outputDir1/$i.tsv $keyDir1/$i.tsv
 done
 
-echo Comparing other file type output with key...
-for i in "${extensions[@]}"
+echo Testing exporting to all file types...
+for i in "${extensionsForWriting[@]}"
 do
 	python3 CompareDataframes.py $keyDir2/MultiFilter.tsv $outputDir2/MultiFilter.$i
 done
 
+#test reading basic files here
+echo Testing reading all file types to Pandas...
+for i in "${extensionsForReading[@]}"
+do
+	python3 CompareDataframes.py $inputFile1 Tests/InputData/InputToRead/input.$i
+done
+
 echo Testing reading from gzipped files...
-for i in "${extensions[@]}"
+for i in "${extensionsForReading[@]}"
 do
 	python3 CompareDataframes.py $inputFile1 Tests/InputData/GzippedInput/gzipped.$i.gz
 done
+
+#use script to check $results file for the word "FAIL"
+# if [[ "grep FAIL $results" != "" ]
+# then
+#    echo the error message
+#    exit 1
+#

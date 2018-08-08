@@ -8,13 +8,17 @@ rm -rf $tmpDir/*
 cp Dockerfile $tmpDir/
 cp RunTests.sh $tmpDir/
 cp VERSION $tmpDir/
-
+mkdir $tmpDir/Tests/
+cp -r Tests/InputData $tmpDir/Tests/
+cp -r Tests/OutputData $tmpDir/Tests/
+cp *.py $tmpDir
 cd $tmpDir
 
 docker build -t srp33/shapeshifter:version$(cat VERSION) .
- 
-mkdir TestOutput
 
-docker run -i --rm -v $(pwd)/TestOutput:/TestOutput  srp33/shapeshifter:version$(cat VERSION) /RunTests.sh
+docker run -i --rm srp33/shapeshifter:version$(cat VERSION) /RunTests.sh
+#docker run -i --rm srp33/shapeshifter:version$(cat VERSION) /bin/bash
 
 cd -
+rm -rf $tmpDir/
+

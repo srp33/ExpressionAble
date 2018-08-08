@@ -151,7 +151,7 @@ def __determine_extension(fileName):
 
 ## Running the tests
 In order to determine whether your file class properly works with ShapeShifter, it will need to pass tests
-that check if the `read_input_to_pandas` and `export_filter_results` work properly.
+that check if the `read_input_to_pandas` and `write_to_file` work properly.
 If you are only supporting reading your file type into ShapeShifter, only follow instructions for "Tests for reading files".
 If you are only supporting exporting to your file type from ShapeShifter, only follow instructions for "Tests for writing to files" 
 
@@ -159,7 +159,8 @@ If you are only supporting exporting to your file type from ShapeShifter, only f
  
 ### Tests for reading files
 First, create a file of your type that is equivalent to [this TSV file](https://github.com/srp33/ShapeShifter/blob/master/ShapeShifter/Tests/InputData/UnitTest.tsv). This preferably should be done
-by hand to ensure accuracy. This file must be named `input.tsv`, except you should replace the extension `tsv` with
+by hand to ensure accuracy. This file must be named `input.tsv`, except you should replace the extension `tsv` with the appropriate extension for
+your file type.
 
 You will also need to provide a gzipped version of this file.
 Once you have your file ready, use ShapeShifter or the ParseArgs command-line tool to perform the following filter and produce an output file:

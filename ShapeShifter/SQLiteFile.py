@@ -77,7 +77,7 @@ class SQLiteFile(SSFile):
                 df = df.transpose()
                 df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=chunksize)
 
-    def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA'):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         filePath = self.filePath
         if len(df.columns) > 2000:
             print("Warning: SQLite supports a maximum of 999 columns. Your data has " + str(
@@ -85,20 +85,49 @@ class SQLiteFile(SSFile):
             df=df.iloc[:,0:999]
         from sqlalchemy import create_engine
         chunksize = 999 // len(df.columns)
+        # if gzipResults:
+        #     tempFile= tempfile.NamedTemporaryFile(delete=False)
+        #     engine = create_engine('sqlite:///' + tempFile.name)
+        #     table = filePath.split('.')[0]
+        #     tableList = table.split('/')
+        #     table = tableList[len(tableList) - 1]
+        #     df.to_sql(table,engine, index=True, if_exists="replace", chunksize=chunksize)
+        #     tempFile.close()
+        #     super()._gzip_results(tempFile.name, filePath)
+        # else:
+        #     engine = create_engine('sqlite:///' + super()._remove_gz(filePath))
+        #     table = filePath.split('.')[0]
+        #     tableList = table.split('/')
+        #     table = tableList[len(tableList) - 1]
+        #     df.to_sql(table, engine, index=True, if_exists="replace", chunksize=chunksize)
         if gzipResults:
-            tempFile= tempfile.NamedTemporaryFile(delete=False)
+            tempFile = tempfile.NamedTemporaryFile(delete=False)
             engine = create_engine('sqlite:///' + tempFile.name)
             table = filePath.split('.')[0]
             tableList = table.split('/')
             table = tableList[len(tableList) - 1]
-            df.to_sql(table,engine, index=True, if_exists="replace", chunksize=chunksize)
+            if not transpose:
+                df = df.set_index(indexCol) if indexCol in df.columns else df
+
+                df.to_sql(table, engine, index=True, if_exists="replace", chunksize=chunksize)
+            else:
+                df = df.set_index(indexCol) if indexCol in df.columns else df
+                df = df.transpose()
+                df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=chunksize)
             tempFile.close()
             super()._gzip_results(tempFile.name, filePath)
+
         else:
             engine = create_engine('sqlite:///' + super()._remove_gz(filePath))
             table = filePath.split('.')[0]
             tableList = table.split('/')
             table = tableList[len(tableList) - 1]
-            df.to_sql(table, engine, index=True, if_exists="replace", chunksize=chunksize)
+            if not transpose:
+                df = df.set_index(indexCol) if indexCol in df.columns else df
+                df.to_sql(table, engine, if_exists='replace', chunksize=chunksize)
+            else:
+                df = df.set_index(indexCol) if indexCol in df.columns else df
+                df = df.transpose()
+                df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=chunksize)
 
 import gzip

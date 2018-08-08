@@ -28,7 +28,7 @@ class GCTFile(SSFile):
                                                                         includeAllColumns, df, includeIndex, indexCol)
         self.write_to_file(df, gzipResults)
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         if gzipResults:
             tempFile = tempfile.NamedTemporaryFile(delete=False)
             toGCT(df, tempFile.name)

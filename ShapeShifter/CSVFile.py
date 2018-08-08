@@ -19,7 +19,7 @@ class CSVFile(SSFile):
                                                                         includeAllColumns, df, includeIndex, indexCol)
         self.write_to_file(df, gzipResults, includeIndex, null)
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         if gzipResults:
             self.filePath = super()._append_gz(self.filePath)
             df.to_csv(path_or_buf=self.filePath, na_rep=null, index=includeIndex, compression='gzip')

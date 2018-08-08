@@ -22,7 +22,7 @@ class HTMLFile(SSFile):
                                                                         includeAllColumns, df, includeIndex, indexCol)
         self.write_to_file(df, gzipResults, null=null)
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         html = df.to_html(na_rep=null, index=False)
         if gzipResults:
             html = html.encode()

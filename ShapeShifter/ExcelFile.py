@@ -28,7 +28,7 @@ class ExcelFile(SSFile):
                                                                         includeAllColumns, df, includeIndex, indexCol)
         self.write_to_file(df, gzipResults, includeIndex, null)
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         if len(df.columns) > 16384 or len(df.index) > 1048576:
             print(
                 "WARNING: Excel supports a maximum of 1,048,576 rows and 16,384 columns. The dimensions of your data are " + str(

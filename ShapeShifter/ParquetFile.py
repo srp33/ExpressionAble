@@ -34,7 +34,7 @@ class ParquetFile(SSFile):
                                                                         includeAllColumns, df, includeIndex, indexCol)
         self.write_to_file(df, gzipResults)
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         if gzipResults:
             df.to_parquet(super()._append_gz(self.filePath), compression='gzip')
         else:

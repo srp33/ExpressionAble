@@ -34,7 +34,12 @@ class SSFile:
         :param gzipResults: boolean indicating whether the resulting file will be gzipped
         :param indexCol: string name of the index column of the data set
         """
-        raise NotImplementedError("Writing to this file type is not currently supported.")
+        df = None
+        includeIndex = False
+        null = 'NA'
+        query, inputSSFile, df, includeIndex = self._prep_for_export(inputSSFile, columnList, query, transpose,
+                                                                        includeAllColumns, df, includeIndex, indexCol)
+        self.write_to_file(df, gzipResults, includeIndex, null)
 
     def _prep_for_export(self, inputSSFile, columnList, query, transpose, includeAllColumns, df, includeIndex,
                          indexCol):
@@ -137,9 +142,11 @@ class SSFile:
 
     __determine_extension = staticmethod(__determine_extension)
 
-    def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA'):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         """
         Writes a Pandas data frame to a file
+        :param transpose:
+        :param indexCol:
         :param df: Pandas data frame to be written to file
         :param gzipResults: boolean indicating whether the written file will be gzipped
         :param includeIndex: boolean indicating whether the index column should be written to the file

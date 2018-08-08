@@ -27,11 +27,12 @@ class HDF5File(SSFile):
         null = 'NA'
         query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, columnList, query, transpose,
                                                                         includeAllColumns, df, includeIndex, indexCol)
-        if not transpose:
-            df = df.set_index(indexCol) if indexCol in df.columns else df
+
         self.write_to_file(df, gzipResults)
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+        if not transpose:
+            df = df.set_index(indexCol) if indexCol in df.columns else df
         if gzipResults:
             tempFile = tempfile.NamedTemporaryFile(delete=False)
             df.to_hdf(tempFile.name, "group", mode='w')

@@ -33,7 +33,7 @@ class StataFile(SSFile):
 
         self.write_to_file(df, gzipResults)
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         # Sometimes stata interprets columns as 'object' type which is no good (sometimes). This code may fix it?
         # However, as a result, boolean values are now converted to 1s and 0s
         type_pref = [int, float, str]

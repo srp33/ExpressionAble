@@ -13,10 +13,11 @@ fileNames=("NoChange" "SimpleTranspose" "FloatFilter" "IntFilter" "DiscreteFilte
 
 filterList=("" "-t" "-f \"float1 > 9.1\"" "-f \"int2 <= 12\"" "-f \"discrete1 = hot\"" "-f \"discrete1 = hot medium\"" "-f \"bool1 = True\"" "-f \"Sample = A\"" "-f \"Sample = A\" \"float1 < 2\" \"int1 > 3\" \"discrete2 = blue\" \"bool1 = True\"" "-f \"float1 < 8\" -c int1" "-f \"float1 < 8\" -c int1 discrete1 bool1 float2" "-f \"float1 < 8\" -a")
 
-
+#When testing new file types, add your file type's extension to the appropriate list(s) below!
 extensionsForReading=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
 extensionsForWriting=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
 
+extensionsForFiltering=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
 
 rm $outputDir1/*
 rm $outputDir2/*
@@ -44,6 +45,7 @@ python3 ParseArgs.py $inputFile1 $outputDir1/NullFilter2.tsv -f "null1 ==None an
 python3 ParseArgs.py $inputFile1 $outputDir1/SetIndex.tsv -f "int1>5" -s bool1
 
 #exporting queries to other file types
+
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.csv -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.json -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True" 
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.xlsx -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True" 
@@ -68,7 +70,7 @@ do
 done
 
 echo Testing exporting to all file types...
-for i in "${extensionsForWriting[@]}"
+for i in "${extensionsForFiltering[@]}"
 do
 	python3 CompareDataframes.py $keyDir2/MultiFilter.tsv $outputDir2/MultiFilter.$i
 done

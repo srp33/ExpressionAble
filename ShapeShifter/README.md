@@ -43,14 +43,11 @@ override and implement this function:
 def read_input_to_pandas(self, columnList=[], indexCol="Sample")
 ```
 If I were implementing support for writing/exporting data to a file of my chosen type from ShapeShifter, I would
-at a minimum override and implement these functions:
+at a minimum override and implement this function:
 ```python
-def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA')
-
-def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
+def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False)
 ```
-The two most significant functions are reading a file into a Pandas data frame and writing the contents of a Pandas data frame
-to a file. `export_filter_results` uses the two previously-mentioned functions to allow ShapeShifter to filter or alter the data set.
+
 ## Function Details
 ```python
 def read_input_to_pandas(self, columnList=[], indexCol="Sample")
@@ -89,47 +86,41 @@ This function must provide means for writing data stored in a Pandas data frame 
 If gzipResults is True, the file created should be gzipped. One way to do this is to export the file to a temporary file, and then gzip that file. 
 To do this, you can create a `tempfile.NamedTemporaryFile(delete=False)`, write your data frame to that file path, close the temporary file, and then
 use `SSFile._gzip_results()` to gzip that temporary file to your desired file path. 
-If I were writing to a MsgPack file, the code for this function might look like the example below. In your code, you would
-replace `df.to_msgpack` with a function or code you wrote that writes your data frame to your file type:
+If I were writing to a GCT file, the code for this function might look like the example below. In your code, you would
+replace `toGCT()` with a function or code you wrote that writes your data frame to your file type:
 ```python
 import tempfile
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         if gzipResults:
-            tempFile =tempfile.NamedTemporaryFile(delete=False)
-            #write the dataframe to MsgPack at file location tempFile.name using YOUR function
-            df.to_msgpack(path = tempFile.name)
+            tempFile = tempfile.NamedTemporaryFile(delete=False)
+            toGCT(df, tempFile.name)
             tempFile.close()
-            super()._gzip_results(tempFilePath = tempFile.name, outFilePath = self.filePath)
+            super()._gzip_results(tempFile.name, self.filePath)
         else:
-            df.to_msgpack(self.filePath)
+            toGCT(df, self._remove_gz(self.filePath))
 ```
 `includeIndex` indicates whether or not the index column should be written to the file or not. Whether it should or not will depend on your own implementation and whether or not you
 want Pandas' default index stored in your file. `null` is an optional parameter which indicates how 'None' should be represented in your file.
-```python
-def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
-```
-This function uses `read_input_to_pandas` to read `inputSSFile` into a Pandas data frame, preps the data by filtering and transposing, and then uses your `write_to_file` to export the filtered data.
-If you are not supporting writing to your file type, then this function will not be necessary to write.
-Most likely, all of that necessary work in this function can be performed by `SSFile._prep_for_export()`, which can be called like as shown below, and then exported. 
-`_prep_for_export()` will take care of some dirty work like dealing with the filters and transposing data if necessary.
-Unless your file type has
-special behavior when transposing, your code will most likely be exactly the following:
+`indexCol` is the name of the column that should be the index in the data frame. `transpose` is a boolean indicating whether or not the 
+data frame had been previously transposed from its original state.
 
+It is worth noting that most Pandas data frames have a default index that numerically labels rows 1, 2, 3, and so on. Unless your specific format requires it,
+we do not want the default index exported to your file because the default index was not originally part of the data set.
+The general exception to this rule seems to be if the data has been transposed; then, the default index should be written.
+When writing to some file types, it may help to insert the following code at the beginning of the `write_to_file` function:
 ```python
-def export_filter_results(self, inputSSFile, gzippedInput=False, columnList=[], query=None, transpose=False, includeAllColumns=False, gzipResults=False, indexCol="Sample"):
-    df=None
-    includeIndex=False
-    query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, gzippedInput, columnList, query,
-                                                                        transpose, includeAllColumns, df, includeIndex,
-                                                                        indexCol)
-    self.write_to_file(df, gzipResults)
+if not transpose:
+    df = df.set_index(indexCol) if indexCol in df.columns else df
 ```
+This code replaces the data frame's default index with the column indicated by `indexCol`, assuming the data was not transposed.
+Doing this may make it easier to avoid writing the default index to your file. Whether or not you need to do this is dependent 
+on your specific implementation, but it is worth considering.
 ## Connecting Your File Type to ShapeShifter
 In addition to implementing the class for you file type, you must hook your file type's class into ShapeShifter so it can use it.
 You need to add a clause to `SSFile.factory()`
 that will be used to construct an file object of your type. The `type` parameter is a string that corresponds to
 the name of your file type. If such a string is given, you should then return a file object of your type with the given `filePath` and `type`. If I were adding support for a GCT file, my code would look like the example below.
-You sh:
+You should of course replace `'gct'` and `GCTFile.GCTFile()` with your extension and file constructor, respectively:
 ```python
 def factory(filePath, type):
     if type.lower() ==......
@@ -170,46 +161,19 @@ Now that you have the files created, they must be placed in the appropriate test
 `Tests/InputData/InputToRead`. Move your gzipped file to `Tests/InputData/GzippedInput`.
 
 In order for the test script to check your files for accuracy, you must add a small item to the file `RunTests.sh`
-Near the top of the file is a list named `extensionsForReading` that lists all the file extensions for files being tested.
+Near the top of the file is a list declaration for `extensionsForReading` that lists all the file extensions for file types being 
+tested for reading.
 add your file type's extension, in quotes, to the list. Now when the testing suite is run, it will include tests for reading
 your file and its gzipped version.
 
 ### Tests for writing to files
+THIS IS UNFINISHED, IGNORE FOR NOW
 
-NOTE THIS IS UNFINISHED SORRY
+The testing script `RunTests.sh` will perform tests on writing files, but you will make two small additions to that file
+for it to test your file type. Near the top of the file is a list declaration for `extensionsForWriting` that lists all the extensions
+for file types being tested for writing. You must add your file type's extension to this list
 
-Once you have your file ready, use ShapeShifter or the ParseArgs command-line tool to perform the following filter and produce an output file:
-```python
-#Example for using ShapeShifter to produce the output file, if I were testing ARFF format
-your_shapeshifter = ShapeShifter('your_unit_test.arff')
-your_shapeshifter.export_filter_results(outFilePath='results.arff', filters="Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True")
 
-```
-```bash
-#Example for using the ParseArgs command-line tool to produce the output file, if I were testing ARFF format
-python3 ParseArgs.py your_unit_test.arff results.arff -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
-```
-Now you can use the CompareDataframes.py script to check whether or not your result file is correct. To do so, I would execute the following program, putting your result file and the 
-key file as the arguments on the command line:
-```bash
-python3 CompareDataframes.py results.arff Tests/OutputData/Parquet1ToOtherFormatsKey/MultiFilter.tsv
-```
-The script will output if the test passed, or why it failed.
-
-The second test is performed in a similar manner, except it compares your gzipped file against against the full unit test file:
-
-```bash
-python3 CompareDataframes.py gzipped.arff.gz Tests/InputData/UnitTest.tsv
-```
-If these tests pass, congratulations! Now they must be added into the testing suite which will be run every time a commit is made.
-First, you must add your gzipped file to the proper location in the `Tests` folder: `Tests/InputData/GzippedInput/`. In order for the test to work,
-your file MUST be named `gzipped.arff.gz`, substituting 'arff' for your specific file extension.
-Then you must make two small additions to the testing script `RunTests.sh`. Near the top of the file is a list named `extensions` which lists the file extensions being tested.
-
-``` 
-Otherwise, replace the '.arff' extension with the extension of your file type.
-
-Now that your file type is tested with all the others, you can verify that your code has been successfully integrated into ShapeShifter by running the test script:
 ```bash
 bash RunTests.sh
 ```

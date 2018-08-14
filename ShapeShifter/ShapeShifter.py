@@ -86,7 +86,7 @@ class ShapeShifter:
             SSFileList.append(SSFile.SSFile.factory(file))
 
         if len(SSFileList) < 1:
-            print("Error: there must be at least one input file to merge.")
+            print("Error: there must be at least one input file to merge with.")
             return
 
         SSFileList.insert(0,self.inputFile)
@@ -109,7 +109,8 @@ class ShapeShifter:
                 df1 = pd.merge(df1, df2, how='inner')
             else:
                 df1=pd.merge(df1,df2, how='inner', on=on)
-        outFile.write_to_file(df1, gzipResults=gzipResults)
+        indexCol = list(df1.columns.values)[0]
+        outFile.write_to_file(df1, gzipResults=gzipResults, indexCol=indexCol)
         return
 
     def __increment_columnname_counters(self, columnDict, df, on):

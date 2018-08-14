@@ -145,7 +145,7 @@ In order to determine whether your file class properly works with ShapeShifter, 
 that check if the `read_input_to_pandas` and `write_to_file` work properly.
 If you are only supporting reading your file type into ShapeShifter, only follow instructions for "Tests for reading files".
 If you are only supporting exporting to your file type from ShapeShifter, only follow instructions for "Tests for writing to files". 
-These tests will be run every time code is committed to GitHub to ensure that new code does not break previously-working code 
+These tests will be run every time code is committed to GitHub to ensure that new code does not break previously-working code. 
 
 
  
@@ -163,20 +163,30 @@ Now that you have the files created, they must be placed in the appropriate test
 In order for the test script to check your files for accuracy, you must add a small item to the file `RunTests.sh`
 Near the top of the file is a list declaration for `extensionsForReading` that lists all the file extensions for file types being 
 tested for reading.
-add your file type's extension, in quotes, to the list. Now when the testing suite is run, it will include tests for reading
+Add your file type's extension, in quotes, to the list. Now when the testing suite is run, it will include tests for reading
 your file and its gzipped version.
 
 ### Tests for writing to files
-THIS IS UNFINISHED, IGNORE FOR NOW
+If you have not yet done so,  create a file of your type that is equivalent to [this TSV file](https://github.com/srp33/ShapeShifter/blob/master/ShapeShifter/Tests/InputData/UnitTest.tsv). This preferably should be done
+by hand to ensure accuracy. This file must be named `input.tsv`, except you should replace the extension `tsv` with the appropriate extension for
+your file type.
 
-The testing script `RunTests.sh` will perform tests on writing files, but you will make two small additions to that file
-for it to test your file type. Near the top of the file is a list declaration for `extensionsForWriting` that lists all the extensions
-for file types being tested for writing. You must add your file type's extension to this list
+Place this input file that you have created into the folder `Tests/OutputData/WriteToFileKey`.
 
+In order for the test script to check your files for accuracy, 
+you must add a small item to the file RunTests.sh Near the top of the file is a list declaration 
+for `extensionsForWriting` that lists all the file extensions for file types being tested for writing. 
+Add your file type's extension, in quotes, to the list. Now when the testing suite is run, it will include tests for 
+writing to your file type.
+
+### Running the automated tests
+To run the suite of automated tests, enter the following command into the terminal:
 
 ```bash
 bash RunTests.sh
 ```
+The script will alert you if tests fail and why they failed. Note that this testing suite is testing
+operations across ALL file types, and not just yours.
 If all the tests pass, you are ready to submit a pull request and officially integrate your code into ShapeShifter!
 
 ## Submitting a pull request

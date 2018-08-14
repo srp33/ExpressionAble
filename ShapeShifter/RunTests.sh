@@ -7,6 +7,7 @@ outputDir1="Tests/OutputData/Parquet1ToTsv"
 outputDir2="Tests/OutputData/Parquet1ToOtherFormats"
 keyDir1="Tests/OutputData/Parquet1ToTsvKey"
 keyDir2="Tests/OutputData/Parquet1ToOtherFormatsKey"
+WriteToFileKey="Tests/OutputData/WriteToFileKey"
 results=ssTestResults.txt
 
 fileNames=("NoChange" "SimpleTranspose" "FloatFilter" "IntFilter" "DiscreteFilter" "DiscreteDoubleFilter" "BooleanFilter" "SampleFilter" "MultiFilter" "ColumnsOnly" "FilterWithColumn" "FilterWithManyColumns" "FilterWithAllColumns" "NullFilter1" "NullFilter2" "SetIndex")
@@ -15,7 +16,7 @@ filterList=("" "-t" "-f \"float1 > 9.1\"" "-f \"int2 <= 12\"" "-f \"discrete1 = 
 
 #When testing new file types, add your file type's extension to the appropriate list(s) below!
 extensionsForReading=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
-extensionsForWriting=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
+extensionsForWriting=()
 
 extensionsForFiltering=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
 
@@ -59,7 +60,9 @@ python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.html -f "Sample == 'A' 
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.arff -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.gct -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
 
-
+for i in "${extensionsForWriting[@]}"
+do
+    python3 ParseArgs.py $inputFile1 $outputdir2/output.$i
 
 
 #compare with key
@@ -69,12 +72,18 @@ do
 	python3 CompareFiles.py $outputDir1/$i.tsv $keyDir1/$i.tsv
 done
 
-echo Testing exporting to all file types...
+echo Testing exporting to base file types...
 for i in "${extensionsForFiltering[@]}"
 do
 	python3 CompareDataframes.py $keyDir2/MultiFilter.tsv $outputDir2/MultiFilter.$i
 done
 
+echo Testing exporting to additional file types...
+
+for i in "${extensionsForWriting[@]}"
+do
+    python3 CompareFiles.py $WriteToFileKey/input.$ $outputDir2/output.$i
+done
 #test reading basic files here
 echo Testing reading all file types to Pandas...
 for i in "${extensionsForReading[@]}"

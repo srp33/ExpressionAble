@@ -63,7 +63,7 @@ python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.gct -f "Sample == 'A' a
 for i in "${extensionsForWriting[@]}"
 do
     python3 ParseArgs.py $inputFile1 $outputdir2/output.$i
-
+done
 
 #compare with key
 echo Testing filters on TSV files...

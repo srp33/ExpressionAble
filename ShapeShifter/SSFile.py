@@ -94,7 +94,7 @@ class SSFile:
         elif type.lower() == 'html': return HTMLFile.HTMLFile(filePath,type)
         elif type.lower() == 'arff': return ARFFFile.ARFFFile(filePath,type)
         elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
-        elif type.lower() == 'jupyternotebook': return JupyterNotebookFile.JupyterNotebookFile(filePath,type)
+        elif type.lower() == 'jupyternotebook': return JupyterNotebookFile.JupyterNBFile(filePath,type)
         else:
             raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
     factory=staticmethod(factory)

@@ -3,6 +3,7 @@ RUN pip3 uninstall -y scipy numpy scikit-learn
 RUN pip3 install --no-binary numpy pandas 
 RUN pip3 install --no-cache-dir pyarrow sqlalchemy xlsxwriter tables xlrd 
 ADD RunTests.sh /
+Add RunTests2.sh /
 ADD Tests/InputData /Tests/InputData
 ADD Tests/OutputData /Tests/OutputData
 ADD *.py /

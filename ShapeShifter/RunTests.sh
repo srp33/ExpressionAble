@@ -85,7 +85,7 @@ echo Testing exporting to additional file types...
 for i in "${extensionsForWriting[@]}"
 do
     echo -n Writing to .$i: 
-    python3 CompareFiles.py $WriteToFileKey/input.$ $outputDir2/output.$i
+    python3 CompareFiles.py $WriteToFileKey/input.$i $outputDir2/output.$i
 done
 #test reading basic files here
 echo Testing reading all file types to Pandas...

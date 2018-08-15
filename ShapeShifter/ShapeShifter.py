@@ -32,8 +32,8 @@ class ShapeShifter:
                                               includeAllColumns=includeAllColumns, gzipResults=gzipResults,
                                               indexCol=index)
 
-    def export_query_results(self, outFilePath, outFileType=None, columns: list = [],
-                             continuousQueries: list = [], discreteQueries: list = [], transpose=False,
+    def export_query_results(self, outFilePath, outFileType=None, columns= [],
+                             continuousQueries = [], discreteQueries = [], transpose=False,
                              includeAllColumns=False, gzipResults = False):
         """
         Filters and exports data to a file. Similar to export_filter_results, but takes filters in the form of ContinuousQuery and DiscreteQuery objects,
@@ -68,7 +68,7 @@ class ShapeShifter:
         df = df[0:numRows]
         return df
 
-    def merge_files(self, fileList, outFilePath, outFileType=None, gzipResults=False, on= None):
+    def merge_files(self, fileList, outFilePath, outFileType=None, gzipResults=False, on= None, how='inner'):
         """
         Merges multiple ShapeShifter-compatible files into a single file
 
@@ -79,6 +79,10 @@ class ShapeShifter:
         :param on: Column or index level names to join on. These must be found in all files.
                     If on is None and not merging on indexes then this defaults to the intersection of the columns in all.
         """
+        how=how.lower()
+        if how not in ['left','right','outer','inner']:
+            print("Error: \'How\' must one of the following options: left, right, outer, inner")
+            return
         outFile = SSFile.SSFile.factory(outFilePath, outFileType)
         SSFileList=[]
         #create a file object for every file path passed in
@@ -106,9 +110,9 @@ class ShapeShifter:
                 self.__rename_common_columns(columnDict, df1, df2, on)
             #perform merge
             if on==None:
-                df1 = pd.merge(df1, df2, how='inner')
+                df1 = pd.merge(df1, df2, how=how)
             else:
-                df1=pd.merge(df1,df2, how='inner', on=on)
+                df1=pd.merge(df1,df2, how=how, on=on)
         indexCol = list(df1.columns.values)[0]
         outFile.write_to_file(df1, gzipResults=gzipResults, indexCol=indexCol)
         return

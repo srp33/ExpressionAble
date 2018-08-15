@@ -12,6 +12,11 @@ class JupyterNBFile(SSFile):
 
         import nbformat as nbf
 
+        #Truncate Data to 500 rows X 20 columns as a max size if dataframe exceeds 10,000 data points
+        max_size = 10000
+        if df.size > max_size:
+            df = df.iloc[0:500, 0:20]
+
         # Convert the dataframe to a tab-separated string, including or excluding index.
         if includeIndex:
             stringDF = df.to_csv(sep="\t", index_label="index", index=True)

@@ -15,16 +15,16 @@ fileNames=("NoChange" "SimpleTranspose" "FloatFilter" "IntFilter" "DiscreteFilte
 filterList=("" "-t" "-f \"float1 > 9.1\"" "-f \"int2 <= 12\"" "-f \"discrete1 = hot\"" "-f \"discrete1 = hot medium\"" "-f \"bool1 = True\"" "-f \"Sample = A\"" "-f \"Sample = A\" \"float1 < 2\" \"int1 > 3\" \"discrete2 = blue\" \"bool1 = True\"" "-f \"float1 < 8\" -c int1" "-f \"float1 < 8\" -c int1 discrete1 bool1 float2" "-f \"float1 < 8\" -a")
 
 #When testing new file types, add your file type's extension to the appropriate list(s) below!
-extensionsForReading=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
-extensionsForWriting=("ipynb")
+extensionsForReading=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" )
+extensionsForWriting=()
 
-extensionsForFiltering=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
+extensionsForFiltering=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" )
 
 rm $outputDir1/*
 rm $outputDir2/*
 
 #redirect all output to a file
-rm -f $results
+#rm -f $results
 
 #list of queries
 echo Building output files...
@@ -62,19 +62,21 @@ python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.gct -f "Sample == 'A' a
 
 for i in "${extensionsForWriting[@]}"
 do
-    python3 ParseArgs.py $inputFile1 $outputdir2/output.$i
+    python3 ParseArgs.py $inputFile1 $outputDir2/output.$i
 done
 
 #compare with key
 echo Testing filters on TSV files...
 for i in "${fileNames[@]}"
 do
+	echo -n Filtering $i: 
 	python3 CompareFiles.py $outputDir1/$i.tsv $keyDir1/$i.tsv
 done
 
 echo Testing exporting to base file types...
 for i in "${extensionsForFiltering[@]}"
 do
+	echo -n Writing to .$i: 
 	python3 CompareDataframes.py $keyDir2/MultiFilter.tsv $outputDir2/MultiFilter.$i
 done
 
@@ -82,18 +84,21 @@ echo Testing exporting to additional file types...
 
 for i in "${extensionsForWriting[@]}"
 do
-    python3 CompareFiles.py $WriteToFileKey/input.$ $outputDir2/output.$i
+    echo -n Writing to .$i: 
+    python3 CompareFiles.py $WriteToFileKey/input.$i $outputDir2/output.$i
 done
 #test reading basic files here
 echo Testing reading all file types to Pandas...
 for i in "${extensionsForReading[@]}"
 do
+	echo -n Reading from .$i: 
 	python3 CompareDataframes.py $inputFile1 Tests/InputData/InputToRead/input.$i
 done
 
 echo Testing reading from gzipped files...
 for i in "${extensionsForReading[@]}"
 do
+	echo -n Reading from gzipped .$i: 
 	python3 CompareDataframes.py $inputFile1 Tests/InputData/GzippedInput/gzipped.$i.gz
 done
 

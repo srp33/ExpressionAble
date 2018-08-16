@@ -1,16 +1,16 @@
-from UseParquet import export_query_results #import *
-from UseParquet import export_filter_results
-from FileTypeEnum import FileTypeEnum
 from OperatorEnum import OperatorEnum
+import argparse
+import sys
+
+import pandas as pd
+import pyarrow
+
+from ColumnNotFoundError import ColumnNotFoundError
 from ContinuousQuery import ContinuousQuery
 from DiscreteQuery import DiscreteQuery
-from ColumnNotFoundError import ColumnNotFoundError
+from OperatorEnum import OperatorEnum
 from ShapeShifter import ShapeShifter
-import pandas as pd
-import argparse
-import pyarrow
-import time
-import sys
+
 
 def determineFileType(fileType):
 	if fileType.lower()== "csv":
@@ -41,6 +41,8 @@ def determineFileType(fileType):
 		return 'arff'
 	elif fileType.lower() == "gct":
 		return 'gct'
+	elif fileType.lower == "jupyternotebook":
+		return "jupyternotebook"
 
 def determineExtension(fileName):
 	extensions = fileName.rstrip("\n").split(".")
@@ -52,6 +54,7 @@ def determineExtension(fileName):
 			extension=extension.lower()
 	else:
 		extension = None
+
 	if extension == "tsv" or extension == "txt":
 		return 'tsv'
 	elif extension == "csv":
@@ -80,6 +83,8 @@ def determineExtension(fileName):
 		return 'arff'
 	elif extension == "gct":
 		return 'gct'
+	elif extension == "ipynb":
+		return "jupyternotebook"
 	else:
 		print("Error: Extension on " + fileName+ " not recognized. Please use appropriate file extensions or explicitly specify file type using the -i or -o flags")
 		sys.exit()

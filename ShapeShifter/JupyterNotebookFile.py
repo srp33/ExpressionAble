@@ -1,4 +1,4 @@
-import pandas as pd
+import tempfile
 
 from SSFile import SSFile
 
@@ -8,7 +8,7 @@ class JupyterNBFile(SSFile):
     # def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         # Does this function need to be written ?
 
-    def to_JupyterNB(df, filename, includeIndex):
+    def to_JupyterNB(self, df, filename, includeIndex):
 
         import nbformat as nbf
 
@@ -55,15 +55,15 @@ class JupyterNBFile(SSFile):
         # Write the .ipynb to the desired file path.
         nbf.write(nb, filename)
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA'):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
 
         if gzipResults:
             tempFile = tempfile.NamedTemporaryFile(delete=False)
-            to_JupyterNB(df, tempFile.name, includeIndex)
+            self.to_JupyterNB(df, tempFile.name, includeIndex)
             tempFile.close()
             super()._gzip_results(tempFile.name, self.filePath)
         else:
-            to_JupyterNB(df, super()._remove_gz(self.filePath), includeIndex)
+            self.to_JupyterNB(df, super()._remove_gz(self.filePath), includeIndex)
 
     #dfFromFile = pd.read_table('/Users/DallasLarsen/BIO494/bio-494/myShapeShifterStuff/exportToJupyterNB/test_data/tenThousandFile.tsv', sep="\t")
 

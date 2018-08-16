@@ -16,7 +16,7 @@ filterList=("" "-t" "-f \"float1 > 9.1\"" "-f \"int2 <= 12\"" "-f \"discrete1 = 
 
 #When testing new file types, add your file type's extension to the appropriate list(s) below!
 extensionsForReading=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
-extensionsForWriting=()
+extensionsForWriting=("ipynb")
 
 extensionsForFiltering=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
 

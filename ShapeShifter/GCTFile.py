@@ -24,11 +24,25 @@ class GCTFile(SSFile):
         df = None
         includeIndex = False
         null = 'NA'
-        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, columnList, query, transpose,
-                                                                        includeAllColumns, df, includeIndex, indexCol)
+
+        if query != None:
+            query = self._translate_null_query(query)
+        if not includeAllColumns and "NAME" not in columnList:
+            columnList.append("NAME")
+        df = inputSSFile._filter_data(columnList=columnList, query=query,
+                                      includeAllColumns=includeAllColumns, indexCol=indexCol)
+
+        if transpose:
+            df = df.set_index(indexCol) if indexCol in df.columns else df
+            df = df.transpose()
+            includeIndex = True
+        #TODO: remove returning inputSSFile for every file type, it is no longer needed since gzip is taken care of elsewhere
+
         self.write_to_file(df, gzipResults)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+        # if not transpose:
+        #     df = df.set_index(indexCol) if indexCol in df.columns else df
         if gzipResults:
             tempFile = tempfile.NamedTemporaryFile(delete=False)
             toGCT(df, tempFile.name)

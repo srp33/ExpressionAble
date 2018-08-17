@@ -3,6 +3,7 @@
 #set -euo pipefail
 
 inputFile1="Tests/InputData/InputParquet1.pq"
+gctInput="Tests/InputData/GCTUnitTest.tsv"
 outputDir1="Tests/OutputData/Parquet1ToTsv"
 outputDir2="Tests/OutputData/Parquet1ToOtherFormats"
 keyDir1="Tests/OutputData/Parquet1ToTsvKey"
@@ -15,10 +16,10 @@ fileNames=("NoChange" "SimpleTranspose" "FloatFilter" "IntFilter" "DiscreteFilte
 filterList=("" "-t" "-f \"float1 > 9.1\"" "-f \"int2 <= 12\"" "-f \"discrete1 = hot\"" "-f \"discrete1 = hot medium\"" "-f \"bool1 = True\"" "-f \"Sample = A\"" "-f \"Sample = A\" \"float1 < 2\" \"int1 > 3\" \"discrete2 = blue\" \"bool1 = True\"" "-f \"float1 < 8\" -c int1" "-f \"float1 < 8\" -c int1 discrete1 bool1 float2" "-f \"float1 < 8\" -a")
 
 #When testing new file types, add your file type's extension to the appropriate list(s) below!
-extensionsForReading=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
+extensionsForReading=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff")
 extensionsForWriting=()
 
-extensionsForFiltering=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "gct")
+extensionsForFiltering=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff")
 
 rm $outputDir1/*
 rm $outputDir2/*
@@ -58,7 +59,8 @@ python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.dta -f "Sample == 'A' a
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.pkl -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.html -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
 python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.arff -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
-python3 ParseArgs.py $inputFile1 $outputDir2/MultiFilter.gct -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
+#GCT unit test is unique
+python3 ParseArgs.py $gctInput $outputDir2/MultiFilter.gct -f "Sample == 'A' and float1 < 2 and int1 > 3 and discrete2 == 'blue' and bool1 == True"
 
 for i in "${extensionsForWriting[@]}"
 do
@@ -79,6 +81,8 @@ do
 	echo -n Writing to .$i: 
 	python3 CompareDataframes.py $keyDir2/MultiFilter.tsv $outputDir2/MultiFilter.$i
 done
+echo -n Writing to .gct:
+python3 CompareDataframes.py $keyDir2/MultiFilter.gct $outputDir2/MultiFilter.gct
 
 echo Testing exporting to additional file types...
 
@@ -94,6 +98,8 @@ do
 	echo -n Reading from .$i: 
 	python3 CompareDataframes.py $inputFile1 Tests/InputData/InputToRead/input.$i
 done
+echo -n Reading from .gct:
+python3 CompareDataframes.py $gctInput Tests/InputData/GCTUnitTest.gct
 
 echo Testing reading from gzipped files...
 for i in "${extensionsForReading[@]}"
@@ -101,6 +107,8 @@ do
 	echo -n Reading from gzipped .$i: 
 	python3 CompareDataframes.py $inputFile1 Tests/InputData/GzippedInput/gzipped.$i.gz
 done
+echo -n Reading from gzipped .gct:
+python3 CompareDataframes.py Tests/InputData/GCTUnitTest.gct Tests/InputData/GzippedInput/gzipped.gct.gz
 
 #use script to check $results file for the word "FAIL"
 # if [[ "grep FAIL $results" != "" ]

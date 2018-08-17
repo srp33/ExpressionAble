@@ -1,0 +1,22 @@
+#1.2
+19	10
+Sample	Description	float1	float2	int1	int2	discrete1	discrete2	bool1	bool2	null1	NAME
+A	a	1.2	3.5	4	2	hot	blue	True	True		a
+B	b	4.2	7.3	3	9	cold	red	False	True	yes	b
+C	c	7.1	2.3	5	4	hot	red	True	False		c
+D	d	1.1	4.3	5	7	medium	red	False	True		d
+E	e	2.5	6.3	1	12	cold	blue	False	False	no	e
+F	f	22.3	5.2	52	3	medium	blue	True	False		f
+G	g	9.3	5.3	5	88	cold	red	True	True		g
+H	h	0.3	7.7	3	7	hot	blue	False	False		h
+I	i	8.0	4.5	8	22	medium	blue	False	True		i
+J	j	52.1	34.0	42	33	hot	red	True	True		j
+K	k	6.6	4.4	4	6	cold	blue	True	False		k
+L	l	0.3	4.3	5	11	hot	red	True	False	yes	l
+M	m	9.4	5.3	2	99	cold	red	False	True	yes	m
+O	n	4.4	7.7	6	6	medium	red	False	False		n
+P	o	7.2	3.3	44	3	medium	blue	True	True		o
+Q	p	12.5	33.2	4	6	medium	red	False	False	no	p
+R	q	7.7	46.2	3	9	hot	red	False	True	no	q
+S	r	90.2	1.2	4	11	hot	blue	False	True	no	r
+T	s	110.2	4.2	100	12	cold	blue	False	False		s

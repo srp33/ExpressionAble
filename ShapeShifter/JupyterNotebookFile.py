@@ -12,7 +12,7 @@ class JupyterNBFile(SSFile):
 
         import nbformat as nbf
 
-        #Truncate Data to 500 rows X 20 columns as a max size if dataframe exceeds 10,000 data points
+        #Truncate Data to 500 rows X 20 columns as a max size if dataframe exceeds 10,000 data points.
         max_size = 10000
         if df.size > max_size:
             df = df.iloc[0:500, 0:20]
@@ -64,7 +64,3 @@ class JupyterNBFile(SSFile):
             super()._gzip_results(tempFile.name, self.filePath)
         else:
             self.to_JupyterNB(df, super()._remove_gz(self.filePath), includeIndex)
-
-    #dfFromFile = pd.read_table('/Users/DallasLarsen/BIO494/bio-494/myShapeShifterStuff/exportToJupyterNB/test_data/tenThousandFile.tsv', sep="\t")
-
-    #to_JupyterNB(dfFromFile, "/Users/DallasLarsen/BIO494/bio-494/myShapeShifterStuff/exportToJupyterNB/testTenThousand", True)

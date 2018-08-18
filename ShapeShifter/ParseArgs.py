@@ -1,4 +1,3 @@
-from OperatorEnum import OperatorEnum
 import argparse
 import sys
 
@@ -85,6 +84,8 @@ def determineExtension(fileName):
 		return 'gct'
 	elif extension == "ipynb":
 		return "jupyternotebook"
+	elif extension=="zip":
+		return "Kallisto"
 	else:
 		print("Error: Extension on " + fileName+ " not recognized. Please use appropriate file extensions or explicitly specify file type using the -i or -o flags")
 		sys.exit()
@@ -183,7 +184,7 @@ parser = argparse.ArgumentParser(description = "Import, filter, and transform da
 parser.add_argument("input_file", help = "Data file to be imported, filtered, and/or transformed")
 parser.add_argument("output_file", help = "File path to which results are exported")
 
-supportedFiles=["CSV", "TSV", "JSON","Excel","HDF5","Parquet","MsgPack","Stata","Pickle","HTML", "SQLite","ARFF", "GCT"]
+supportedFiles=["CSV", "TSV", "JSON","Excel","HDF5","Parquet","MsgPack","Stata","Pickle","HTML", "SQLite","ARFF", "GCT", "Kallisto"]
 
 parser.add_argument("-i","--input_file_type", help = "Type of file to be imported. If not specified, file type will be determined by the file extension given. Available choices are: "+", ".join(supportedFiles), choices = supportedFiles, metavar= 'File_Type')
 parser.add_argument("-o","--output_file_type", help = "Type of file to which results are exported. If not specified, file type will be determined by the file extension given. Available choices are: "+", ".join(supportedFiles), choices = supportedFiles, metavar='File_Type')
@@ -195,14 +196,15 @@ parser.add_argument("-g","--gzip", help = "Gzips the output file", action="store
 parser.add_argument("-s","--set_index", help="Sets the given column to become the index column, where appropriate. If not set, the default index will be 'Sample'",nargs=1)
 args = parser.parse_args()
 
-inFileType = determineExtension(args.input_file)
+#inFileType = determineExtension(args.input_file)
+inFileType = None
 if args.input_file_type:
-	inFileType = determineFileType(args.input_file_type)
+	inFileType = args.input_file_type#=determineFileType(args.input_file_type)
 isInFileGzipped = isGzipped(args.input_file)	
 
-outFileType= determineExtension(args.output_file)
+outFileType= None #= determineExtension(args.output_file)
 if args.output_file_type:
-	outFileType = determineFileType(args.output_file_type)
+	outFileType = args.output_file_type#=determineFileType(args.output_file_type)
 isTransposed = False
 if args.transpose:
 	isTransposed=True

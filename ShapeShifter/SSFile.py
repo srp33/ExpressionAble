@@ -2,6 +2,7 @@ import shutil
 import tempfile
 
 
+
 class SSFile:
     """
     Abstract base class for all the supported file types in ShapeShifter. Subclasses must implement reading a file to pandas and exporting a dataframe to the filetype
@@ -95,6 +96,7 @@ class SSFile:
         elif type.lower() == 'arff': return ARFFFile.ARFFFile(filePath,type)
         elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
         elif type.lower() == 'jupyternotebook': return JupyterNotebookFile.JupyterNBFile(filePath,type)
+        elif type.lower() == 'kallisto': return KallistoFile.KallistoFile(filePath,type)
         else:
             raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
     factory=staticmethod(factory)
@@ -353,3 +355,4 @@ import SQLiteFile
 import StataFile
 import TSVFile
 import JupyterNotebookFile
+import KallistoFile

@@ -8,7 +8,10 @@ echo Running tests...
 if grep -q FAIL $results;
 then
 	echo The following tests failed:
-	grep FAIL $results
+	grep -A 1 FAIL $results
+	echo The following tests passed:
+	grep -A 1 PASS $results
+	rm -f $results
 	exit 1
 else
 	echo TESTS PASS

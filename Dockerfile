@@ -1,7 +1,7 @@
 FROM python:3.6-stretch
 RUN pip3 uninstall -y scipy numpy scikit-learn
 RUN pip3 install --no-binary numpy pandas 
-RUN pip3 install --no-cache-dir pyarrow sqlalchemy xlsxwriter tables xlrd 
+RUN pip3 install --no-cache-dir pyarrow sqlalchemy xlsxwriter tables xlrd nbformat
 ADD RunTests.sh /
 Add RunTests2.sh /
 ADD Tests/InputData /Tests/InputData

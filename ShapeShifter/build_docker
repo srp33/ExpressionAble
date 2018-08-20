@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o errexit
+
 tmpDir=/tmp/buildSS
 
 mkdir -p $tmpDir

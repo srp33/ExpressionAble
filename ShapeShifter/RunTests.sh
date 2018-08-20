@@ -20,7 +20,8 @@ extensionsForReading=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff
 extensionsForWriting=("rmd")
 
 extensionsForFiltering=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff")
-
+mkdir $outputDir1
+mkdir $outputDir2
 rm $outputDir1/*
 rm $outputDir2/*
 
@@ -64,6 +65,7 @@ python3 ParseArgs.py $gctInput $outputDir2/MultiFilter.gct -f "Sample == 'A' and
 
 for i in "${extensionsForWriting[@]}"
 do
+    echo -n Writing $i:
     python3 ParseArgs.py $inputFile1 $outputDir2/output.$i
 done
 

@@ -10,7 +10,7 @@ then
 	echo The following tests failed:
 	grep -A 1 FAIL $results
 	echo The following tests passed:
-	grep -A 1 PASS $results
+	grep PASS $results
 	rm -f $results
 	exit 1
 else

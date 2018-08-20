@@ -16,7 +16,6 @@ cp -r ShapeShifter/Tests/InputData $tmpDir/Tests/
 cp -r ShapeShifter/Tests/OutputData $tmpDir/Tests/
 cp ShapeShifter/*.py $tmpDir
 cd $tmpDir
-
 docker build -t srp33/shapeshifter:version$(cat VERSION) .
 
 docker run -i --rm srp33/shapeshifter:version$(cat VERSION) /RunTests2.sh

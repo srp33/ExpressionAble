@@ -14,10 +14,15 @@ class GCTFile(SSFile):
         #     df= gctToPandas(super()._remove_gz(self.filePath))
         #     os.remove(super()._remove_gz(self.filePath))
         # else:
-        df = gctToPandas(self.filePath)
-        if len(columnList) > 0:
-            df = df[columnList]
-        return df
+        if len(columnList) == 0:
+            return gctToPandas(self.filePath)
+        else:
+            columnList.append("Description")
+            return gctToPandas(self.filePath, columnList)
+        # df = gctToPandas(self.filePath)
+        # if len(columnList) > 0:
+        #     df = df[columnList]
+        # return df
 
     def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,
                               gzipResults=False, indexCol="Sample"):

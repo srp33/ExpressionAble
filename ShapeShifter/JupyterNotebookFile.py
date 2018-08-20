@@ -12,7 +12,7 @@ class JupyterNBFile(SSFile):
 
         import nbformat as nbf
 
-        #Truncate Data to 500 rows X 20 columns as a max size if dataframe exceeds 10,000 data points.
+        # Truncate Data to 500 rows X 20 columns as a max size if dataframe exceeds 10,000 data points.
         max_size = 10000
         if df.size > max_size:
             #todo this will probably cause some errors if there aren't 500 rows or 20 columns

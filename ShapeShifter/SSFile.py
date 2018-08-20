@@ -96,6 +96,7 @@ class SSFile:
         elif type.lower() == 'arff': return ARFFFile.ARFFFile(filePath,type)
         elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
         elif type.lower() == 'jupyternotebook': return JupyterNotebookFile.JupyterNBFile(filePath,type)
+        elif type.lower() == 'rmarkdown': return RMarkdownFile.RMarkdownFile(filePath,type)
         elif type.lower() == 'kallisto': return KallistoFile.KallistoFile(filePath,type)
         else:
             raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
@@ -142,6 +143,8 @@ class SSFile:
             return 'gct'
         elif extension == "ipynb":
             return 'jupyternotebook'
+        elif extension == "rmd":
+            return 'rmarkdown'
         else:
             raise Exception("Error: Extension on " + fileName + " not recognized. Please use appropriate file extensions or explicitly specify file type.")
 
@@ -355,4 +358,5 @@ import SQLiteFile
 import StataFile
 import TSVFile
 import JupyterNotebookFile
+import RMarkdownFile
 import KallistoFile

@@ -77,7 +77,8 @@ with a function or some code that reads your file into a Pandas data frame:
 
 If passed a list of desired columns, this function should return a Pandas data frame containing the data on your file only for the selected columns. 
 If the list of columns is empty, it should return the entire data set from the file in a Pandas data frame.
-Note: the returned data frame should be un-indexed.
+Note: the returned data frame should not have an index (besides the default index). If necessary, reset the index using
+`df.reset_index(inplace=True)`.
 
 ```python
 def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA')

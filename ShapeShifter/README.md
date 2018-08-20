@@ -9,9 +9,20 @@ and [these interactive exercises](https://www.learnpython.org/en/Classes_and_Obj
 Since you will need to implement your own classes that inherit from and use preexisting code, this README will make much more sense
 if you are comfortable with those principles.
 
-First, you will need to clone the ShapeShifter git repository to have access to its files:
+To get started, you will need to create your own fork of [the ShapeShifter repository](https://github.com/srp33/ShapeShifter).
+Click on the "Fork" button as shown below:
+
+
+![Fork button on Github](https://github-images.s3.amazonaws.com/help/bootcamp/Bootcamp-Fork.png)
+
+Then, you will need to clone your fork of the ShapeShifter repository to have access to its files.
+Press the "Clone or download" button as shown below to display the URL you will use to clone the repository.
+
+![Clone button on Github](https://camo.githubusercontent.com/b50d9bb4d043c1b27dd6e4db5bb2d402697f4d4a/687474703a2f2f692e696d6775722e636f6d2f75624e627765302e706e67)
+
+Copy the URL, then enter in the following commands at the command line, replacing `<URL>` with the URL you just copied from GitHub:
 ```bash
-git clone https://github.com/srp33/ShapeShifter.git
+git clone <URL>
 cd ShapeShifter
 
 ```
@@ -184,7 +195,7 @@ writing to your file type.
 To run the suite of automated tests, enter the following command into the terminal:
 
 ```bash
-bash RunTests.sh
+bash RunTests2.sh
 ```
 The script will alert you if tests fail and why they failed. Note that this testing suite is testing
 operations across ALL file types, and not just yours.
@@ -199,7 +210,10 @@ git add --all
 git commit -m "message"
 git push origin new-branch-name
 ```
-Go [here](https://github.com/srp33/ShapeShifter/compare?expand=1) to create a GitHub pull request. Put "master" as the base branch 
-and your new branch as the compare branch. Click on "Create pull request". We will then check to make sure your code is working properly.
+Go [here](https://github.com/srp33/ShapeShifter/compare?expand=1) to create a GitHub pull request. Under "Comparing changes", click the blue text "compare across forks".
+Ensure the base fork is "srp33/ShapeShifter/" and the base branch is "master".
+For the head fork, select the fork you have been working on (it is easily identified by your GitHub username). 
+For the compare branch, select the branch that you have been working on and that is up to date with your most recent changes. 
+Leave a comment explaining the work you've done, then click on "Create pull request". We will then check to make sure your code is working properly.
 If it is, we will integrate your code into the ShapeShifter repository.
 

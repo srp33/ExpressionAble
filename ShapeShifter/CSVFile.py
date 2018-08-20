@@ -4,7 +4,7 @@ from SSFile import SSFile
 
 
 class CSVFile(SSFile):
-
+#  comment
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if len(columnList) == 0:
             return pd.read_csv(self.filePath)

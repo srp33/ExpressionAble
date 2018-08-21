@@ -14,7 +14,7 @@ class RMarkdownFile(SSFile):
         if df.size > max_size:
             df = df.iloc[0:500, 0:20]
             # Print message to warn user that data will be truncated.
-            print("Warning: Jupyter support is only available for up to 10,000 data points. Your data has been"
+            print("Warning: Jupyter NoteBook support is only available for up to 10,000 data points. Your data has been"
                   "truncated to have a maximum of 500 rows X 20 columns.")
 
         # Convert the dataframe to a tab-separated string, either including or excluding index.

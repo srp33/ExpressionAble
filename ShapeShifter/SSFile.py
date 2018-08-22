@@ -97,7 +97,8 @@ class SSFile:
         elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
         elif type.lower() == 'jupyternotebook': return JupyterNotebookFile.JupyterNBFile(filePath,type)
         elif type.lower() == 'rmarkdown': return RMarkdownFile.RMarkdownFile(filePath,type)
-        elif type.lower() == 'kallisto': return KallistoFile.KallistoFile(filePath,type)
+        elif type.lower() == 'kallistotpm': return KallistoTPMFile.KallistoTPMFile(filePath,type)
+        elif type.lower() == 'salmon': return SalmonFile.SalmonFile(filePath,type)
         else:
             raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
     factory=staticmethod(factory)
@@ -360,3 +361,4 @@ import TSVFile
 import JupyterNotebookFile
 import RMarkdownFile
 import KallistoTPMFile
+import SalmonFile

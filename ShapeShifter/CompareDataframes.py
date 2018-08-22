@@ -15,10 +15,13 @@ def standardizeNullValue(x):
     return x
 f1 = sys.argv[1]
 f2 = sys.argv[2]
+type=None
+if len(sys.argv)>3:
+    type=sys.argv[3]
 
 try:
     ss1 = ShapeShifter.ShapeShifter(f1)
-    ss2 = ShapeShifter.ShapeShifter(f2)
+    ss2 = ShapeShifter.ShapeShifter(f2,type)
 
     df1 = ss1.inputFile.read_input_to_pandas()
     df2 = ss2.inputFile.read_input_to_pandas()

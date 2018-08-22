@@ -11,12 +11,12 @@ then
 	grep -A 1 FAIL $results
 	echo Here is an error log:
 	grep Error $results
-	echo The following tests passed:
-	grep PASS $results
+	#echo The following tests passed:
+	#grep PASS $results
 	rm -f $results
 	exit 1
 else
-	grep PASS $results
+	#grep PASS $results
 	echo TESTS PASS
 fi
 

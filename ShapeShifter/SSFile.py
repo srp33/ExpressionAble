@@ -359,4 +359,4 @@ import StataFile
 import TSVFile
 import JupyterNotebookFile
 import RMarkdownFile
-import KallistoFile
+import KallistoTPMFile

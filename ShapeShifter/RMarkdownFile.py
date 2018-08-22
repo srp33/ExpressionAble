@@ -2,6 +2,7 @@ import tempfile
 
 from SSFile import SSFile
 
+
 class RMarkdownFile(SSFile):
 
     # def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
@@ -10,6 +11,7 @@ class RMarkdownFile(SSFile):
     def to_Rmd(self, df, filename, includeIndex):
 
         # Truncate Data to 500 rows X 20 columns as a max size if dataframe exceeds 10,000 data points.
+        #todo don't truncate, just exit. Same for sqlite, excel. custon exception?
         max_size = 10000
         if df.size > max_size:
             df = df.iloc[0:500, 0:20]

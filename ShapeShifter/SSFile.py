@@ -98,7 +98,9 @@ class SSFile:
         elif type.lower() == 'jupyternotebook': return JupyterNotebookFile.JupyterNBFile(filePath,type)
         elif type.lower() == 'rmarkdown': return RMarkdownFile.RMarkdownFile(filePath,type)
         elif type.lower() == 'kallistotpm': return KallistoTPMFile.KallistoTPMFile(filePath,type)
-        elif type.lower() == 'salmon': return SalmonFile.SalmonFile(filePath,type)
+        elif type.lower() == 'kallisto_est_counts': return Kallisto_est_counts_File.Kallisto_est_counts_File(filePath,type)
+        elif type.lower() == 'salmontpm': return SalmonTPMFile.SalmonTPMFile(filePath, type)
+        elif type.lower() == 'salmonnumreads': return SalmonNumReadsFile.SalmonNumReadsFile(filePath,type)
         else:
             raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
     factory=staticmethod(factory)
@@ -361,4 +363,6 @@ import TSVFile
 import JupyterNotebookFile
 import RMarkdownFile
 import KallistoTPMFile
-import SalmonFile
+import Kallisto_est_counts_File
+import SalmonTPMFile
+import SalmonNumReadsFile

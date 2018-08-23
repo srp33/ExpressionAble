@@ -2,7 +2,7 @@ from SSFile import SSFile
 from salmon import salmonToPandas
 
 
-class SalmonFile(SSFile):
+class SalmonTPMFile(SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         df = salmonToPandas(self.filePath, colName="TPM")

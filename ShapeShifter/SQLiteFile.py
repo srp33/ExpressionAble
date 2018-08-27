@@ -40,10 +40,12 @@ class SQLiteFile(SSFile):
                                       includeAllColumns=includeAllColumns, indexCol=indexCol)
         null = 'NA'
         includeIndex = False
-        if len(df.columns) > 2000:
-            print("Warning: SQLite supports a maximum of 999 columns. Your data has " + str(
-                len(df.columns)) + " columns. Extra data has been truncated.")
-            df=df.iloc[:,0:999]
+        if len(df.columns) > 999:
+            raise SizeExceededError.SizeExceededError("SQLite supports a maximum of 999 columns. Your data has " + str(
+                len(df.columns)) + " columns. Please use a smaller data set or consider using a different file type")
+            # print("Warning: SQLite supports a maximum of 999 columns. Your data has " + str(
+            #     len(df.columns)) + " columns. Extra data has been truncated.")
+            # df=df.iloc[:,0:999]
         chunksize = 999//len(df.columns)
         from sqlalchemy import create_engine
 
@@ -79,10 +81,9 @@ class SQLiteFile(SSFile):
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         filePath = self.filePath
-        if len(df.columns) > 2000:
-            print("Warning: SQLite supports a maximum of 999 columns. Your data has " + str(
-                len(df.columns)) + " columns. Extra data has been truncated.")
-            df=df.iloc[:,0:999]
+        if len(df.columns) > 999:
+            raise SizeExceededError.SizeExceededError("SQLite supports a maximum of 999 columns. Your data has " + str(
+                len(df.columns)) + " columns. Please use a smaller data set or consider using a different file type")
         from sqlalchemy import create_engine
         chunksize = 999 // len(df.columns)
         # if gzipResults:
@@ -131,3 +132,4 @@ class SQLiteFile(SSFile):
                 df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=chunksize)
 
 import gzip
+import SizeExceededError

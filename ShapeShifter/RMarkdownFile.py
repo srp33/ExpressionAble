@@ -1,5 +1,6 @@
 import tempfile
 
+import SizeExceededError
 from SSFile import SSFile
 
 
@@ -14,10 +15,10 @@ class RMarkdownFile(SSFile):
         #todo don't truncate, just exit. Same for sqlite, excel. custon exception?
         max_size = 10000
         if df.size > max_size:
-            df = df.iloc[0:500, 0:20]
+            #df = df.iloc[0:500, 0:20]
             # Print message to warn user that data will be truncated.
-            print("Warning: Jupyter NoteBook support is only available for up to 10,000 data points. Your data has been"
-                  "truncated to have a maximum of 500 rows X 20 columns.")
+            raise SizeExceededError.SizeExceededError(" R Markdown support is only available for up to 10,000 data points."
+                  "\nPlease use a smaller data set or consider using a different file type")
 
         # Convert the dataframe to a tab-separated string, either including or excluding index.
         if includeIndex:

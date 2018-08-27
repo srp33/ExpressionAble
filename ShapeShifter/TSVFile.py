@@ -7,8 +7,8 @@ class TSVFile(SSFile.SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if len(columnList) == 0:
-            return pd.read_csv(self.filePath, sep="\t")
-        return pd.read_csv(self.filePath, sep="\t", usecols=columnList)
+            return pd.read_csv(self.filePath, sep="\t", low_memory=False)
+        return pd.read_csv(self.filePath, sep="\t", usecols=columnList, low_memory=False)
 
     def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,
                               gzipResults=False, indexCol="Sample"):

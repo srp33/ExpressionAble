@@ -23,7 +23,7 @@ def toGCT(df, fileName):
 #Takes a GCT file and reads it into a pandas dataframe
 def gctToPandas(fileName, columnList=None):
 #We're trying to keep it from having the default index
-    df = pd.read_csv(filepath_or_buffer=fileName, sep='\t', skiprows=2, usecols=columnList)
+    df = pd.read_csv(filepath_or_buffer=fileName, sep='\t', skiprows=2, usecols=columnList, low_memory=False)
 #Also remove the description column.
     df = df.drop(labels="Description", axis=1)
     return df

@@ -14,7 +14,7 @@ def kallistoToPandas(fileName, colName="tpm"):
         z.extractall(temp)
         #parse through the directory
         for dirpath, dirs, files in sorted(os.walk(temp)):
-            for d in dirs:
+            for d in sorted(dirs):
                 abundanceFilePath = os.path.join(dirpath,d, "abundance.tsv")
 
                 if not os.path.exists(abundanceFilePath):
@@ -36,6 +36,7 @@ def kallistoToPandas(fileName, colName="tpm"):
     #transpose the dataframe
     df = df.T
     #rename the dataframe to "Sample"
+    #todo if it still is out of order, just sort the data by the values in the sample column
     df.index = df.index.rename("Sample")
     df.columns.name = None
 

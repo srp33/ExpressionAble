@@ -131,13 +131,17 @@ on your specific implementation, but it is worth considering.
 In addition to implementing the class for you file type, you must hook your file type's class into ShapeShifter so it can use it.
 You need to add a clause to `SSFile.factory()`
 that will be used to construct an file object of your type. The `type` parameter is a string that corresponds to
-the name of your file type. If such a string is given, you should then return a file object of your type with the given `filePath` and `type`. If I were adding support for a GCT file, my code would look like the example below.
+the name of your file type. If such a string is given, you should then return a file object of your type with the given `filePath` and `type`. 
+In order for this to work, you will also need to add an import statement at the BOTTOM of the file SSFile.py. If I were adding support for a GCT file, my code would look like the example below.
 You should of course replace `'gct'` and `GCTFile.GCTFile()` with your extension and file constructor, respectively:
 ```python
 def factory(filePath, type):
     if type.lower() ==......
     ...
     elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
+    
+...
+import GCTFile
 ```
 Finally, a clause should be added in the `SSFile.__determine_extension()` function that indicates what file extension or extensions correspond to your file type.
 This method should return the name of your file type when a file name has the extension related to your file type. The purpose 

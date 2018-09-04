@@ -103,8 +103,15 @@ done
 echo -n Reading from .gct:
 python3 CompareDataframes.py $gctInput Tests/InputData/GCTUnitTest.gct
 
-echo -n Reading from Kallisto:
+echo -n Reading from KallistoTPM:
 python3 CompareDataframes.py Tests/InputData/KallistoTPMTest.tsv Tests/InputData/KallistoTPMTest.zip kallistotpm
+echo -n Reading from Kallisto_est_counts:
+python3 CompareDataframes.py Tests/InputData/Kallisto_est_counts_Test.tsv Tests/InputData/KallistoTPMTest.zip kallisto_est_counts
+
+echo -n Reading from SalmonTPM:
+python3 CompareDataframes.py Tests/InputData/SalmonTPMTest.tsv Tests/InputData/SalmonTPMTest.zip salmontpm
+echo -n Reading from SalmonNumReads:
+python3 CompareDataframes.py Tests/InputData/SalmonNumReadsTest.tsv Tests/InputData/SalmonTPMTest.zip salmonnumreads
 
 echo Testing reading from gzipped files...
 for i in "${extensionsForReading[@]}"

@@ -38,7 +38,7 @@ def salmonToPandas(fileName, colName="TPM"):
     #rename the dataframe to "Sample"
     df.index = df.index.rename("Sample")
     df.columns.name = None
-
+    df = df.reset_index()
     return df
 #Two different parsers for Salmon; two for kallisto.
 #Kallisto_tpm and kallisto_est_counts

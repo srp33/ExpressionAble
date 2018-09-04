@@ -35,7 +35,14 @@ try:
             temp2=df2.iloc[i,j]
             temp=standardizeNullValue(temp)
             temp2=standardizeNullValue(temp2)
-            if temp!=temp2:
+            isEqual = True
+            if isinstance(temp,Number) and isinstance(temp2, Number):
+                if abs(temp - temp2) >0.1:
+                    isEqual = False
+            else:
+                if temp!=temp2:
+                    isEqual = False
+            if not isEqual:
                 print(f1 + " and " + f2 + ": FAIL: Values differ at row " +str(df1.index[i]) + " and column \'"+str(df1.columns[j])+"\'")
                 print("\t"+f1 + " value: " + str(temp) + "\t"+f2 + " value: " + str(temp2))
 #                print("\t"+f2 + " value: " + str(temp2))

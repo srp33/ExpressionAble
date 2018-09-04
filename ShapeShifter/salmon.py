@@ -37,6 +37,7 @@ def salmonToPandas(fileName, colName="TPM"):
     df = df.T
     #rename the dataframe to "Sample"
     df.index = df.index.rename("Sample")
+    df=df.sort_index()
     df.columns.name = None
     df = df.reset_index()
     return df

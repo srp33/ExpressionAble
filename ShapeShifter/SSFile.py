@@ -2,11 +2,11 @@ import shutil
 import tempfile
 
 
-
 class SSFile:
     """
     Abstract base class for all the supported file types in ShapeShifter. Subclasses must implement reading a file to pandas and exporting a dataframe to the filetype
     """
+
 
     def __init__(self, filePath, fileType):
         self.filePath=filePath

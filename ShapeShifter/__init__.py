@@ -1,3 +1,4 @@
+name = 'myshapeshifter'
 __all__ = ['ARFFFile', 'ColumnInfo', 'ColumnNotFoundError', 'CompareDataframes', 'CompareFiles', 'ContinuousQuery',
            'ConvertARFF', 'ConvertGCT', 'CreateParquet', 'CSVFile', 'DiscreteQuery', 'ExcelFile', 'GCTFile',
            'HDF5File', 'HTMLFile', 'JSONFile', 'JupyterNotebookFile', 'kallisto', 'Kallisto_est_counts_File',

@@ -92,62 +92,62 @@ for i in range(0,len(filetypes)):
         line = "Write\t"+filetypes[i]+"\tMedium\t"+filterDescriptions[j]+"\t"+seconds+"\n"
         outputLines.append(line)
 
-#Read METABRIC file
-for i in range(0,len(filetypes)):
-    if filetypes[i]!='Excel' and filetypes[i]!='JSON' and filetypes[i]!='Stata' and filetypes[i]!='SQLite':
-        for j in range(0, len(filterDescriptions)):
-            print("Reading METABRIC from " + filetypes[i] +": " +str(j))
-            fileName = "Tests/Speed/METABRIC/metabric." +extensions[i]
-            metabricFile = SSFile.factory(fileName)
-            t1=time.time()
-            df=metabricFile.read_input_to_pandas(columnList=metabricColumns[j])
-            t2=time.time()
-            seconds = str(t2-t1)
-            line = "Read\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
-            outputLines.append(line)
-            # if metabricFilters[j] == None:
-            #     seconds = 'NA'
-            # else:
-            #     t1 = time.time()
-            #     df = df.query(metabricFilters[j])
-            #     t2 = time.time()
-            #     seconds = str(t2 - t1)
-            # line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-            # filterLines.append(line)
-    else:
-        for j in range(0, len(filterDescriptions)):
-            if filetypes[i]=='JSON':
-                reason = 'NA_super_slow'
-            else:
-                reason = 'NA_technical'
-            line = "Read\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + reason + "\n"
-            outputLines.append(line)
-            # line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + reason + "\n"
-            # filterLines.append(line)
-
-#Write METABRIC file
-for i in range(0,len(filetypes)):
-    #put in row for every case explaining why the results aren't there: either super_slow or technical
-    if filetypes[i]!='Excel' and filetypes[i]!='JSON' and filetypes[i]!='Stata' and filetypes[i]!='SQLite':
-        for j in range(0, len(filterDescriptions)):
-            print("Writing METABRIC to " + filetypes[i] + ": " +str(j))
-            fileName = "Tests/Speed/METABRIC/metabric.pq"
-            inFile = SSFile.factory(fileName)
-            outFile = SSFile.factory("Tests/Speed/Output/METABRICOutput"+str(j)+"." + extensions[i])
-            df = inFile._filter_data(columnList=metabricColumns[j], query=metabricFilters[j])
-            t1 = time.time()
-            outFile.write_to_file(df)
-            t2=time.time()
-            seconds = str(t2-t1)
-            line = "Write\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
-            outputLines.append(line)
-    else:
-        for j in range(0, len(filterDescriptions)):
-            if filetypes[i]=='JSON':
-                line = "Write\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+"NA_super_slow"+"\n"
-            else:
-                line = "Write\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + "NA_technical" + "\n"
-            filterLines.append(line)
+# #Read METABRIC file
+# for i in range(0,len(filetypes)):
+#     if filetypes[i]!='Excel' and filetypes[i]!='JSON' and filetypes[i]!='Stata' and filetypes[i]!='SQLite':
+#         for j in range(0, len(filterDescriptions)):
+#             print("Reading METABRIC from " + filetypes[i] +": " +str(j))
+#             fileName = "Tests/Speed/METABRIC/metabric." +extensions[i]
+#             metabricFile = SSFile.factory(fileName)
+#             t1=time.time()
+#             df=metabricFile.read_input_to_pandas(columnList=metabricColumns[j])
+#             t2=time.time()
+#             seconds = str(t2-t1)
+#             line = "Read\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
+#             outputLines.append(line)
+#             # if metabricFilters[j] == None:
+#             #     seconds = 'NA'
+#             # else:
+#             #     t1 = time.time()
+#             #     df = df.query(metabricFilters[j])
+#             #     t2 = time.time()
+#             #     seconds = str(t2 - t1)
+#             # line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+#             # filterLines.append(line)
+#     else:
+#         for j in range(0, len(filterDescriptions)):
+#             if filetypes[i]=='JSON':
+#                 reason = 'NA_super_slow'
+#             else:
+#                 reason = 'NA_technical'
+#             line = "Read\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + reason + "\n"
+#             outputLines.append(line)
+#             # line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + reason + "\n"
+#             # filterLines.append(line)
+#
+# #Write METABRIC file
+# for i in range(0,len(filetypes)):
+#     #put in row for every case explaining why the results aren't there: either super_slow or technical
+#     if filetypes[i]!='Excel' and filetypes[i]!='JSON' and filetypes[i]!='Stata' and filetypes[i]!='SQLite':
+#         for j in range(0, len(filterDescriptions)):
+#             print("Writing METABRIC to " + filetypes[i] + ": " +str(j))
+#             fileName = "Tests/Speed/METABRIC/metabric.pq"
+#             inFile = SSFile.factory(fileName)
+#             outFile = SSFile.factory("Tests/Speed/Output/METABRICOutput"+str(j)+"." + extensions[i])
+#             df = inFile._filter_data(columnList=metabricColumns[j], query=metabricFilters[j])
+#             t1 = time.time()
+#             outFile.write_to_file(df)
+#             t2=time.time()
+#             seconds = str(t2-t1)
+#             line = "Write\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
+#             outputLines.append(line)
+#     else:
+#         for j in range(0, len(filterDescriptions)):
+#             if filetypes[i]=='JSON':
+#                 line = "Write\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+"NA_super_slow"+"\n"
+#             else:
+#                 line = "Write\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + "NA_technical" + "\n"
+#             filterLines.append(line)
 #Read Tall file
 for i in range(0,len(filetypes)):
     for j in range(0, len(filterDescriptions)):

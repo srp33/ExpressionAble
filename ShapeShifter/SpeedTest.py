@@ -6,8 +6,8 @@ from SSFile import SSFile
 #later, support open science framework for storing large files
 #seperate filter logic for timing
 #currently excluding ARFF and HTML. We do not test Excel and Stata on METABRIC
-filetypes = ['Parquet', 'CSV','Excel','GCT','HDF5','JSON','MsgPack','Pickle','SQLite', 'Stata','TSV']
-extensions=['pq','csv','xlsx','gct','hdf','json','mp','pkl','db', 'dta','tsv']
+filetypes = ['Parquet', 'CSV','Excel','HDF5','JSON','MsgPack','Pickle','SQLite', 'Stata','TSV']
+extensions=['pq','csv','xlsx','hdf','json','mp','pkl','db', 'dta','tsv']
 filterDescriptions=['read_whole_file','1_categorical','1_numeric','1_of_each','2_categorical','2_numeric','2_of_each']
 smallFilters=[None,"discrete1=='hot'","float1>2","discrete1=='hot' and float1>2", "discrete1=='hot' and discrete2=='blue'", "float1>2 and float2<10", "discrete1=='hot' and discrete2=='blue' and float1>2 and float2<10"]
 smallColumns=[[],['Sample','discrete1'],['Sample','float1'],['Sample','discrete1','float1'],['Sample','discrete1','discrete2'],['Sample','float1','float2'],['Sample','discrete1','discrete2','float1','float2']]
@@ -32,16 +32,16 @@ for i in range(0,len(filetypes)):
         seconds = str(t2-t1)
         line = "Read\t"+filetypes[i]+"\tSmall\t"+filterDescriptions[j]+"\t"+seconds+"\n"
         outputLines.append(line)
-        if smallFilters[j]==None:
-            #print NA instead
-            seconds='NA'
-        else:
-            t1 = time.time()
-            df = df.query(smallFilters[j])
-            t2 = time.time()
-            seconds = str(t2 - t1)
-        line = "Filter\t" + filetypes[i] + "\tSmall\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-        filterLines.append(line)
+        # if smallFilters[j]==None:
+        #     #print NA instead
+        #     seconds='NA'
+        # else:
+        #     t1 = time.time()
+        #     df = df.query(smallFilters[j])
+        #     t2 = time.time()
+        #     seconds = str(t2 - t1)
+        # line = "Filter\t" + filetypes[i] + "\tSmall\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+        # filterLines.append(line)
 
 #Write small file
 for i in range(0,len(filetypes)):
@@ -68,15 +68,15 @@ for i in range(0,len(filetypes)):
         seconds = str(t2-t1)
         line = "Read\t"+filetypes[i]+"\tMedium\t"+filterDescriptions[j]+"\t"+seconds+"\n"
         outputLines.append(line)
-        if mediumFilters[j] == None:
-            seconds='NA'
-        else:
-            t1 = time.time()
-            df = df.query(mediumFilters[j])
-            t2 = time.time()
-            seconds = str(t2 - t1)
-        line = "Filter\t" + filetypes[i] + "\tMedium\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-        filterLines.append(line)
+        # if mediumFilters[j] == None:
+        #     seconds='NA'
+        # else:
+        #     t1 = time.time()
+        #     df = df.query(mediumFilters[j])
+        #     t2 = time.time()
+        #     seconds = str(t2 - t1)
+        # line = "Filter\t" + filetypes[i] + "\tMedium\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+        # filterLines.append(line)
 
 #Write medium file
 for i in range(0,len(filetypes)):
@@ -105,15 +105,15 @@ for i in range(0,len(filetypes)):
             seconds = str(t2-t1)
             line = "Read\t"+filetypes[i]+"\tMETABRIC\t"+filterDescriptions[j]+"\t"+seconds+"\n"
             outputLines.append(line)
-            if metabricFilters[j] == None:
-                seconds = 'NA'
-            else:
-                t1 = time.time()
-                df = df.query(metabricFilters[j])
-                t2 = time.time()
-                seconds = str(t2 - t1)
-            line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-            filterLines.append(line)
+            # if metabricFilters[j] == None:
+            #     seconds = 'NA'
+            # else:
+            #     t1 = time.time()
+            #     df = df.query(metabricFilters[j])
+            #     t2 = time.time()
+            #     seconds = str(t2 - t1)
+            # line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+            # filterLines.append(line)
     else:
         for j in range(0, len(filterDescriptions)):
             if filetypes[i]=='JSON':
@@ -122,8 +122,8 @@ for i in range(0,len(filetypes)):
                 reason = 'NA_technical'
             line = "Read\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + reason + "\n"
             outputLines.append(line)
-            line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + reason + "\n"
-            filterLines.append(line)
+            # line = "Filter\t" + filetypes[i] + "\tMETABRIC\t" + filterDescriptions[j] + "\t" + reason + "\n"
+            # filterLines.append(line)
 
 #Write METABRIC file
 for i in range(0,len(filetypes)):
@@ -159,15 +159,15 @@ for i in range(0,len(filetypes)):
         seconds = str(t2-t1)
         line = "Read\t"+filetypes[i]+"\tTall\t"+filterDescriptions[j]+"\t"+seconds+"\n"
         outputLines.append(line)
-        if tallFilters[j] == None:
-            seconds = 'NA'
-        else:
-            t1 = time.time()
-            df = df.query(tallFilters[j])
-            t2 = time.time()
-            seconds = str(t2 - t1)
-        line = "Filter\t" + filetypes[i] + "\tTall\t" + filterDescriptions[j] + "\t" + seconds + "\n"
-        filterLines.append(line)
+        # if tallFilters[j] == None:
+        #     seconds = 'NA'
+        # else:
+        #     t1 = time.time()
+        #     df = df.query(tallFilters[j])
+        #     t2 = time.time()
+        #     seconds = str(t2 - t1)
+        # line = "Filter\t" + filetypes[i] + "\tTall\t" + filterDescriptions[j] + "\t" + seconds + "\n"
+        # filterLines.append(line)
 
 #Write Tall file
 for i in range(0,len(filetypes)):
@@ -183,14 +183,50 @@ for i in range(0,len(filetypes)):
         line = "Write\t"+filetypes[i]+"\tTall\t"+filterDescriptions[j]+"\t"+seconds+"\n"
         outputLines.append(line)
 
+#Get data for filter times file
+file_sizes=["Small", "Medium", "Tall"]
+filter_files=["Tests/Speed/Small/SmallTest.pq", "Tests/Speed/Medium/MediumTest.pq", "Tests/Speed/Tall/TallData.pq"]
+for i in range(1, len(filterDescriptions)):
+    small_file_obj = SSFile.factory(filter_files[0])
+    df = small_file_obj.read_input_to_pandas(columnList = smallColumns[i])
+    t1 = time.time()
+    df = df.query(smallFilters[i])
+    t2 = time.time()
+    seconds = str(t2-t1)
+    line = "Small\t" + filterDescriptions[i] + "\t" + seconds + "\n"
+    filterLines.append(line)
 
+for i in range(1, len(filterDescriptions)):
+    medium_file_obj = SSFile.factory(filter_files[1])
+    df = medium_file_obj.read_input_to_pandas(columnList = mediumColumns[i])
+    t1 = time.time()
+    df = df.query(mediumFilters[i])
+    t2 = time.time()
+    seconds = str(t2-t1)
+    line = "Medium\t" + filterDescriptions[i] + "\t" + seconds + "\n"
+    filterLines.append(line)
+
+for i in range(1, len(filterDescriptions)):
+    tall_file_obj = SSFile.factory(filter_files[2])
+    df = tall_file_obj.read_input_to_pandas(columnList=tallColumns[i])
+    t1 = time.time()
+    df = df.query(tallFilters[i])
+    t2 = time.time()
+    seconds = str(t2 - t1)
+    line = "Tall\t" + filterDescriptions[i] + "\t" + seconds + "\n"
+    filterLines.append(line)
+
+with open('FilterSpeeds.tsv','w') as outFile:
+    outFile.write("Size\tFilter\tSeconds\n")
+    for line in filterLines:
+        outFile.write(line)
 
 #Write all data to results file
-with open('Results.tsv','w') as outFile:
+with open('SomeResults.tsv','w') as outFile:
     outFile.write(header)
     for line in outputLines:
         outFile.write(line)
-    for line in filterLines:
-        outFile.write(line)
+    # for line in filterLines:
+    #     outFile.write(line)
 
 

@@ -6,6 +6,10 @@ from SSFile import SSFile
 #later, support open science framework for storing large files
 #seperate filter logic for timing
 #currently excluding ARFF and HTML. We do not test Excel and Stata on METABRIC
+supported_file_type_dict = {"Small": ["Parquet"]} #etc
+#todo change all these to maps wherever possible
+#todo: rename medium to small, get rid of small
+#todo: change METABRIC to be "Wide" and randomly generated
 filetypes = ['Parquet', 'CSV','Excel','HDF5','JSON','MsgPack','Pickle','SQLite', 'Stata','TSV']
 extensions=['pq','csv','xlsx','hdf','json','mp','pkl','db', 'dta','tsv']
 filterDescriptions=['read_whole_file','1_categorical','1_numeric','1_of_each','2_categorical','2_numeric','2_of_each']

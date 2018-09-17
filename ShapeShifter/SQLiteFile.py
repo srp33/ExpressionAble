@@ -56,11 +56,13 @@ class SQLiteFile(SSFile):
             tableList = table.split('/')
             table = tableList[len(tableList) - 1]
             if not transpose:
-                df = df.set_index(indexCol) if indexCol in df.columns else df
+                df = df.set_index(indexCol) if indexCol in df.columns else df.set_index(df.columns[0])
 
                 df.to_sql(table, engine, index=True, if_exists="replace", chunksize=chunksize)
             else:
-                df = df.set_index(indexCol) if indexCol in df.columns else df
+                indexCol = df.columns[0]
+                df = df.set_index(indexCol) if indexCol in df.columns else df.set_index(df.columns[0])
+
                 df = df.transpose()
                 df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=chunksize)
             tempFile.close()
@@ -72,10 +74,11 @@ class SQLiteFile(SSFile):
             tableList = table.split('/')
             table = tableList[len(tableList) - 1]
             if not transpose:
-                df = df.set_index(indexCol) if indexCol in df.columns else df
+                df = df.set_index(indexCol) if indexCol in df.columns else df.set_index(df.columns[0])
                 df.to_sql(table, engine, if_exists='replace', chunksize=chunksize)
             else:
-                df = df.set_index(indexCol) if indexCol in df.columns else df
+                indexCol = df.columns[0]
+                df = df.set_index(indexCol) if indexCol in df.columns else df.set_index(df.columns[0])
                 df = df.transpose()
                 df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=chunksize)
 
@@ -108,11 +111,12 @@ class SQLiteFile(SSFile):
             tableList = table.split('/')
             table = tableList[len(tableList) - 1]
             if not transpose:
-                df = df.set_index(indexCol) if indexCol in df.columns else df
+                df = df.set_index(indexCol) if indexCol in df.columns else df.set_index(df.columns[0])
 
                 df.to_sql(table, engine, index=True, if_exists="replace", chunksize=chunksize)
             else:
-                df = df.set_index(indexCol) if indexCol in df.columns else df
+                indexCol = df.columns[0]
+                df = df.set_index(indexCol) if indexCol in df.columns else df.set_index(df.columns[0])
                 df = df.transpose()
                 df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=chunksize)
             tempFile.close()
@@ -124,10 +128,11 @@ class SQLiteFile(SSFile):
             tableList = table.split('/')
             table = tableList[len(tableList) - 1]
             if not transpose:
-                df = df.set_index(indexCol) if indexCol in df.columns else df
+                df = df.set_index(indexCol) if indexCol in df.columns else df.set_index(df.columns[0])
                 df.to_sql(table, engine, if_exists='replace', chunksize=chunksize)
             else:
-                df = df.set_index(indexCol) if indexCol in df.columns else df
+                indexCol = df.columns[0]
+                df = df.set_index(indexCol) if indexCol in df.columns else df.set_index(df.columns[0])
                 df = df.transpose()
                 df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=chunksize)
 

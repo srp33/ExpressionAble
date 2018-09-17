@@ -45,6 +45,7 @@ class StataFile(SSFile):
                 except (ValueError, TypeError) as e:
                     pass
 
+        df = df.set_index(indexCol) if indexCol in df.columns else df.set_index(df.columns[0])
         if gzipResults:
             #write to temp file
             tempFile = tempfile.NamedTemporaryFile(delete=False)

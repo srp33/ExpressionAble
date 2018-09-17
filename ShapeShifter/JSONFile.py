@@ -28,7 +28,7 @@ class JSONFile(SSFile):
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         if not transpose:
-            df = df.set_index(indexCol, drop=True) if indexCol in df.columns else df
+            df = df.set_index(indexCol, drop=True) if indexCol in df.columns else df.set_index(df.columns[0], drop=True)
         if gzipResults:
             outFilePath = super()._append_gz(self.filePath)
             df.to_json(path_or_buf=outFilePath, compression='gzip')

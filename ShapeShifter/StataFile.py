@@ -28,8 +28,8 @@ class StataFile(SSFile):
         null = 'NA'
         query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, columnList, query, transpose,
                                                                         includeAllColumns, df, includeIndex, indexCol)
-        if not transpose:
-            df = df.set_index(indexCol) if indexCol in df.columns else df
+        # if not transpose:
+        #     df = df.set_index(indexCol) if indexCol in df.columns else df
 
         self.write_to_file(df, gzipResults)
 

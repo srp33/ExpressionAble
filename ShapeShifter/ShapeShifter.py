@@ -53,6 +53,12 @@ class ShapeShifter:
         query = self.__convert_queries_to_string(continuousQueries, discreteQueries)
         self.outputFile.export_filter_results(self.inputFile, columns=columns, query=query,
                               transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults)
+
+    def get_number_of_filtered_samples(self, continuous_queries, discrete_queries):
+        query = self.__convert_queries_to_string(continuous_queries, discrete_queries)
+        df = self.inputFile._filter_data(query=query)
+        return len(df.index)
+
     def peek_by_column_names(self, listOfColumnNames, numRows=10, indexCol="Sample"):
         """
         Takes a look at a portion of the file by showing only the requested columns

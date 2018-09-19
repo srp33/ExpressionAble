@@ -2,61 +2,61 @@ import SSFile
 
 class ShapeShifter:
 
-    def __init__(self, filePath, fileType=None):
+    def __init__(self, file_path, file_type=None):
         """
         Creates a ShapeShifter object
-        :param filePath: string name of a file path to read and perform operations on
-        :param fileType: string indicating the type of file that is being read
+        :param file_path: string name of a file path to read and perform operations on
+        :param file_type: string indicating the type of file that is being read
 
         """
 
-        self.inputFile = SSFile.SSFile.factory(filePath, fileType)
-        self.gzippedInput= self.__is_gzipped()
-        self.outputFile= None
+        self.input_file = SSFile.SSFile.factory(file_path, file_type)
+        self.gzipped_input= self.__is_gzipped()
+        self.output_file= None
 
-    def export_filter_results(self, outFilePath, outFileType=None, filters=None, columns=[],
-                              transpose=False, includeAllColumns=False, gzipResults=False, index='Sample'):
+    def export_filter_results(self, out_file_path, out_file_type=None, filters=None, columns=[],
+                              transpose=False, include_all_columns=False, gzip_results=False, index='Sample'):
         """
         Filters and then exports data to a file
-        :param outFilePath: Name of the file that results will be saved to
-        :param outFileType: string indicating what file format results will be saved to
+        :param out_file_path: Name of the file that results will be saved to
+        :param out_file_type: string indicating what file format results will be saved to
         :param filters: string representing the query or filter to apply to the data set
         :param columns: list of columns to include in the output. If blank and no filter is specified, all columns will be included.
         :param transpose: boolean when, if True, index and columns will be transposed in the output file
-        :param includeAllColumns: boolean indicating whether to include all columns in the output. If True, overrides columnList
-        :param gzipResults: boolean indicating whether the resulting file will be gzipped
+        :param include_all_columns: boolean indicating whether to include all columns in the output. If True, overrides columnList
+        :param gzip_results: boolean indicating whether the resulting file will be gzipped
         :return:
         """
-        self.outputFile = SSFile.SSFile.factory(outFilePath,outFileType)
-        self.outputFile.export_filter_results(self.inputFile, columnList=columns, query=filters, transpose=transpose,
-                                              includeAllColumns=includeAllColumns, gzipResults=gzipResults,
-                                              indexCol=index)
+        self.output_file = SSFile.SSFile.factory(out_file_path, out_file_type)
+        self.output_file.export_filter_results(self.input_file, column_list=columns, query=filters, transpose=transpose,
+                                               include_all_columns=include_all_columns, gzip_results=gzip_results,
+                                               index_col=index)
 
-    def export_query_results(self, outFilePath, outFileType=None, columns= [],
-                             continuousQueries = [], discreteQueries = [], transpose=False,
-                             includeAllColumns=False, gzipResults = False):
+    def export_query_results(self, out_file_path, out_file_type=None, columns= [],
+                             continuous_queries = [], discrete_queries = [], transpose=False,
+                             include_all_columns=False, gzip_results = False):
         """
         Filters and exports data to a file. Similar to export_filter_results, but takes filters in the form of ContinuousQuery and DiscreteQuery objects,
         and has slightly less flexible functionality
-        :param outFilePath: Name of the file that results will be saved to
-        :param outFileType: string indicating what file format results will be saved to
+        :param out_file_path: Name of the file that results will be saved to
+        :param out_file_type: string indicating what file format results will be saved to
         :param columns: list of columns to include in the output. If blank, all columns will be included.
-        :param continuousQueries: list of ContinuousQuery objects representing queries on a column of continuous data
-        :param discreteQueries: list of DiscreteQuery objects representing queries on a column of discrete data
+        :param continuous_queries: list of ContinuousQuery objects representing queries on a column of continuous data
+        :param discrete_queries: list of DiscreteQuery objects representing queries on a column of discrete data
         :param transpose: boolean when, if True, index and columns will be transposed in the output file
-        :param includeAllColumns: boolean indicating whether to include all columns in the output. If True, overrides columnList
-        :param gzipResults: boolean indicating whether the resulting file will be gzipped
+        :param include_all_columns: boolean indicating whether to include all columns in the output. If True, overrides columnList
+        :param gzip_results: boolean indicating whether the resulting file will be gzipped
         :return:
         """
 
-        self.outputFile = SSFile.SSFile.factory(outFilePath, outFileType)
-        query = self.__convert_queries_to_string(continuousQueries, discreteQueries)
-        self.outputFile.export_filter_results(self.inputFile, columns=columns, query=query,
-                              transpose=transpose, includeAllColumns=includeAllColumns, gzipResults=gzipResults)
+        self.output_file = SSFile.SSFile.factory(out_file_path, out_file_type)
+        query = self.__convert_queries_to_string(continuous_queries, discrete_queries)
+        self.output_file.export_filter_results(self.input_file, column_list=columns, query=query,
+                                               transpose=transpose, include_all_columns=include_all_columns, gzip_results=gzip_results)
 
     def get_filtered_samples(self, continuous_queries, discrete_queries):
         query = self.__convert_queries_to_string(continuous_queries, discrete_queries)
-        df = self.inputFile._filter_data(query=query)
+        df = self.input_file._filter_data(query=query)
         return df.index.values
 
     def peek_by_column_names(self, listOfColumnNames, numRows=10, indexCol="Sample"):
@@ -68,7 +68,7 @@ class ShapeShifter:
         :return:
         """
         listOfColumnNames.insert(0, indexCol)
-        df = self.inputFile.read_input_to_pandas(columnList=listOfColumnNames, indexCol = indexCol)
+        df = self.input_file.read_input_to_pandas(columnList=listOfColumnNames, indexCol = indexCol)
         #df = pd.read_parquet(self.inputFile.filePath, columns=listOfColumnNames)
         df.set_index(indexCol, drop=True, inplace=True)
         df = df[0:numRows]
@@ -99,7 +99,7 @@ class ShapeShifter:
             print("Error: there must be at least one input file to merge with.")
             return
 
-        SSFileList.insert(0,self.inputFile)
+        SSFileList.insert(0, self.input_file)
         df1 = SSFileList[0].read_input_to_pandas()
 
         #we keep track of how often a column name appears and will change the names to avoid duplicates if necessary
@@ -179,7 +179,7 @@ class ShapeShifter:
         import ColumnInfo
         columnList = [columnName]
         #df = pd.read_parquet(self.inputFile.filePath, columns=columnList)
-        df = self.inputFile.read_input_to_pandas(columnList=columnList)
+        df = self.input_file.read_input_to_pandas(columnList=columnList)
 
         uniqueValues = df[columnName].unique().tolist()
         # uniqueValues.remove(None)
@@ -201,7 +201,7 @@ class ShapeShifter:
         """
         # columnNames = getColumnNames(parquetFilePath)
         import ColumnInfo
-        df = self.inputFile.read_input_to_pandas()
+        df = self.input_file.read_input_to_pandas()
         columnDict = {}
         for col in df:
             uniqueValues = df[col].unique().tolist()
@@ -218,7 +218,7 @@ class ShapeShifter:
         """
         Function for internal use. Checks if a file is gzipped based on its extension
         """
-        extensions = self.inputFile.filePath.rstrip("\n").split(".")
+        extensions = self.input_file.filePath.rstrip("\n").split(".")
         if extensions[len(extensions) - 1] == 'gz':
             return True
         return False
@@ -285,7 +285,7 @@ class ShapeShifter:
         :rtype: list
 
         """
-        return self.inputFile.get_column_names()
+        return self.input_file.get_column_names()
 
 
     def peek(self, numRows=10, numCols=10):
@@ -311,7 +311,7 @@ class ShapeShifter:
         # df = self.inputFile.read_input_to_pandas(columnList=selectedCols)
         # df.set_index(self.index, drop=True, inplace=True)
 
-        df=self.inputFile.read_input_to_pandas()
+        df=self.input_file.read_input_to_pandas()
         if (numCols > len(df.columns)):
              numCols = len(df.columns)
         df = df.iloc[0:numRows, 0:numCols]

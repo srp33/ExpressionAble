@@ -24,26 +24,26 @@ class GCTFile(SSFile):
         #     df = df[columnList]
         # return df
 
-    def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,
-                              gzipResults=False, indexCol="Sample"):
+    def export_filter_results(self, inputSSFile, column_list=[], query=None, transpose=False, include_all_columns=False,
+                              gzip_results=False, index_col="Sample"):
         df = None
         includeIndex = False
         null = 'NA'
 
         if query != None:
             query = self._translate_null_query(query)
-        if not includeAllColumns and "NAME" not in columnList:
-            columnList.append("NAME")
-        df = inputSSFile._filter_data(columnList=columnList, query=query,
-                                      includeAllColumns=includeAllColumns, indexCol=indexCol)
+        if not include_all_columns and "NAME" not in column_list:
+            column_list.append("NAME")
+        df = inputSSFile._filter_data(columnList=column_list, query=query,
+                                      includeAllColumns=include_all_columns, indexCol=index_col)
 
         if transpose:
-            df = df.set_index(indexCol) if indexCol in df.columns else df
+            df = df.set_index(index_col) if index_col in df.columns else df
             df = df.transpose()
             includeIndex = True
         #TODO: remove returning inputSSFile for every file type, it is no longer needed since gzip is taken care of elsewhere
 
-        self.write_to_file(df, gzipResults)
+        self.write_to_file(df, gzip_results)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         # if not transpose:

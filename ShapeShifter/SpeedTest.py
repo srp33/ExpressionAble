@@ -6,7 +6,7 @@ from SSFile import SSFile
 #later, support open science framework for storing large files
 #seperate filter logic for timing
 #currently excluding ARFF and HTML. We do not test Excel and Stata on METABRIC
-supported_file_type_dict = {"Small": ["Parquet"]} #etc
+supported_file_type_dict = {"Small": ["Parquet"], "medium": ["Parquet"]} #etc
 #todo change all these to maps wherever possible
 #todo: rename medium to small, get rid of small
 #todo: change METABRIC to be "Wide" and randomly generated

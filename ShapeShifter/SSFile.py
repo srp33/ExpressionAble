@@ -23,24 +23,24 @@ class SSFile:
         """
         raise NotImplementedError("Reading from this file type is not currently supported.")
 
-    def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,
-                              gzipResults=False, indexCol="Sample"):
+    def export_filter_results(self, inputSSFile, column_list=[], query=None, transpose=False, include_all_columns=False,
+                              gzip_results=False, index_col="Sample"):
         """
         Filters and then exports data to a file
         :param inputSSFile: SSFile object representing the file to be read and filtered
-        :param columnList: list of columns to include in the output. If blank, all columns will be included.
+        :param column_list: list of columns to include in the output. If blank, all columns will be included.
         :param query: string representing the query or filter to apply to the data set
         :param transpose: boolean indicating whether the results will be transposed
-        :param includeAllColumns: boolean indicating whether to include all columns in the output. If True, overrides columnList
-        :param gzipResults: boolean indicating whether the resulting file will be gzipped
-        :param indexCol: string name of the index column of the data set
+        :param include_all_columns: boolean indicating whether to include all columns in the output. If True, overrides columnList
+        :param gzip_results: boolean indicating whether the resulting file will be gzipped
+        :param index_col: string name of the index column of the data set
         """
         df = None
         includeIndex = False
         null = 'NA'
-        query, inputSSFile, df, includeIndex = self._prep_for_export(inputSSFile, columnList, query, transpose,
-                                                                        includeAllColumns, df, includeIndex, indexCol)
-        self.write_to_file(df, gzipResults, includeIndex, null)
+        query, inputSSFile, df, includeIndex = self._prep_for_export(inputSSFile, column_list, query, transpose,
+                                                                     include_all_columns, df, includeIndex, index_col)
+        self.write_to_file(df, gzip_results, includeIndex, null)
 
     def _prep_for_export(self, inputSSFile, columnList, query, transpose, includeAllColumns, df, includeIndex,
                          indexCol):
@@ -164,6 +164,12 @@ class SSFile:
         :param null: string representing how null or None values should be represented in the output file
         """
         raise NotImplementedError("Writing to this file type is not currently supported.")
+    def _update_index_col(self, df, indexCol="Sample"):
+        """
+        Function for internal use. If the given index column is not in the data frame, it will default to the first column name
+        """
+        if indexCol not in df.columns:
+            return
     def __is_gzipped(self):
         """
         Function for internal use. Checks if a file is gzipped based on its extension

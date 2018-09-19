@@ -20,15 +20,15 @@ class HDF5File(SSFile):
             df = df[columnList]
         return df
 
-    def export_filter_results(self, inputSSFile, columnList=[], query=None, transpose=False, includeAllColumns=False,
-                              gzipResults=False, indexCol="Sample"):
+    def export_filter_results(self, inputSSFile, column_list=[], query=None, transpose=False, include_all_columns=False,
+                              gzip_results=False, index_col="Sample"):
         df = None
         includeIndex = False
         null = 'NA'
-        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, columnList, query, transpose,
-                                                                        includeAllColumns, df, includeIndex, indexCol)
+        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, column_list, query, transpose,
+                                                                        include_all_columns, df, includeIndex, index_col)
 
-        self.write_to_file(df, gzipResults)
+        self.write_to_file(df, gzip_results)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         if not transpose:

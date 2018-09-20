@@ -3,15 +3,15 @@ import time
 from SSFile import SSFile
 
 supported_file_types = {"Small": ["Parquet", "CSV", "Excel", "HDF5", "JSON", "MsgPack", "Pickle", "SQLite", "Stata", "TSV"],
-                          "Wide": ["Parquet", "CSV", "HDF5", "MsgPack", "Pickle", "SQLite", "Stata", "TSV"],
+                          "Wide": ["Parquet", "CSV", "HDF5", "MsgPack", "Pickle", "Stata", "TSV"],
                           "Tall": ["Parquet", "CSV", "Excel", "HDF5", "JSON", "MsgPack", "Pickle", "SQLite", "Stata", "TSV"]}
 
-input_file_paths = {"Small": "Tests/Speed/Small/SmallTest.", "Wide": "Tests/Speed/Wide/WideTest.", "Tall": "Tests/Speed/Tall/TallTest.tsv"}
+input_file_paths = {"Small": "Tests/Speed/Small/SmallTest.", "Wide": "Tests/Speed/Wide/WideTest.", "Tall": "Tests/Speed/Tall/TallTest"}
 
 output_file_paths = {"Small": "Tests/Speed/Output/SmallOutput.", "Wide": "Tests/Speed/Output/WideOutput.", "Tall": "Tests/Speed/Output/TallOutput."}
 
 extensions = {"Parquet": "pq", "CSV": "csv", "Excel": "xlsx", "JSON": "json", "MsgPack": "mp", "Pickle": "pkl",
-              "SQLite": "db", "Stata": "dta", "TSV": "tsv"}
+        "HDF5": "hdf", "SQLite": "db", "Stata": "dta", "TSV": "tsv"}
 
 filters = {"read_whole_file": None, "1_categorical": "discrete1=='hot'", "1_numeric": "int1>20",
            "1_of_each": "discrete1=='hot' and int1>20", "2_categorical":"discrete1=='hot' and discrete2=='cold'",
@@ -26,7 +26,7 @@ output_lines=[]
 
 for file_size in supported_file_types:
     for file_type in supported_file_types[file_size]:
-        file_path = input_file_paths[file_type] + extensions[file_type]
+        file_path = input_file_paths[file_size] + extensions[file_type]
         file_obj = SSFile.factory(file_path)
         for filter_description in filters:
             t1 = time.time()

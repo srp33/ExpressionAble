@@ -23,8 +23,8 @@ try:
     ss1 = ShapeShifter.ShapeShifter(f1)
     ss2 = ShapeShifter.ShapeShifter(f2,type)
 
-    df1 = ss1.inputFile.read_input_to_pandas()
-    df2 = ss2.inputFile.read_input_to_pandas()
+    df1 = ss1.input_file.read_input_to_pandas()
+    df2 = ss2.input_file.read_input_to_pandas()
     if len(df1.index) != len(df2.index) or len(df1.columns) != len(df2.columns):
         print(f1 + " and " +f2+ ": FAIL: dimensions differ")
         sys.exit()

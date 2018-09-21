@@ -6,7 +6,7 @@ supported_file_types = {"Small": ["Parquet", "CSV", "Excel", "HDF5", "JSON", "Ms
                           "Wide": ["Parquet", "CSV", "HDF5", "MsgPack", "Pickle", "Stata", "TSV"],
                           "Tall": ["Parquet", "CSV", "Excel", "HDF5", "JSON", "MsgPack", "Pickle", "SQLite", "Stata", "TSV"]}
 
-input_file_paths = {"Small": "Tests/Speed/Small/SmallTest.", "Wide": "Tests/Speed/Wide/WideTest.", "Tall": "Tests/Speed/Tall/TallTest"}
+input_file_paths = {"Small": "Tests/Speed/Small/SmallTest.", "Wide": "Tests/Speed/Wide/WideTest.", "Tall": "Tests/Speed/Tall/TallTest."}
 
 output_file_paths = {"Small": "Tests/Speed/Output/SmallOutput.", "Wide": "Tests/Speed/Output/WideOutput.", "Tall": "Tests/Speed/Output/TallOutput."}
 

@@ -1,4 +1,6 @@
 from . import SSFile
+import pandas as pd
+
 
 class ShapeShifter:
 
@@ -316,6 +318,3 @@ class ShapeShifter:
              numCols = len(df.columns)
         df = df.iloc[0:numRows, 0:numCols]
         return df
-
-
-import pandas as pd

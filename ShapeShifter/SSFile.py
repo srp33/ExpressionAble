@@ -3,25 +3,6 @@ import tempfile
 import gzip
 import os
 import re
-from . import ARFFFile
-from . import CSVFile
-from . import ExcelFile
-from . import GCTFile
-from . import HDF5File
-from . import HTMLFile
-from . import JSONFile
-from . import MsgPackFile
-from . import ParquetFile
-from . import PickleFile
-from . import SQLiteFile
-from . import StataFile
-from . import TSVFile
-from . import JupyterNotebookFile
-from . import RMarkdownFile
-from . import KallistoTPMFile
-from . import Kallisto_est_counts_File
-from . import SalmonTPMFile
-from . import SalmonNumReadsFile
 
 
 class SSFile:
@@ -101,6 +82,25 @@ class SSFile:
         :param type: string representing the type of file
         :return: SSFile subclass object
         """
+        from . import ARFFFile
+        from . import CSVFile
+        from . import ExcelFile
+        from . import GCTFile
+        from . import HDF5File
+        from . import HTMLFile
+        from . import JSONFile
+        from . import MsgPackFile
+        from . import ParquetFile
+        from . import PickleFile
+        from . import SQLiteFile
+        from . import StataFile
+        from . import TSVFile
+        from . import JupyterNotebookFile
+        from . import RMarkdownFile
+        from . import KallistoTPMFile
+        from . import Kallisto_est_counts_File
+        from . import SalmonTPMFile
+        from . import SalmonNumReadsFile
         if type==None:
             type = SSFile.__determine_extension(filePath)
 

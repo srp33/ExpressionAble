@@ -1,7 +1,7 @@
 name = 'myshapeshifter'
-from .columninfo import ColumnInfo
-from .shapeshifter import ShapeShifter
-from .continuousquery import ContinuousQuery
-from .operatorenum import OperatorEnum
-from .discretequery import DiscreteQuery
-from .filetypeenum import FileTypeEnum
+# from shapeshifter import ColumnInfo
+# from shapeshifter import ShapeShifter
+# from shapeshifter import ContinuousQuery
+# from shapeshifter import OperatorEnum
+# from shapeshifter import DiscreteQuery
+# from shapeshifter import FileTypeEnum

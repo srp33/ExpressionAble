@@ -3,8 +3,8 @@ import tempfile
 
 import pandas as pd
 
-from . import SizeExceededError
-from .SSFile import SSFile
+from errors import SizeExceededError
+from files import SSFile
 
 
 class ExcelFile(SSFile):
@@ -31,7 +31,7 @@ class ExcelFile(SSFile):
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         if len(df.columns) > 16384 or len(df.index) > 1048576:
-            raise SizeExceededError.SizeExceededError("Excel supports a maximum of 1,048,576 rows and 16,384 columns. The dimensions of your data are " + str(df.shape)
+            raise SizeExceededError("Excel supports a maximum of 1,048,576 rows and 16,384 columns. The dimensions of your data are " + str(df.shape)
                                                       +"\nPlease use a smaller data set or consider using a different file type")
             # print(
             #     "WARNING: Excel supports a maximum of 1,048,576 rows and 16,384 columns. The dimensions of your data are " + str(

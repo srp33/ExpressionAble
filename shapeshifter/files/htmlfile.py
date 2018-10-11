@@ -1,6 +1,6 @@
 import pandas as pd
-
-from .SSFile import SSFile
+import gzip
+from files import SSFile
 
 
 class HTMLFile(SSFile):
@@ -32,6 +32,3 @@ class HTMLFile(SSFile):
             outFile = open(self.filePath, "w")
             outFile.write(html)
             outFile.close()
-
-
-import gzip

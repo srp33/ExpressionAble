@@ -1,4 +1,4 @@
-from .OperatorEnum import OperatorEnum
+from . import OperatorEnum
 class ContinuousQuery:
 	"""
 	Data object that encapsulates a continuous query, holding info on the column, operator, and value'
@@ -18,6 +18,3 @@ class ContinuousQuery:
 		self.columnName = columnName
 		self.operator = operator
 		self.value = value
-
-
-

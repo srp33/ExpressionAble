@@ -1,5 +1,3 @@
-import pyarrow.parquet as pq
-import pyarrow as pa
 import pandas as pd
 import sys
 inFile = sys.argv[1]

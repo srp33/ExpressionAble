@@ -1,8 +1,8 @@
-import shutil
-import tempfile
 import gzip
 import os
 import re
+import shutil
+import tempfile
 
 
 class SSFile:
@@ -82,47 +82,32 @@ class SSFile:
         :param type: string representing the type of file
         :return: SSFile subclass object
         """
-        from . import ARFFFile
-        from . import CSVFile
-        from . import ExcelFile
-        from . import GCTFile
-        from . import HDF5File
-        from . import HTMLFile
-        from . import JSONFile
-        from . import MsgPackFile
-        from . import ParquetFile
-        from . import PickleFile
-        from . import SQLiteFile
-        from . import StataFile
-        from . import TSVFile
-        from . import JupyterNotebookFile
-        from . import RMarkdownFile
-        from . import KallistoTPMFile
-        from . import Kallisto_est_counts_File
-        from . import SalmonTPMFile
-        from . import SalmonNumReadsFile
+        from files import ARFFFile, CSVFile, ExcelFile, GCTFile, HDF5File, HTMLFile, JSONFile, MsgPackFile, ParquetFile
+        from files import PickleFile, SQLiteFile, StataFile, TSVFile, JupyterNBFile, RMarkdownFile, KallistoTPMFile
+        from files import KallistoEstCountsFile, SalmonTPMFile, SalmonNumReadsFile
+
         if type==None:
             type = SSFile.__determine_extension(filePath)
 
-        if type.lower() == 'parquet': return ParquetFile.ParquetFile(filePath, type)
-        elif type.lower() == 'tsv': return TSVFile.TSVFile(filePath,type)
-        elif type.lower() == 'csv': return CSVFile.CSVFile(filePath,type)
-        elif type.lower() == 'json': return JSONFile.JSONFile(filePath,type)
-        elif type.lower() == 'excel': return ExcelFile.ExcelFile(filePath,type)
-        elif type.lower() == 'hdf5': return HDF5File.HDF5File(filePath,type)
-        elif type.lower() == 'pickle': return PickleFile.PickleFile(filePath,type)
-        elif type.lower() == 'msgpack': return MsgPackFile.MsgPackFile(filePath, type)
-        elif type.lower() == 'stata': return StataFile.StataFile(filePath,type)
-        elif type.lower() == 'sqlite': return SQLiteFile.SQLiteFile(filePath,type)
-        elif type.lower() == 'html': return HTMLFile.HTMLFile(filePath,type)
-        elif type.lower() == 'arff': return ARFFFile.ARFFFile(filePath,type)
-        elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
-        elif type.lower() == 'jupyternotebook': return JupyterNotebookFile.JupyterNBFile(filePath,type)
-        elif type.lower() == 'rmarkdown': return RMarkdownFile.RMarkdownFile(filePath,type)
-        elif type.lower() == 'kallistotpm': return KallistoTPMFile.KallistoTPMFile(filePath,type)
-        elif type.lower() == 'kallisto_est_counts': return Kallisto_est_counts_File.Kallisto_est_counts_File(filePath,type)
-        elif type.lower() == 'salmontpm': return SalmonTPMFile.SalmonTPMFile(filePath, type)
-        elif type.lower() == 'salmonnumreads': return SalmonNumReadsFile.SalmonNumReadsFile(filePath,type)
+        if type.lower() == 'parquet': return ParquetFile(filePath, type)
+        elif type.lower() == 'tsv': return TSVFile(filePath, type)
+        elif type.lower() == 'csv': return CSVFile(filePath, type)
+        elif type.lower() == 'json': return JSONFile(filePath, type)
+        elif type.lower() == 'excel': return ExcelFile(filePath, type)
+        elif type.lower() == 'hdf5': return HDF5File(filePath, type)
+        elif type.lower() == 'pickle': return PickleFile(filePath, type)
+        elif type.lower() == 'msgpack': return MsgPackFile(filePath, type)
+        elif type.lower() == 'stata': return StataFile(filePath, type)
+        elif type.lower() == 'sqlite': return SQLiteFile(filePath, type)
+        elif type.lower() == 'html': return HTMLFile(filePath, type)
+        elif type.lower() == 'arff': return ARFFFile(filePath, type)
+        elif type.lower() == 'gct': return GCTFile(filePath, type)
+        elif type.lower() == 'jupyternotebook': return JupyterNBFile(filePath, type)
+        elif type.lower() == 'rmarkdown': return RMarkdownFile(filePath, type)
+        elif type.lower() == 'kallistotpm': return KallistoTPMFile(filePath, type)
+        elif type.lower() == 'kallisto_est_counts': return KallistoEstCountsFile(filePath, type)
+        elif type.lower() == 'salmontpm': return SalmonTPMFile(filePath, type)
+        elif type.lower() == 'salmonnumreads': return SalmonNumReadsFile(filePath, type)
         else:
             raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
     factory=staticmethod(factory)

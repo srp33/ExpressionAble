@@ -1,12 +1,13 @@
-from .SSFile import SSFile
-from .salmon import salmonToPandas
+from files import SSFile
+from utils import kallisto_to_pandas
 
 
-class SalmonNumReadsFile(SSFile):
+class KallistoTPMFile(SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
-        df = salmonToPandas(self.filePath, colName="NumReads")
+        df = kallisto_to_pandas(self.filePath, colName="tpm")
         #can I read in only certain columns?
         if len(columnList) > 0:
             df = df[columnList]
+        df=df.reset_index()
         return df

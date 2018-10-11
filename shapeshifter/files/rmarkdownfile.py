@@ -1,7 +1,7 @@
 import tempfile
 
-from . import SizeExceededError
-from .SSFile import SSFile
+from errors import SizeExceededError
+from files import SSFile
 
 
 class RMarkdownFile(SSFile):
@@ -17,7 +17,7 @@ class RMarkdownFile(SSFile):
         if df.size > max_size:
             #df = df.iloc[0:500, 0:20]
             # Print message to warn user that data will be truncated.
-            raise SizeExceededError.SizeExceededError(" R Markdown support is only available for up to 10,000 data points."
+            raise SizeExceededError(" R Markdown support is only available for up to 10,000 data points."
                   "\nPlease use a smaller data set or consider using a different file type")
 
         # Convert the dataframe to a tab-separated string, either including or excluding index.

@@ -1,20 +1,20 @@
-import os
+import gzip
 import tempfile
 
-from .ConvertARFF import arffToPandas
-from .ConvertARFF import toARFF
-from .SSFile import SSFile
+import pandas as pd
+
+from files import SSFile
 
 
-class ARFFFile(SSFile):
+class MsgPackFile(SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if self.isGzipped:
-            tempFile = super()._gunzip_to_temp_file()
-            df= arffToPandas(tempFile.name)
-            os.remove(tempFile.name)
+            with gzip.open(self.filePath) as path:
+                df=pd.read_msgpack(path)
         else:
-            df = arffToPandas(self.filePath)
+            df = pd.read_msgpack(self.filePath)
+        df = df.reset_index()
         if len(columnList) > 0:
             df = df[columnList]
         return df
@@ -27,18 +27,15 @@ class ARFFFile(SSFile):
         query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, column_list, query, transpose,
                                                                         include_all_columns, df, includeIndex, index_col)
 
-        self.write_to_file(df, gzip_results, includeIndex, null)
+        self.write_to_file(df, gzip_results)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+        if not transpose:
+            df = df.set_index(indexCol) if indexCol in df.columns else df.set_index(df.columns[0])
         if gzipResults:
-            tempFile = tempfile.NamedTemporaryFile(delete=False)
-            toARFF(df, tempFile.name)
+            tempFile =tempfile.NamedTemporaryFile(delete=False)
+            df.to_msgpack(tempFile.name)
             tempFile.close()
             super()._gzip_results(tempFile.name, self.filePath)
         else:
-            toARFF(df, super()._remove_gz(self.filePath))
-
-
-
-
-
+            df.to_msgpack(super()._remove_gz(self.filePath))

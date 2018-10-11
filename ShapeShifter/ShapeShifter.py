@@ -1,5 +1,6 @@
-from . import SSFile
 import pandas as pd
+
+from files import SSFile
 
 
 class ShapeShifter:
@@ -12,7 +13,7 @@ class ShapeShifter:
 
         """
 
-        self.input_file = SSFile.SSFile.factory(file_path, file_type)
+        self.input_file = SSFile.factory(file_path, file_type)
         self.gzipped_input= self.__is_gzipped()
         self.output_file= None
 
@@ -29,7 +30,7 @@ class ShapeShifter:
         :param gzip_results: boolean indicating whether the resulting file will be gzipped
         :return:
         """
-        self.output_file = SSFile.SSFile.factory(out_file_path, out_file_type)
+        self.output_file = SSFile.factory(out_file_path, out_file_type)
         self.output_file.export_filter_results(self.input_file, column_list=columns, query=filters, transpose=transpose,
                                                include_all_columns=include_all_columns, gzip_results=gzip_results,
                                                index_col=index)
@@ -51,7 +52,7 @@ class ShapeShifter:
         :return:
         """
 
-        self.output_file = SSFile.SSFile.factory(out_file_path, out_file_type)
+        self.output_file = SSFile.factory(out_file_path, out_file_type)
         query = self.__convert_queries_to_string(continuous_queries, discrete_queries)
         self.output_file.export_filter_results(self.input_file, column_list=columns, query=query,
                                                transpose=transpose, include_all_columns=include_all_columns, gzip_results=gzip_results)
@@ -91,11 +92,11 @@ class ShapeShifter:
         if how not in ['left','right','outer','inner']:
             print("Error: \'How\' must one of the following options: left, right, outer, inner")
             return
-        outFile = SSFile.SSFile.factory(outFilePath, outFileType)
+        outFile = SSFile.factory(outFilePath, outFileType)
         SSFileList=[]
         #create a file object for every file path passed in
         for file in fileList:
-            SSFileList.append(SSFile.SSFile.factory(file))
+            SSFileList.append(SSFile.factory(file))
 
         if len(SSFileList) < 1:
             print("Error: there must be at least one input file to merge with.")
@@ -178,7 +179,7 @@ class ShapeShifter:
         :return: Name, data type (continuous/discrete), and unique values from specified column
         :rtype: ColumnInfo object
         """
-        from . import ColumnInfo
+        from . import columninfo
         columnList = [columnName]
         #df = pd.read_parquet(self.inputFile.filePath, columns=columnList)
         df = self.input_file.read_input_to_pandas(columnList=columnList)
@@ -190,9 +191,9 @@ class ShapeShifter:
         while uniqueValues[i] == None:
             i += 1
         if isinstance(uniqueValues[i], str) or isinstance(uniqueValues[i], bool):
-            return ColumnInfo.ColumnInfo(columnName, "discrete", uniqueValues)
+            return columninfo.ColumnInfo(columnName, "discrete", uniqueValues)
         else:
-            return ColumnInfo.ColumnInfo(columnName, "continuous", uniqueValues)
+            return columninfo.ColumnInfo(columnName, "continuous", uniqueValues)
 
     def get_all_columns_info(self):
         """
@@ -202,7 +203,7 @@ class ShapeShifter:
         :rtype: dictionary where key: column name and value:ColumnInfo object containing the column name, data type (continuous/discrete), and unique values from all columns
         """
         # columnNames = getColumnNames(parquetFilePath)
-        from . import ColumnInfo
+        from . import columninfo
         df = self.input_file.read_input_to_pandas()
         columnDict = {}
         for col in df:
@@ -211,9 +212,9 @@ class ShapeShifter:
             while uniqueValues[i] == None:
                 i += 1
             if isinstance(uniqueValues[i], str) or isinstance(uniqueValues[i], bool):
-                columnDict[col] = ColumnInfo.ColumnInfo(col, "discrete", uniqueValues)
+                columnDict[col] = columninfo.ColumnInfo(col, "discrete", uniqueValues)
             else:
-                columnDict[col] = ColumnInfo.ColumnInfo(col, "continuous", uniqueValues)
+                columnDict[col] = columninfo.ColumnInfo(col, "continuous", uniqueValues)
         return columnDict
 
     def __is_gzipped(self):
@@ -256,18 +257,18 @@ class ShapeShifter:
         """
         Function for internal use. Used to translate an OperatorEnum into a string representation of that operator
         """
-        from . import OperatorEnum
-        if operator == OperatorEnum.OperatorEnum.Equals:
+        from . import operatorenum
+        if operator == operatorenum.OperatorEnum.Equals:
             return "=="
-        elif operator == OperatorEnum.OperatorEnum.GreaterThan:
+        elif operator == operatorenum.OperatorEnum.GreaterThan:
             return ">"
-        elif operator == OperatorEnum.OperatorEnum.GreaterThanOrEqualTo:
+        elif operator == operatorenum.OperatorEnum.GreaterThanOrEqualTo:
             return ">="
-        elif operator == OperatorEnum.OperatorEnum.LessThan:
+        elif operator == operatorenum.OperatorEnum.LessThan:
             return "<"
-        elif operator == OperatorEnum.OperatorEnum.LessThanOrEqualTo:
+        elif operator == operatorenum.OperatorEnum.LessThanOrEqualTo:
             return "<="
-        elif operator == OperatorEnum.OperatorEnum.NotEquals:
+        elif operator == operatorenum.OperatorEnum.NotEquals:
             return "!="
 
 

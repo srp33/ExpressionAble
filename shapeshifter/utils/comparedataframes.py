@@ -2,10 +2,10 @@ import math
 import sys
 from numbers import Number
 
-import ShapeShifter
+from shapeshifter import ShapeShifter
 
 
-def standardizeNullValue(x):
+def standardize_null_value(x):
     if x==None or x=='None' or x=='' or x=='nan' or x=='NaN' or (isinstance(x, Number) and math.isnan(x)):
         x=None
 
@@ -20,8 +20,8 @@ if len(sys.argv)>3:
     type=sys.argv[3]
 
 try:
-    ss1 = ShapeShifter.ShapeShifter(f1)
-    ss2 = ShapeShifter.ShapeShifter(f2,type)
+    ss1 = ShapeShifter(f1)
+    ss2 = ShapeShifter(f2,type)
 
     df1 = ss1.input_file.read_input_to_pandas()
     df2 = ss2.input_file.read_input_to_pandas()
@@ -33,8 +33,8 @@ try:
         for j in range(0, len(df1.columns)):
             temp=df1.iloc[i,j]
             temp2=df2.iloc[i,j]
-            temp=standardizeNullValue(temp)
-            temp2=standardizeNullValue(temp2)
+            temp=standardize_null_value(temp)
+            temp2=standardize_null_value(temp2)
             isEqual = True
             if isinstance(temp,Number) and isinstance(temp2, Number):
                 if abs(temp - temp2) >0.1:

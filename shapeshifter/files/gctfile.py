@@ -1,8 +1,6 @@
 import tempfile
-
-from .ConvertGCT import gctToPandas
-from .ConvertGCT import toGCT
-from .SSFile import SSFile
+from utils import to_gct, gct_to_pandas
+from files import SSFile
 
 
 class GCTFile(SSFile):
@@ -15,10 +13,10 @@ class GCTFile(SSFile):
         #     os.remove(super()._remove_gz(self.filePath))
         # else:
         if len(columnList) == 0:
-            return gctToPandas(self.filePath)
+            return gct_to_pandas(self.filePath)
         else:
             columnList.append("Description")
-            return gctToPandas(self.filePath, columnList)
+            return gct_to_pandas(self.filePath, columnList)
         # df = gctToPandas(self.filePath)
         # if len(columnList) > 0:
         #     df = df[columnList]
@@ -50,8 +48,8 @@ class GCTFile(SSFile):
         #     df = df.set_index(indexCol) if indexCol in df.columns else df
         if gzipResults:
             tempFile = tempfile.NamedTemporaryFile(delete=False)
-            toGCT(df, tempFile.name)
+            to_gct(df, tempFile.name)
             tempFile.close()
             super()._gzip_results(tempFile.name, self.filePath)
         else:
-            toGCT(df, self._remove_gz(self.filePath))
+            to_gct(df, self._remove_gz(self.filePath))

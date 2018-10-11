@@ -1,20 +1,10 @@
 import pyarrow.parquet as pq
 import re
-#import pyarrow as pa
 import pandas as pd
-from .ColumnInfo import ColumnInfo
-from .ContinuousQuery import ContinuousQuery
-from .DiscreteQuery import DiscreteQuery
-from .OperatorEnum import OperatorEnum
-from .FileTypeEnum import FileTypeEnum
-from .ColumnNotFoundError import ColumnNotFoundError
-from .ConvertARFF import toARFF
-from .ConvertARFF import arffToPandas
-from .ConvertGCT import toGCT
-from .ConvertGCT import gctToPandas
+from . import ColumnInfo, OperatorEnum, FileTypeEnum
+from utils import to_arff, arff_to_pandas, to_gct, gct_to_pandas
 import gzip
 import time
-import sys
 import os
 
 def peek(parquetFilePath, numRows=10, numCols=10,indexCol="Sample")->pd.DataFrame:
@@ -400,12 +390,12 @@ def read_input_to_pandas(inputFilePath, inputFileType, columnList, indexCol):
 			df=df[columnList]
 		return df
 	elif inputFileType == FileTypeEnum.ARFF:
-		df= arffToPandas(inputFilePath)
+		df= arff_to_pandas(inputFilePath)
 		if len(columnList)>0:
 			df=df[columnList]
 		return df
 	elif inputFileType == FileTypeEnum.GCT:
-		df= gctToPandas(inputFilePath)
+		df= gct_to_pandas(inputFilePath)
 		if len(columnList)>0:
 			df=df[columnList]
 		return df
@@ -574,11 +564,11 @@ def export_filter_results(parquetFilePath, outFilePath, outFileType:FileTypeEnum
 	elif outFileType == FileTypeEnum.ARFF:
 		#if not transpose:
 		#	df=df.set_index(indexCol)
-		toARFF(df, outFilePath)
+		to_arff(df, outFilePath)
 		if gzipResults:
 			compress_results(outFilePath)
 	elif outFileType == FileTypeEnum.GCT:
-		toGCT(df, outFilePath)
+		to_gct(df, outFilePath)
 		if gzipResults:
 			compress_results(outFilePath)
 	t2=time.time()

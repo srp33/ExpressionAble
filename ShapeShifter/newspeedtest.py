@@ -1,6 +1,6 @@
 import time
 
-from .SSFile import SSFile
+from files import SSFile
 
 supported_file_types = {"Small": ["Parquet", "CSV", "Excel", "HDF5", "JSON", "MsgPack", "Pickle", "SQLite", "Stata", "TSV"],
                           "Wide": ["Parquet", "CSV", "HDF5", "MsgPack", "Pickle", "Stata", "TSV"],

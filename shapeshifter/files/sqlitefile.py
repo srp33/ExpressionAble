@@ -2,9 +2,9 @@ import tempfile
 
 import pandas as pd
 
-from .SSFile import SSFile
+from .ssfile import SSFile
 import gzip
-from . import SizeExceededError
+from errors import SizeExceededError
 
 
 class SQLiteFile(SSFile):
@@ -43,7 +43,7 @@ class SQLiteFile(SSFile):
         null = 'NA'
         includeIndex = False
         if len(df.columns) > 999:
-            raise SizeExceededError.SizeExceededError("SQLite supports a maximum of 999 columns. Your data has " + str(
+            raise SizeExceededError("SQLite supports a maximum of 999 columns. Your data has " + str(
                 len(df.columns)) + " columns. Please use a smaller data set or consider using a different file type")
             # print("Warning: SQLite supports a maximum of 999 columns. Your data has " + str(
             #     len(df.columns)) + " columns. Extra data has been truncated.")
@@ -87,7 +87,7 @@ class SQLiteFile(SSFile):
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         filePath = self.filePath
         if len(df.columns) > 999:
-            raise SizeExceededError.SizeExceededError("SQLite supports a maximum of 999 columns. Your data has " + str(
+            raise SizeExceededError("SQLite supports a maximum of 999 columns. Your data has " + str(
                 len(df.columns)) + " columns. Please use a smaller data set or consider using a different file type")
         from sqlalchemy import create_engine
         chunksize = 999 // len(df.columns)

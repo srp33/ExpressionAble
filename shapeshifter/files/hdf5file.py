@@ -1,9 +1,8 @@
 import os
 import tempfile
-
 import pandas as pd
 
-from .SSFile import SSFile
+from files import SSFile
 
 
 class HDF5File(SSFile):

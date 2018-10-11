@@ -2,7 +2,7 @@ import pandas as pd
 
 #Takes a pandas dataframe and converts it to a file
 #The file will be named after the second parameter
-def toGCT(df, fileName):
+def to_gct(df, fileName):
     #df = df.fillna("")
 #Write #1.2 (the version string)
     writeFile = open(fileName, 'w')
@@ -21,7 +21,7 @@ def toGCT(df, fileName):
     df.to_csv(path_or_buf=fileName, sep="\t", na_rep="", index=False, mode='a')
 
 #Takes a GCT file and reads it into a pandas dataframe
-def gctToPandas(fileName, columnList=None):
+def gct_to_pandas(fileName, columnList=None):
 #We're trying to keep it from having the default index
     df = pd.read_csv(filepath_or_buffer=fileName, sep='\t', skiprows=2, usecols=columnList, low_memory=False)
     #todo: transpose here!

@@ -5,14 +5,14 @@ import pandas as pd
 
 
 #Return true if the values in the column are numeric
-def isNumeric(column): 
+def is_numeric(column):
     for item in column:
         if type(item) != float and type(item) != int and item != "?":
             return False   
     return True
 
 #Return true if the values in the column are dates
-def isDate(column):
+def is_date(column):
     for item in column: 
         try:
             pd.to_datetime(item)
@@ -23,7 +23,7 @@ def isDate(column):
 
 #Pass in a dataframe, which will be changed to an ARFF file
 #The file name is the second parameter you'll pass in.  
-def toARFF(df, fileName):
+def to_arff(df, fileName):
     df = df.fillna("?")
 
     writeFile = open(fileName, 'w')
@@ -34,9 +34,9 @@ def toARFF(df, fileName):
     for colName in list(df):
         writeFile.write("@ATTRIBUTE\t" + colName)
         options = set([])
-        if isNumeric(df[colName]) == True:
+        if is_numeric(df[colName]) == True:
             writeFile.write("\tNUMERIC\n")
-        elif isDate(df[colName]) == True:
+        elif is_date(df[colName]) == True:
             writeFile.write("\tDATE\tyyyy-MM-dd\n")
             for value in df[colName]:
                 fullDate = pd.to_datetime(value, errors='ignore')
@@ -69,7 +69,7 @@ def toARFF(df, fileName):
     writeFile.close()
 
 #Converts an ARFF file (the parameter) into a pandas dataframe
-def arffToPandas(fileName):
+def arff_to_pandas(fileName):
     i = 0
     columnNames = []
     dataList = []

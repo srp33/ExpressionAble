@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .SSFile import SSFile
+from files import SSFile
 
 
 class JSONFile(SSFile):

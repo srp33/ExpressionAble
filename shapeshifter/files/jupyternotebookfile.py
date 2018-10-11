@@ -1,7 +1,7 @@
 import tempfile
 
-from . import SizeExceededError
-from .SSFile import SSFile
+from errors import SizeExceededError
+from files import SSFile
 
 
 class JupyterNBFile(SSFile):
@@ -16,7 +16,7 @@ class JupyterNBFile(SSFile):
         # Truncate Data to 500 rows X 20 columns as a max size if dataframe exceeds 10,000 data points.
         max_size = 10000
         if df.size > max_size:
-            raise SizeExceededError.SizeExceededError(
+            raise SizeExceededError(
                 "Jupyter NoteBook support is only available for up to 10,000 data points."
                 "\nPlease use a smaller data set or consider using a different file type")
 

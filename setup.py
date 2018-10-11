@@ -8,7 +8,7 @@ setup(
     # Needed to actually package something
     packages=['shapeshifter'],
     # Needed for dependencies
-    install_requires=['pandas', 'pyarrow', 'salmon', 'shutil', 'gzip', 'tempfile'],
+    install_requires=['pandas', 'pyarrow', 'salmon'],
     version='0.1',
     license='MIT',
     description='A tool for managing large datasets',

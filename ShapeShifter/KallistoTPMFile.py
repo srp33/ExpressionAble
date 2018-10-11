@@ -1,5 +1,5 @@
-from SSFile import SSFile
-from kallisto import kallistoToPandas
+from .SSFile import SSFile
+from .kallisto import kallistoToPandas
 
 
 class KallistoTPMFile(SSFile):

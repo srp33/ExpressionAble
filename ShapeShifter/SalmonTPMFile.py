@@ -1,5 +1,5 @@
-from SSFile import SSFile
-from salmon import salmonToPandas
+from .SSFile import SSFile
+from .salmon import salmonToPandas
 
 
 class SalmonTPMFile(SSFile):

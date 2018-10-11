@@ -3,8 +3,8 @@ import tempfile
 
 import pandas as pd
 
-import SizeExceededError
-from SSFile import SSFile
+from . import SizeExceededError
+from .SSFile import SSFile
 
 
 class ExcelFile(SSFile):

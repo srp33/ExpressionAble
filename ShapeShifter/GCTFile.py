@@ -1,8 +1,8 @@
 import tempfile
 
-from ConvertGCT import gctToPandas
-from ConvertGCT import toGCT
-from SSFile import SSFile
+from .ConvertGCT import gctToPandas
+from .ConvertGCT import toGCT
+from .SSFile import SSFile
 
 
 class GCTFile(SSFile):

@@ -1,7 +1,7 @@
 import tempfile
 
-import SizeExceededError
-from SSFile import SSFile
+from . import SizeExceededError
+from .SSFile import SSFile
 
 
 class RMarkdownFile(SSFile):

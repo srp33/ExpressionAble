@@ -2,16 +2,16 @@ import pyarrow.parquet as pq
 import re
 #import pyarrow as pa
 import pandas as pd
-from ColumnInfo import ColumnInfo
-from ContinuousQuery import ContinuousQuery
-from DiscreteQuery import DiscreteQuery
-from OperatorEnum import OperatorEnum
-from FileTypeEnum import FileTypeEnum
-from ColumnNotFoundError import ColumnNotFoundError
-from ConvertARFF import toARFF
-from ConvertARFF import arffToPandas
-from ConvertGCT import toGCT
-from ConvertGCT import gctToPandas
+from .ColumnInfo import ColumnInfo
+from .ContinuousQuery import ContinuousQuery
+from .DiscreteQuery import DiscreteQuery
+from .OperatorEnum import OperatorEnum
+from .FileTypeEnum import FileTypeEnum
+from .ColumnNotFoundError import ColumnNotFoundError
+from .ConvertARFF import toARFF
+from .ConvertARFF import arffToPandas
+from .ConvertGCT import toGCT
+from .ConvertGCT import gctToPandas
 import gzip
 import time
 import sys

@@ -3,7 +3,7 @@ import tempfile
 
 import pandas as pd
 
-from SSFile import SSFile
+from .SSFile import SSFile
 
 
 class MsgPackFile(SSFile):

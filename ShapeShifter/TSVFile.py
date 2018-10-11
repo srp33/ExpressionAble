@@ -1,6 +1,6 @@
 import pandas as pd
-
-import SSFile
+import gzip
+from . import SSFile
 
 
 class TSVFile(SSFile.SSFile):
@@ -37,4 +37,3 @@ class TSVFile(SSFile.SSFile):
         f.close()
         columns = line.split("\t")
         return columns
-import gzip

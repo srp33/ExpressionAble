@@ -1,9 +1,9 @@
 import os
 import tempfile
 
-from ConvertARFF import arffToPandas
-from ConvertARFF import toARFF
-from SSFile import SSFile
+from .ConvertARFF import arffToPandas
+from .ConvertARFF import toARFF
+from .SSFile import SSFile
 
 
 class ARFFFile(SSFile):

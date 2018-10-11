@@ -2,7 +2,9 @@ import tempfile
 
 import pandas as pd
 
-from SSFile import SSFile
+from .SSFile import SSFile
+import gzip
+from . import SizeExceededError
 
 
 class SQLiteFile(SSFile):
@@ -136,5 +138,3 @@ class SQLiteFile(SSFile):
                 df = df.transpose()
                 df.to_sql(table, engine, if_exists="replace", index=True, index_label=indexCol, chunksize=chunksize)
 
-import gzip
-import SizeExceededError

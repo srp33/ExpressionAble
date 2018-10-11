@@ -1,5 +1,27 @@
 import shutil
 import tempfile
+import gzip
+import os
+import re
+from . import ARFFFile
+from . import CSVFile
+from . import ExcelFile
+from . import GCTFile
+from . import HDF5File
+from . import HTMLFile
+from . import JSONFile
+from . import MsgPackFile
+from . import ParquetFile
+from . import PickleFile
+from . import SQLiteFile
+from . import StataFile
+from . import TSVFile
+from . import JupyterNotebookFile
+from . import RMarkdownFile
+from . import KallistoTPMFile
+from . import Kallisto_est_counts_File
+from . import SalmonTPMFile
+from . import SalmonNumReadsFile
 
 
 class SSFile:
@@ -348,27 +370,3 @@ class SSFile:
         if len(missingColumns) > 0:
             print("Warning: the following columns were not found and therefore not included in output: " + ", ".join(
                 missingColumns))
-
-
-import gzip
-import os
-import re
-import ARFFFile
-import CSVFile
-import ExcelFile
-import GCTFile
-import HDF5File
-import HTMLFile
-import JSONFile
-import MsgPackFile
-import ParquetFile
-import PickleFile
-import SQLiteFile
-import StataFile
-import TSVFile
-import JupyterNotebookFile
-import RMarkdownFile
-import KallistoTPMFile
-import Kallisto_est_counts_File
-import SalmonTPMFile
-import SalmonNumReadsFile

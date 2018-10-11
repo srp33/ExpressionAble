@@ -1,6 +1,6 @@
 import pandas as pd
 import gzip
-from files import SSFile
+from ..files import SSFile
 
 
 class HTMLFile(SSFile):

@@ -1,6 +1,6 @@
 import time
 
-from files import SSFile
+from .files import SSFile
 
 #add tests for reading the whole file and a tall data set (10 cols, 1 million rows)
 #later, support open science framework for storing large files

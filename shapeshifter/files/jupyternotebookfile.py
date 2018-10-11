@@ -1,7 +1,7 @@
 import tempfile
 
-from errors import SizeExceededError
-from files import SSFile
+from ..errors import SizeExceededError
+from ..files import SSFile
 
 
 class JupyterNBFile(SSFile):

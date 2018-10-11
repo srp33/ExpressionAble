@@ -4,7 +4,7 @@ import pandas as pd
 
 from .ssfile import SSFile
 import gzip
-from errors import SizeExceededError
+from ..errors import SizeExceededError
 
 
 class SQLiteFile(SSFile):

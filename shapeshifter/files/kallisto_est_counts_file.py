@@ -1,5 +1,5 @@
-from files import SSFile
-from utils import kallisto_to_pandas
+from ..files import SSFile
+from ..utils import kallisto_to_pandas
 
 
 class KallistoEstCountsFile(SSFile):

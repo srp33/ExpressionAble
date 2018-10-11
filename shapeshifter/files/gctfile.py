@@ -1,6 +1,6 @@
 import tempfile
-from utils import to_gct, gct_to_pandas
-from files import SSFile
+from ..utils import to_gct, gct_to_pandas
+from ..files import SSFile
 
 
 class GCTFile(SSFile):

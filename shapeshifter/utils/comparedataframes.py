@@ -2,7 +2,7 @@ import math
 import sys
 from numbers import Number
 
-from shapeshifter import ShapeShifter
+from .. import ShapeShifter
 
 
 def standardize_null_value(x):

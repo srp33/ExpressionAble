@@ -1,8 +1,8 @@
 import os
 import tempfile
 
-from utils import arff_to_pandas, to_arff
-from files import SSFile
+from ..utils import arff_to_pandas, to_arff
+from ..files import SSFile
 
 
 class ARFFFile(SSFile):

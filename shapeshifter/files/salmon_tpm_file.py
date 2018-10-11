@@ -1,5 +1,5 @@
-from files import SSFile
-from utils import salmon_to_pandas
+from ..files import SSFile
+from ..utils import salmon_to_pandas
 
 
 class SalmonTPMFile(SSFile):

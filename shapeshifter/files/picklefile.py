@@ -1,6 +1,6 @@
 import pandas as pd
 
-from files import SSFile
+from ..files import SSFile
 
 
 class PickleFile(SSFile):

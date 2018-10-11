@@ -82,9 +82,9 @@ class SSFile:
         :param type: string representing the type of file
         :return: SSFile subclass object
         """
-        from files import ARFFFile, CSVFile, ExcelFile, GCTFile, HDF5File, HTMLFile, JSONFile, MsgPackFile, ParquetFile
-        from files import PickleFile, SQLiteFile, StataFile, TSVFile, JupyterNBFile, RMarkdownFile, KallistoTPMFile
-        from files import KallistoEstCountsFile, SalmonTPMFile, SalmonNumReadsFile
+        from ..files import ARFFFile, CSVFile, ExcelFile, GCTFile, HDF5File, HTMLFile, JSONFile, MsgPackFile, ParquetFile
+        from ..files import PickleFile, SQLiteFile, StataFile, TSVFile, JupyterNBFile, RMarkdownFile, KallistoTPMFile
+        from ..files import KallistoEstCountsFile, SalmonTPMFile, SalmonNumReadsFile
 
         if type==None:
             type = SSFile.__determine_extension(filePath)

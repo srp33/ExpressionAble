@@ -6,7 +6,7 @@ setup(
     author='Brandon Fry',
     # author_email='',
     # Needed to actually package something
-    packages=['shapeshifter'],
+    packages=find_packages(exclude=['.idea', 'docs', 'Tests']),
     # Needed for dependencies
     install_requires=['pandas', 'pyarrow', 'sqlalchemy'],
     version='0.1',

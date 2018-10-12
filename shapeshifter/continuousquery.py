@@ -1,14 +1,14 @@
-from shapeshifter import OperatorEnum
+from shapeshifter import operatorenum
 class ContinuousQuery:
 	"""
 	Data object that encapsulates a continuous query, holding info on the column, operator, and value'
 	"""
-	def __init__(self, columnName:str, operator:OperatorEnum, value:float):
+	def __init__(self, columnName:str, operator:operatorenum, value:float):
 		"""
 		:type columnName: string
 		:param columnName: name of the column to be examined
 
-		:type operator: OperatorEnum
+		:type operator: operatorenum
 		:param operator: representation of comparison operator such as ==, <, >=, etc.
 
 		:type value: float

@@ -5,10 +5,10 @@ import pandas as pd
 import pyarrow
 
 from shapeshifter.errors import ColumnNotFoundError
-from shapeshifter import ContinuousQuery
-from shapeshifter import DiscreteQuery
-from shapeshifter import OperatorEnum
-from shapeshifter import ShapeShifter
+from shapeshifter import continuousquery
+from shapeshifter import discretequery
+from shapeshifter import operatorenum
+from shapeshifter import shapeshifter
 
 
 def determineFileType(fileType):
@@ -98,17 +98,17 @@ def isGzipped(fileName):
 
 def determineOperator(operator):
 	if operator=="==" or operator=="=":
-		return OperatorEnum.Equals
+		return operatorenum.Equals
 	elif operator== "<":
-		return OperatorEnum.LessThan
+		return operatorenum.LessThan
 	elif operator =="<=":
-		return OperatorEnum.LessThanOrEqualTo
+		return operatorenum.LessThanOrEqualTo
 	elif operator ==">":
-		return OperatorEnum.GreaterThan
+		return operatorenum.GreaterThan
 	elif operator ==">=":
-		return OperatorEnum.GreaterThanOrEqualTo
+		return operatorenum.GreaterThanOrEqualTo
 	elif operator == "!=":
-		return OperatorEnum.NotEquals
+		return operatorenum.NotEquals
 
 def isOperator(operator):
 	if operator=="==" or operator=="=" or operator=="<" or operator ==">" or operator==">=" or operator=="<=" or operator=="!=":
@@ -146,7 +146,7 @@ def buildContinuousQuery(query):
 	col = query[0]
 	operator = determineOperator(query[1])
 	value = float(query[2])
-	return ContinuousQuery(col, operator, value)
+	return continuousquery(col, operator, value)
 	
 def buildDiscreteQuery(query):
 	query=query.rstrip("\n").split(" ")
@@ -159,7 +159,7 @@ def buildDiscreteQuery(query):
 			values.append(False)
 		else:
 			values.append(query[i])
-	return DiscreteQuery(col, values)
+	return discretequery(col, values)
 
 def parseColumns(columns):
 	colList = columns.rstrip("\n").split(",")
@@ -242,7 +242,7 @@ if __name__ == '__main__':
 	if args.set_index:
 		indexCol=args.set_index[0]
 	try:
-		ss = ShapeShifter(args.input_file, inFileType)
+		ss = shapeshifter(args.input_file, inFileType)
 		ss.export_filter_results(args.output_file, outFileType, filters=query, columns=colList, transpose=isTransposed,
 								 include_all_columns=allCols, gzip_results=gzip, index=indexCol)
 

@@ -1,3 +1,7 @@
+__all__ = ['SSFile', 'ARFFFile', 'CSVFile', 'ExcelFile', 'GCTFile', 'HDF5File', 'HTMLFile', 'JSONFile', 'JupyterNBFile',
+           'KallistoEstCountsFile', 'KallistoTPMFile', 'MsgPackFile', 'ParquetFile', 'PickleFile', 'RMarkdownFile',
+           'SalmonNumReadsFile', 'SalmonTPMFile', 'SQLiteFile', 'StataFile', 'TSVFile']
+
 from shapeshifter.files.ssfile import SSFile
 from shapeshifter.files.arffile import ARFFFile
 from shapeshifter.files.csvfile import CSVFile

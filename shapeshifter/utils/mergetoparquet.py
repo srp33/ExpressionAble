@@ -40,4 +40,5 @@ def build_parquet(inputFiles, outputFile):
 		df1 = pd.merge(df1,df2,how='inner')
 	df1.to_parquet(outputFile)
 
-build_parquet(["TsvData/METABRIC/data.tsv", "TsvData/METABRIC/converted_metadata.txt"], "metabric.pq")
+if __name__ == '__main__':
+	build_parquet(["TsvData/METABRIC/data.tsv", "TsvData/METABRIC/converted_metadata.txt"], "metabric.pq")

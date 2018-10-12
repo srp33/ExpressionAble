@@ -3,7 +3,7 @@ import gzip
 from ..files import SSFile
 
 
-class TSVFile(SSFile.SSFile):
+class TSVFile(SSFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if len(columnList) == 0:

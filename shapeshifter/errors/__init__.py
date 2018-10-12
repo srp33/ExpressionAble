@@ -1,2 +1,4 @@
-from .columnnotfounderror import ColumnNotFoundError
-from .sizeexceedederror import SizeExceededError
+__all__ = ['ColumnNotFoundError', 'SizeExceededError']
+
+from shapeshifter.errors.columnnotfounderror import ColumnNotFoundError
+from shapeshifter.errors.sizeexceedederror import SizeExceededError

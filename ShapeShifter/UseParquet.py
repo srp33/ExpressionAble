@@ -1,8 +1,8 @@
 import pyarrow.parquet as pq
 import re
 import pandas as pd
-from . import ColumnInfo, OperatorEnum, FileTypeEnum
-from .utils import to_arff, arff_to_pandas, to_gct, gct_to_pandas
+from shapeshifter import ColumnInfo, OperatorEnum, FileTypeEnum
+from shapeshifter.utils import to_arff, arff_to_pandas, to_gct, gct_to_pandas
 import gzip
 import time
 import os

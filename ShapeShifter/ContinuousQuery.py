@@ -1,4 +1,4 @@
-from . import OperatorEnum
+from shapeshifter import OperatorEnum
 class ContinuousQuery:
 	"""
 	Data object that encapsulates a continuous query, holding info on the column, operator, and value'

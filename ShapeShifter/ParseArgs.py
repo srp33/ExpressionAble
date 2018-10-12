@@ -4,11 +4,11 @@ import sys
 import pandas as pd
 import pyarrow
 
-from .errors import ColumnNotFoundError
-from . import ContinuousQuery
-from . import DiscreteQuery
-from . import OperatorEnum
-from . import ShapeShifter
+from shapeshifter.errors import ColumnNotFoundError
+from shapeshifter import ContinuousQuery
+from shapeshifter import DiscreteQuery
+from shapeshifter import OperatorEnum
+from shapeshifter import ShapeShifter
 
 
 def determineFileType(fileType):

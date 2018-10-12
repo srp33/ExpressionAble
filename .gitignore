@@ -11,3 +11,6 @@ runstuff.py
 __pycache__
 *.swp
 .idea/
+ShapeShifter.egg-info/
+*.egg-info/
+

@@ -1,4 +1,3 @@
-name = 'myshapeshifter'
 from shapeshifter.columninfo import ColumnInfo
 from shapeshifter.shapeshifter import ShapeShifter
 from shapeshifter.continuousquery import ContinuousQuery

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='ShapeShifter',
+    name='shapeshifter',
     url='https://github.com/srp33/ShapeShifter',
     author='Brandon Fry',
     # author_email='',

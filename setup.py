@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='shapeshifter',
+    name='ShapeShifter',
     url='https://github.com/srp33/ShapeShifter',
     author='Brandon Fry',
     # author_email='',
     # Needed to actually package something
-    packages=find_packages(exclude=['.idea', 'docs', 'Tests']),
+    packages=find_packages(['shapeshifter']),
     # Needed for dependencies
     install_requires=['pandas', 'pyarrow', 'sqlalchemy'],
     version='0.1',

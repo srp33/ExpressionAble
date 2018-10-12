@@ -3,15 +3,12 @@ from setuptools import setup, find_packages
 setup(
     name='shapeshifter',
     url='https://github.com/srp33/ShapeShifter',
-    author='Brandon Fry',
-    # author_email='',
-    # Needed to actually package something
+    author='Piccolo Lab',
+    author_email='stephen_piccolo@byu.edu',
     packages=find_packages(exclude=['Tests*', 'docs*']),
-    # Needed for dependencies
     install_requires=['pandas', 'pyarrow', 'sqlalchemy'],
-    version='0.1',
+    version=open('VERSION').read(),
     license='MIT',
     description='A tool for managing large datasets',
-    # We will also need a readme eventually (there will be a warning)
-    # long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
 )

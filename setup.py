@@ -10,5 +10,5 @@ setup(
     version=open('VERSION').read(),
     license='MIT',
     description='A tool for managing large datasets',
-    long_description=open('README.md').read(),
+    # long_description=open('README.md').read(),
 )

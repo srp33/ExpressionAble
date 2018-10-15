@@ -1,0 +1,13 @@
+from ..files import SSFile
+from ..utils import kallisto_to_pandas
+
+
+class KallistoEstCountsFile(SSFile):
+
+    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+        df = kallisto_to_pandas(self.filePath, colName="est_counts")
+        #can I read in only certain columns?
+        if len(columnList) > 0:
+            df = df[columnList]
+        df=df.reset_index()
+        return df

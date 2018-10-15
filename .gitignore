@@ -10,4 +10,6 @@ argsExample.py
 runstuff.py
 __pycache__
 *.swp
+.idea/
+*.egg-info/
 

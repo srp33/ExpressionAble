@@ -14,8 +14,9 @@ cp VERSION $tmpDir/
 mkdir $tmpDir/Tests/
 cp -r Tests/InputData $tmpDir/Tests/
 cp -r Tests/OutputData $tmpDir/Tests/
-cp Tests/*.py $tmpDir
+cp Tests/*.py $tmpDir/
 cp -r shapeshifter $tmpDir
+cp setup.py $tmpDir
 cd $tmpDir
 docker build -t srp33/shapeshifter:version$(cat VERSION) .
 

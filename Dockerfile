@@ -6,5 +6,8 @@ ADD RunTests.sh /
 ADD RunTests2.sh /
 ADD Tests/InputData /Tests/InputData
 ADD Tests/OutputData /Tests/OutputData
-ADD Tests/*.py /
-ADD shapeshifter /
+ADD *.py /
+ADD VERSION /ShapeShifter/
+RUN mv setup.py /ShapeShifter/
+ADD shapeshifter /ShapeShifter/shapeshifter
+RUN pip3 install -e ShapeShifter

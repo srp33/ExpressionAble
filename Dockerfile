@@ -6,4 +6,5 @@ ADD RunTests.sh /
 ADD RunTests2.sh /
 ADD Tests/InputData /Tests/InputData
 ADD Tests/OutputData /Tests/OutputData
+ADD Tests/*.py /
 ADD shapeshifter /

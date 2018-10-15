@@ -16,7 +16,7 @@ then
 	rm -f $results
 	exit 1
 else
-	#grep PASS $results
+	grep PASS $results
 	echo TESTS PASS
 fi
 

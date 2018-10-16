@@ -39,11 +39,14 @@ Now you are ready to use ShapeShifter code and begin work on your file type!
 
 ## Adding a file type to ShapeShifter
 
+Begin by adding a new file to ShapeShifter/shapeshifter/files. The file name should be all lowercase and indicate the
+file type you are supporting.
+For example, if I were creating a class for supporting the ARFF format, I would name my file arfffile.py.
 All ShapeShifter-supported file types are associated with a class that inherits from SSFile.SSFile.
 Make sure the class you are building properly inherits from SSFile. For example, If I were writing a class to support the ARFF
 file type, my class declaration would look like this:
 ```python
-from SSFile import SSFile
+from ..files import SSFile
 class ARFFFile(SSFile):
     ...
 ``` 

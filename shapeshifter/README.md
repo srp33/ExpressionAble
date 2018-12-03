@@ -42,7 +42,7 @@ Now you are ready to use ShapeShifter code and begin work on your file type!
 Begin by adding a new file to ShapeShifter/shapeshifter/files. The file name should be all lowercase and indicate the
 file type you are supporting.
 For example, if I were creating a class for supporting the ARFF format, I would name my file arfffile.py.
-All ShapeShifter-supported file types are associated with a class that inherits from SSFile.SSFile.
+All ShapeShifter-supported file types are associated with a class that inherits from SSFile.
 Make sure the class you are building properly inherits from SSFile. For example, If I were writing a class to support the ARFF
 file type, my class declaration would look like this:
 ```python
@@ -135,16 +135,15 @@ In addition to implementing the class for you file type, you must hook your file
 You need to add a clause to `SSFile.factory()`
 that will be used to construct an file object of your type. The `type` parameter is a string that corresponds to
 the name of your file type. If such a string is given, you should then return a file object of your type with the given `filePath` and `type`. 
-In order for this to work, you will also need to add an import statement at the BOTTOM of the file SSFile.py. If I were adding support for a GCT file, my code would look like the example below.
+In order for this to work, you will also need to add an import statement in the factory method of the file SSFile.py. If I were adding support for a GCT file, my code would look like the example below.
 You should of course replace `'gct'` and `GCTFile.GCTFile()` with your extension and file constructor, respectively:
 ```python
 def factory(filePath, type):
+    from ..files import GCTFile
+
     if type.lower() ==......
     ...
-    elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
-    
-...
-import GCTFile
+    elif type.lower() == 'gct': return GCTFile(filePath,type)
 ```
 Finally, a clause should be added in the `SSFile.__determine_extension()` function that indicates what file extension or extensions correspond to your file type.
 This method should return the name of your file type when a file name has the extension related to your file type. The purpose 

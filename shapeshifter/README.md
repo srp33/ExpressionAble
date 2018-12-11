@@ -1,6 +1,6 @@
 # Adding Support for Additional File Types in ShapeShifter
 
-Currently, ShapeShifter supports working with files in the following formats: CSV, TSV, JSON, Excel, HDF5, Parquet, MsgPack, Stata, Pickle, HTML, SQLite, ARFF, and GCT. This file explains what steps must be taken to expand ShapeShifter to work with other types of files.
+Currently, ShapeShifter supports working with files in the following formats: CSV, TSV, JSON, Excel, HDF5, Parquet, MsgPack, Stata, Pickle, HTML, SQLite, ARFF, Salmon, Kallisto, Jupyter notebook, RMarkdown, and GCT. This file explains what steps must be taken to expand ShapeShifter to work with other types of files.
 
 ## Getting Started
 If you are unfamiliar with object-oriented programming, classes, and inheritance in python, your time would be well spent
@@ -67,7 +67,10 @@ def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', in
 def read_input_to_pandas(self, columnList=[], indexCol="Sample")
 ```
 This function must provide means for reading your desired file type stored at the location `self.filePath` into a Pandas data frame. 
-This function must return a Pandas data frame that contains the information stored in the file. The file may be gzipped, which can be checked 
+This function must return a Pandas data frame that contains the information stored in the file. If passed a list of desired columns `columnList`, this function should return a Pandas data frame containing the data on your file only for the selected columns.
+If the list of columns is empty, it should return the entire data set from the file in a Pandas data frame.
+Note: the returned data frame should not have an index (besides the default index). If necessary, reset the index using
+`df.reset_index(inplace=True)`, and do not worry about the parameter `indexCol`. The file may be gzipped, which can be checked 
 using `self.isGzipped`. One way to read in a gzipped file is to temporarily unzip it using `SSFile._gunzip_to_temp_file()`
 and then delete the temporary file. If I were reading from an ARFF file, and I had written a function `arffToPandas(filePath)` that takes an ARFF file
 and puts it in a Pandas data frame, the code might look like the example below. In your code, you would replace `arffToPandas`
@@ -89,10 +92,7 @@ with a function or some code that reads your file into a Pandas data frame:
         return df
 ```
 
-If passed a list of desired columns, this function should return a Pandas data frame containing the data on your file only for the selected columns. 
-If the list of columns is empty, it should return the entire data set from the file in a Pandas data frame.
-Note: the returned data frame should not have an index (besides the default index). If necessary, reset the index using
-`df.reset_index(inplace=True)`.
+
 
 ```python
 def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA')

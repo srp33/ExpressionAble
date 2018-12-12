@@ -1,6 +1,6 @@
 # Adding Support for Additional File Types in ShapeShifter
 
-Currently, ShapeShifter supports working with files in the following formats: CSV, TSV, JSON, Excel, HDF5, Parquet, MsgPack, Stata, Pickle, HTML, SQLite, ARFF, and GCT. This file explains what steps must be taken to expand ShapeShifter to work with other types of files.
+Currently, ShapeShifter supports working with files in the following formats: CSV, TSV, JSON, Excel, HDF5, Parquet, MsgPack, Stata, Pickle, HTML, SQLite, ARFF, Salmon, Kallisto, Jupyter notebook, RMarkdown, and GCT. This file explains what steps must be taken to expand ShapeShifter to work with other types of files.
 
 ## Getting Started
 If you are unfamiliar with object-oriented programming, classes, and inheritance in python, your time would be well spent
@@ -42,7 +42,7 @@ Now you are ready to use ShapeShifter code and begin work on your file type!
 Begin by adding a new file to ShapeShifter/shapeshifter/files. The file name should be all lowercase and indicate the
 file type you are supporting.
 For example, if I were creating a class for supporting the ARFF format, I would name my file arfffile.py.
-All ShapeShifter-supported file types are associated with a class that inherits from SSFile.SSFile.
+All ShapeShifter-supported file types are associated with a class that inherits from SSFile.
 Make sure the class you are building properly inherits from SSFile. For example, If I were writing a class to support the ARFF
 file type, my class declaration would look like this:
 ```python
@@ -67,7 +67,10 @@ def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', in
 def read_input_to_pandas(self, columnList=[], indexCol="Sample")
 ```
 This function must provide means for reading your desired file type stored at the location `self.filePath` into a Pandas data frame. 
-This function must return a Pandas data frame that contains the information stored in the file. The file may be gzipped, which can be checked 
+This function must return a Pandas data frame that contains the information stored in the file. If passed a list of desired columns `columnList`, this function should return a Pandas data frame containing the data on your file only for the selected columns.
+If the list of columns is empty, it should return the entire data set from the file in a Pandas data frame.
+Note: the returned data frame should not have an index (besides the default index). If necessary, reset the index using
+`df.reset_index(inplace=True)`, and do not worry about the parameter `indexCol`. The file may be gzipped, which can be checked 
 using `self.isGzipped`. One way to read in a gzipped file is to temporarily unzip it using `SSFile._gunzip_to_temp_file()`
 and then delete the temporary file. If I were reading from an ARFF file, and I had written a function `arffToPandas(filePath)` that takes an ARFF file
 and puts it in a Pandas data frame, the code might look like the example below. In your code, you would replace `arffToPandas`
@@ -89,10 +92,7 @@ with a function or some code that reads your file into a Pandas data frame:
         return df
 ```
 
-If passed a list of desired columns, this function should return a Pandas data frame containing the data on your file only for the selected columns. 
-If the list of columns is empty, it should return the entire data set from the file in a Pandas data frame.
-Note: the returned data frame should not have an index (besides the default index). If necessary, reset the index using
-`df.reset_index(inplace=True)`.
+
 
 ```python
 def write_to_file(self,df, gzipResults=False, includeIndex=False, null='NA')
@@ -135,16 +135,15 @@ In addition to implementing the class for you file type, you must hook your file
 You need to add a clause to `SSFile.factory()`
 that will be used to construct an file object of your type. The `type` parameter is a string that corresponds to
 the name of your file type. If such a string is given, you should then return a file object of your type with the given `filePath` and `type`. 
-In order for this to work, you will also need to add an import statement at the BOTTOM of the file SSFile.py. If I were adding support for a GCT file, my code would look like the example below.
+In order for this to work, you will also need to add an import statement in the factory method of the file SSFile.py. If I were adding support for a GCT file, my code would look like the example below.
 You should of course replace `'gct'` and `GCTFile.GCTFile()` with your extension and file constructor, respectively:
 ```python
 def factory(filePath, type):
+    from ..files import GCTFile
+
     if type.lower() ==......
     ...
-    elif type.lower() == 'gct': return GCTFile.GCTFile(filePath,type)
-    
-...
-import GCTFile
+    elif type.lower() == 'gct': return GCTFile(filePath,type)
 ```
 Finally, a clause should be added in the `SSFile.__determine_extension()` function that indicates what file extension or extensions correspond to your file type.
 This method should return the name of your file type when a file name has the extension related to your file type. The purpose 

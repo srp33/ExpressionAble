@@ -108,6 +108,7 @@ class SSFile:
         elif type.lower() == 'kallisto_est_counts': return KallistoEstCountsFile(filePath, type)
         elif type.lower() == 'salmontpm': return SalmonTPMFile(filePath, type)
         elif type.lower() == 'salmonnumreads': return SalmonNumReadsFile(filePath, type)
+        #elif type.lower() == 'geo': return GEOFile(filePath,type)
         else:
             raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
     factory=staticmethod(factory)
@@ -155,10 +156,22 @@ class SSFile:
             return 'jupyternotebook'
         elif extension == "rmd":
             return 'rmarkdown'
+        elif SSFile.__is_geo_filepath(fileName):
+            return 'geo'
         else:
             raise Exception("Error: Extension on " + fileName + " not recognized. Please use appropriate file extensions or explicitly specify file type.")
 
     __determine_extension = staticmethod(__determine_extension)
+
+    def __is_geo_filepath(file_name):
+        #Case 1: using a GEO id that starts with GSE and ends with a number
+        if file_name.startswith("GSE") and file_name[3:].isdigit():
+            return True
+        if "ftp.ncbi.nlm.nih.gov/geo/series/" in file_name and file_name.endswith(".txt.gz"):
+            return True
+        return False
+
+    __is_geo_filepath = staticmethod(__is_geo_filepath)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         """

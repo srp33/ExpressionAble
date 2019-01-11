@@ -126,7 +126,7 @@ class SSFile:
                 extension = extensions[len(extensions) - 2]
         else:
             extension = None
-        if extension == "tsv" or extension == "txt":
+        if extension == "tsv":
             return 'tsv'
         elif extension == "csv":
             return 'csv'

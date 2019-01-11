@@ -145,7 +145,7 @@ def factory(filePath, type):
     ...
     elif type.lower() == 'gct': return GCTFile(filePath,type)
 ```
-Finally, a clause should be added in the `SSFile.__determine_extension()` function that indicates what file extension or extensions correspond to your file type.
+A clause should be added in the `SSFile.__determine_extension()` function that indicates what file extension or extensions correspond to your file type.
 This method should return the name of your file type when a file name has the extension related to your file type. The purpose 
 of this function is to enable ShapeShifter to infer file types based on file extensions. If I were adding support for Parquet files, whose file extension is '.pq', my code would look like this:
 
@@ -156,6 +156,18 @@ def __determine_extension(fileName):
         ...
         elif extension == 'pq':
             return 'parquet'
+```
+Finally, a small addition must be made to ShapeShifter/shapeshifter/files/\_\_init__.py. At the top
+of the file, add the name of the class you wrote to the list titled `__all__` as shown below:
+
+```python
+__all__ = ['SSFile', 'ARFFFile', 'CSVFile', 'ExcelFile', 'GCTFile', 'HDF5File', 'HTMLFile', 'JSONFile', 'JupyterNBFile',
+           'KallistoEstCountsFile', 'KallistoTPMFile', 'MsgPackFile', 'ParquetFile', 'PickleFile', 'RMarkdownFile',
+           'SalmonNumReadsFile', 'SalmonTPMFile', 'SQLiteFile', 'StataFile', 'TSVFile', 'FWFFile']
+```
+Then, add an import statement that imports the class you wrote. Below is an example of such a statement for importing an ExcelFile:
+```python
+from shapeshifter.files.excelfile import ExcelFile
 ```
 
 ## Adding Necessary Tests

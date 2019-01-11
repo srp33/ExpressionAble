@@ -4,11 +4,11 @@ from ..files import SSFile
 
 
 class CSVFile(SSFile):
-#  comment
+
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         if len(columnList) == 0:
             return pd.read_csv(self.filePath, low_memory=False)
-        return pd.read_csv(self.filePath, usecols=columnList, low_memory=False)
+        return pd.read_csv(self.filePath, usecols=columnList, low_memory=False) #low memory set to false ensures no mixed types?
 
     def export_filter_results(self, inputSSFile, column_list=[], query=None, transpose=False, include_all_columns=False,
                               gzip_results=False, index_col="Sample"):

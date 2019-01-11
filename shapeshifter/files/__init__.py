@@ -2,6 +2,9 @@ __all__ = ['SSFile', 'ARFFFile', 'CSVFile', 'ExcelFile', 'GCTFile', 'HDF5File', 
            'KallistoEstCountsFile', 'KallistoTPMFile', 'MsgPackFile', 'ParquetFile', 'PickleFile', 'RMarkdownFile',
            'SalmonNumReadsFile', 'SalmonTPMFile', 'SQLiteFile', 'StataFile', 'TSVFile', 'FWFFile']
 
+from shapeshifter.files.ssfile import SSFile
+print("hi")
+
 from shapeshifter.files.arffile import ARFFFile
 from shapeshifter.files.csvfile import CSVFile
 from shapeshifter.files.excelfile import ExcelFile
@@ -20,6 +23,5 @@ from shapeshifter.files.rmarkdownfile import RMarkdownFile
 from shapeshifter.files.salmon_num_reads_file import SalmonNumReadsFile
 from shapeshifter.files.salmon_tpm_file import SalmonTPMFile
 from shapeshifter.files.sqlitefile import SQLiteFile
-from shapeshifter.files.ssfile import SSFile
 from shapeshifter.files.statafile import StataFile
 from shapeshifter.files.tsvfile import TSVFile

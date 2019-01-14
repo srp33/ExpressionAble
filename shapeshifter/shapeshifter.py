@@ -77,14 +77,14 @@ class ShapeShifter:
         df = df[0:numRows]
         return df
 
-    def merge_files(self, fileList, outFilePath, outFileType=None, gzipResults=False, on= None, how='inner'):
+    def merge_files(self, file_list, out_file_path, out_file_type=None, gzip_results=False, on=None, how='inner'):
         """
         Merges multiple ShapeShifter-compatible files into a single file
 
-        :param fileList: List of file paths representing files that will be merged
-        :param outFilePath: File path where merged files will be stored
-        :param outFileType: string representing the type of file that the merged file will be stored as
-        :param gzipResults: If True, merged file will be gzipped
+        :param file_list: List of file paths representing files that will be merged
+        :param out_file_path: File path where merged files will be stored
+        :param out_file_type: string representing the type of file that the merged file will be stored as
+        :param gzip_results: If True, merged file will be gzipped
         :param on: Column or index level names to join on. These must be found in all files.
                     If on is None and not merging on indexes then this defaults to the intersection of the columns in all.
         """
@@ -92,10 +92,10 @@ class ShapeShifter:
         if how not in ['left','right','outer','inner']:
             print("Error: \'How\' must one of the following options: left, right, outer, inner")
             return
-        outFile = SSFile.factory(outFilePath, outFileType)
+        outFile = SSFile.factory(out_file_path, out_file_type)
         SSFileList=[]
         #create a file object for every file path passed in
-        for file in fileList:
+        for file in file_list:
             SSFileList.append(SSFile.factory(file))
 
         if len(SSFileList) < 1:
@@ -110,7 +110,7 @@ class ShapeShifter:
         columnDict={}
         self.__increment_columnname_counters(columnDict, df1, on)
         if len(SSFileList) == 1:
-            outFile.write_to_file(df1, gzipResults=gzipResults)
+            outFile.write_to_file(df1, gzipResults=gzip_results)
             return
         for i in range(0, len(SSFileList) - 1):
             df2 = SSFileList[i + 1].read_input_to_pandas()
@@ -123,7 +123,7 @@ class ShapeShifter:
             else:
                 df1=pd.merge(df1,df2, how=how, on=on)
         indexCol = list(df1.columns.values)[0]
-        outFile.write_to_file(df1, gzipResults=gzipResults, indexCol=indexCol)
+        outFile.write_to_file(df1, gzipResults=gzip_results, indexCol=indexCol)
         return
 
     def __increment_columnname_counters(self, columnDict, df, on):

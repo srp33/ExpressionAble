@@ -1,5 +1,5 @@
 # shapeshifter Python Module
-The official repository for the shapeshifter python module, which allows for:
+The official repository for the shapeshifter Python module, which allows for:
 * Transforming tabular data sets from one format to another.
 * Querying large data sets to filter out useful data.
 * Selecting additional columns/features to include in the resulting data set.
@@ -9,7 +9,7 @@ The official repository for the shapeshifter python module, which allows for:
 Click for information on the [shapeshifter command-line tool](https://github.com/srp33/ShapeShifter-CLI), which combines
 the features of shapeshifter with the ease and speed of the command-line!
 
-Basic use is described below, but see the full documentation  
+Basic use is described below, but see the full documentation on Read the Docs.  
 ## Install
 `pip3 install shapeshifter`
 

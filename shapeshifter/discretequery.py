@@ -1,6 +1,6 @@
 class DiscreteQuery:
 	"""
-	Data object that holds information about a discrete query to be made on a dataset
+	Data object that holds information about a discrete query to be made on a dataset.
 	"""
 
 	def __init__(self, columnName:str, values:list):

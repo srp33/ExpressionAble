@@ -234,7 +234,7 @@ class ShapeShifter:
         :return: Name, data type (continuous/discrete), and unique values from specified column
         :rtype: ColumnInfo object
         """
-        from . import columninfo
+        from shapeshifter.utils import columninfo
         columnList = [columnName]
         #df = pd.read_parquet(self.inputFile.filePath, columns=columnList)
         df = self.input_file.read_input_to_pandas(columnList=columnList)
@@ -258,7 +258,7 @@ class ShapeShifter:
         :rtype: dictionary where key: column name and value:ColumnInfo object containing the column name, data type (continuous/discrete), and unique values from all columns
         """
         # columnNames = getColumnNames(parquetFilePath)
-        from . import columninfo
+        from shapeshifter.utils import columninfo
         df = self.input_file.read_input_to_pandas()
         columnDict = {}
         for col in df:
@@ -312,7 +312,7 @@ class ShapeShifter:
         """
         Function for internal use. Used to translate an OperatorEnum into a string representation of that operator
         """
-        from . import operatorenum
+        from shapeshifter.utils import operatorenum
         if operator == operatorenum.OperatorEnum.Equals:
             return "=="
         elif operator == operatorenum.OperatorEnum.GreaterThan:

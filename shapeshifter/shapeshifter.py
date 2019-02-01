@@ -64,8 +64,7 @@ class ShapeShifter:
         :param out_file_path: Name of the file that results will be saved to.
 
         :type out_file_type: str, default None
-        :param out_file_type: Name of the file format results will be saved to. If None, the type will be inferred
-        from the file path.
+        :param out_file_type: Name of the file format results will be saved to. If None, the type will be inferred from the file path.
 
         :type columns: list of str, default []
         :param columns: Names of columns to include in the output. If blank and no filter is specified, all columns will be included.

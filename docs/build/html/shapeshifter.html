@@ -1,0 +1,566 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>shapeshifter package &#8212; ShapeShifter 0.0.3 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ShapeShifter 0.0.3 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="shapeshifter-package">
+<h1>shapeshifter package<a class="headerlink" href="#shapeshifter-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-shapeshifter.shapeshifter">
+<span id="shapeshifter-shapeshifter-module"></span><h2>shapeshifter.shapeshifter module<a class="headerlink" href="#module-shapeshifter.shapeshifter" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="shapeshifter.shapeshifter.ShapeShifter">
+<em class="property">class </em><code class="descclassname">shapeshifter.shapeshifter.</code><code class="descname">ShapeShifter</code><span class="sig-paren">(</span><em>file_path</em>, <em>file_type=None</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.shapeshifter.ShapeShifter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Creates a ShapeShifter object, which represents a file to be transformed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_path</strong> (<em>str</em>) – Name of a file path to read and perform operations on.</li>
+<li><strong>file_type</strong> (<em>str</em>) – Name of the type of file that is being read.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="shapeshifter.shapeshifter.ShapeShifter.export_filter_results">
+<code class="descname">export_filter_results</code><span class="sig-paren">(</span><em>out_file_path</em>, <em>out_file_type=None</em>, <em>filters=None</em>, <em>columns=[]</em>, <em>transpose=False</em>, <em>include_all_columns=False</em>, <em>gzip_results=False</em>, <em>index='Sample'</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.shapeshifter.ShapeShifter.export_filter_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters and then exports data to a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>out_file_path</strong> (<em>str</em>) – Name of the file that results will be saved to.</li>
+<li><strong>out_file_type</strong> (<em>str</em><em>, </em><em>default None</em>) – Name of the file format results will be saved to. If None, the type will be inferred from the file path.</li>
+<li><strong>filters</strong> (<em>str</em><em>, </em><em>default None</em>) – Query or filter to apply to the data set written in Python logic.</li>
+<li><strong>columns</strong> (<em>list of str</em><em>, </em><em>default</em><em> [</em><em>]</em>) – Names of columns to include in the output. If blank and no filter is specified, all columns will be included.</li>
+<li><strong>transpose</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, index and columns will be transposed in the output file.</li>
+<li><strong>include_all_columns</strong> (<em>bool</em><em>, </em><em>default False</em>) – Indicates whether to include all columns in the output. If True, overrides columnList.</li>
+<li><strong>gzip_results</strong> (<em>bool</em><em>, </em><em>default False</em>) – Indicates whether the resulting file will be gzipped.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.shapeshifter.ShapeShifter.export_query_results">
+<code class="descname">export_query_results</code><span class="sig-paren">(</span><em>out_file_path</em>, <em>out_file_type=None</em>, <em>columns=[]</em>, <em>continuous_queries=[]</em>, <em>discrete_queries=[]</em>, <em>transpose=False</em>, <em>include_all_columns=False</em>, <em>gzip_results=False</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.shapeshifter.ShapeShifter.export_query_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters and exports data to a file. Similar to export_filter_results, but takes filters in the form of ContinuousQuery and DiscreteQuery objects,
+and has slightly less flexible functionality</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>out_file_path</strong> (<em>str</em>) – Name of the file that results will be saved to.</li>
+<li><strong>out_file_type</strong> (<em>str</em><em>, </em><em>default None</em>) – Name of the file format results will be saved to. If None, the type will be inferred</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>from the file path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>columns</strong> (<em>list of str</em><em>, </em><em>default</em><em> [</em><em>]</em>) – Names of columns to include in the output. If blank and no filter is specified, all columns will be included.</li>
+<li><strong>continuous_queries</strong> (<em>list of ContinuousQuery.</em>) – Objects representing queries on a column of continuous data.</li>
+<li><strong>discrete_queries</strong> (<em>list of DiscreteQuery</em>) – Objects representing queries on a column of discrete data.</li>
+<li><strong>transpose</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, index and columns will be transposed in the output file.</li>
+<li><strong>include_all_columns</strong> (<em>bool</em><em>, </em><em>default False</em>) – Indicates whether to include all columns in the output. If True, overrides columnList.</li>
+<li><strong>gzip_results</strong> (<em>bool</em><em>, </em><em>default False</em>) – Indicates whether the resulting file will be gzipped.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.shapeshifter.ShapeShifter.get_all_columns_info">
+<code class="descname">get_all_columns_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.shapeshifter.ShapeShifter.get_all_columns_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the column name, data type, and all unique values from every column in a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Name, data type (continuous/discrete), and unique values from every column.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dictionary where key: column name and value:ColumnInfo object containing the column name, data type (continuous/discrete), and unique values from all columns</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.shapeshifter.ShapeShifter.get_column_info">
+<code class="descname">get_column_info</code><span class="sig-paren">(</span><em>columnName: str</em>, <em>sizeLimit: int = None</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.shapeshifter.ShapeShifter.get_column_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a specified column’s name, data type, and all its unique values from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>columnName</strong> (<em>str</em>) – The name of the column about which information is being obtained.</li>
+<li><strong>sizeLimit</strong> (<em>int</em>) – limits the number of unique values returned to be no more than this number.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Name, data type (continuous/discrete), and unique values from specified column</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ColumnInfo object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.shapeshifter.ShapeShifter.get_column_names">
+<code class="descname">get_column_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#shapeshifter.shapeshifter.ShapeShifter.get_column_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves all column names from a dataset stored in a parquet file
+:type parquetFilePath: string
+:param parquetFilePath: filepath to a parquet file to be examined</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">All column names</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.shapeshifter.ShapeShifter.get_filtered_samples">
+<code class="descname">get_filtered_samples</code><span class="sig-paren">(</span><em>continuous_queries</em>, <em>discrete_queries</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.shapeshifter.ShapeShifter.get_filtered_samples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.shapeshifter.ShapeShifter.merge_files">
+<code class="descname">merge_files</code><span class="sig-paren">(</span><em>file_list</em>, <em>out_file_path</em>, <em>out_file_type=None</em>, <em>gzip_results=False</em>, <em>on=None</em>, <em>how='inner'</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.shapeshifter.ShapeShifter.merge_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merges multiple ShapeShifter-compatible files into a single file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_list</strong> (<em>list of str</em>) – File paths representing files that will be merged with the file in this ShapeShifter object.</li>
+<li><strong>out_file_path</strong> (<em>str</em>) – File path where the output of merging the files will be stored.</li>
+<li><strong>out_file_type</strong> (<em>str</em><em>, </em><em>default None</em>) – Name of the file format that results will be saved to. If None, the type will be inferred</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>from the file path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>gzip_results</strong> (<em>bool</em><em>, </em><em>default False</em>) – Indicates whether the resulting file will be gzipped.</li>
+<li><strong>on</strong> (<em>str</em><em>, </em><em>default None</em>) – Column or index level names to join on. These must be found in all files.
+If on is None and not merging on indexes then this defaults to the intersection of the columns in all.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.shapeshifter.ShapeShifter.peek">
+<code class="descname">peek</code><span class="sig-paren">(</span><em>numRows=10</em>, <em>numCols=10</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.shapeshifter.ShapeShifter.peek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a look at the first few rows and columns of a parquet file and returns a Pandas DataFrame corresponding to the number of requested rows and columns</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>numRows</strong> (<em>int</em><em>, </em><em>default 10</em>) – the number of rows the returned Pandas DataFrame will contain.</li>
+<li><strong>numCols</strong> (<em>int</em><em>, </em><em>default 10</em>) – the number of columns the returned Pandas DataFrame will contain.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The first numRows and numCols in the given parquet file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Pandas DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.shapeshifter.ShapeShifter.peek_by_column_names">
+<code class="descname">peek_by_column_names</code><span class="sig-paren">(</span><em>listOfColumnNames</em>, <em>numRows=10</em>, <em>indexCol='Sample'</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.shapeshifter.ShapeShifter.peek_by_column_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a look at a portion of the file by showing only the requested columns.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>listOfColumnNames</strong> (<em>list of str</em>) – Names of columns that will be given in the output.</li>
+<li><strong>numRows</strong> (<em>int</em><em>, </em><em>default 10</em>) – The number of rows that will be shown with the requested columns in the output.</li>
+<li><strong>indexCol</strong> (<em>str</em><em>, </em><em>default 'Sample'</em>) – Name of the column that will be the index column in the DataFrame.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Pandas DataFrame with only the requested columns and number of rows.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-shapeshifter">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-shapeshifter" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="shapeshifter.ShapeShifter">
+<em class="property">class </em><code class="descclassname">shapeshifter.</code><code class="descname">ShapeShifter</code><span class="sig-paren">(</span><em>file_path</em>, <em>file_type=None</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.ShapeShifter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Creates a ShapeShifter object, which represents a file to be transformed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_path</strong> (<em>str</em>) – Name of a file path to read and perform operations on.</li>
+<li><strong>file_type</strong> (<em>str</em>) – Name of the type of file that is being read.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="shapeshifter.ShapeShifter.export_filter_results">
+<code class="descname">export_filter_results</code><span class="sig-paren">(</span><em>out_file_path</em>, <em>out_file_type=None</em>, <em>filters=None</em>, <em>columns=[]</em>, <em>transpose=False</em>, <em>include_all_columns=False</em>, <em>gzip_results=False</em>, <em>index='Sample'</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.ShapeShifter.export_filter_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters and then exports data to a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>out_file_path</strong> (<em>str</em>) – Name of the file that results will be saved to.</li>
+<li><strong>out_file_type</strong> (<em>str</em><em>, </em><em>default None</em>) – Name of the file format results will be saved to. If None, the type will be inferred from the file path.</li>
+<li><strong>filters</strong> (<em>str</em><em>, </em><em>default None</em>) – Query or filter to apply to the data set written in Python logic.</li>
+<li><strong>columns</strong> (<em>list of str</em><em>, </em><em>default</em><em> [</em><em>]</em>) – Names of columns to include in the output. If blank and no filter is specified, all columns will be included.</li>
+<li><strong>transpose</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, index and columns will be transposed in the output file.</li>
+<li><strong>include_all_columns</strong> (<em>bool</em><em>, </em><em>default False</em>) – Indicates whether to include all columns in the output. If True, overrides columnList.</li>
+<li><strong>gzip_results</strong> (<em>bool</em><em>, </em><em>default False</em>) – Indicates whether the resulting file will be gzipped.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.ShapeShifter.export_query_results">
+<code class="descname">export_query_results</code><span class="sig-paren">(</span><em>out_file_path</em>, <em>out_file_type=None</em>, <em>columns=[]</em>, <em>continuous_queries=[]</em>, <em>discrete_queries=[]</em>, <em>transpose=False</em>, <em>include_all_columns=False</em>, <em>gzip_results=False</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.ShapeShifter.export_query_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters and exports data to a file. Similar to export_filter_results, but takes filters in the form of ContinuousQuery and DiscreteQuery objects,
+and has slightly less flexible functionality</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>out_file_path</strong> (<em>str</em>) – Name of the file that results will be saved to.</li>
+<li><strong>out_file_type</strong> (<em>str</em><em>, </em><em>default None</em>) – Name of the file format results will be saved to. If None, the type will be inferred</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>from the file path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>columns</strong> (<em>list of str</em><em>, </em><em>default</em><em> [</em><em>]</em>) – Names of columns to include in the output. If blank and no filter is specified, all columns will be included.</li>
+<li><strong>continuous_queries</strong> (<em>list of ContinuousQuery.</em>) – Objects representing queries on a column of continuous data.</li>
+<li><strong>discrete_queries</strong> (<em>list of DiscreteQuery</em>) – Objects representing queries on a column of discrete data.</li>
+<li><strong>transpose</strong> (<em>bool</em><em>, </em><em>default False</em>) – If True, index and columns will be transposed in the output file.</li>
+<li><strong>include_all_columns</strong> (<em>bool</em><em>, </em><em>default False</em>) – Indicates whether to include all columns in the output. If True, overrides columnList.</li>
+<li><strong>gzip_results</strong> (<em>bool</em><em>, </em><em>default False</em>) – Indicates whether the resulting file will be gzipped.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.ShapeShifter.get_all_columns_info">
+<code class="descname">get_all_columns_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.ShapeShifter.get_all_columns_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the column name, data type, and all unique values from every column in a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Name, data type (continuous/discrete), and unique values from every column.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dictionary where key: column name and value:ColumnInfo object containing the column name, data type (continuous/discrete), and unique values from all columns</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.ShapeShifter.get_column_info">
+<code class="descname">get_column_info</code><span class="sig-paren">(</span><em>columnName: str</em>, <em>sizeLimit: int = None</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.ShapeShifter.get_column_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a specified column’s name, data type, and all its unique values from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>columnName</strong> (<em>str</em>) – The name of the column about which information is being obtained.</li>
+<li><strong>sizeLimit</strong> (<em>int</em>) – limits the number of unique values returned to be no more than this number.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Name, data type (continuous/discrete), and unique values from specified column</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ColumnInfo object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.ShapeShifter.get_column_names">
+<code class="descname">get_column_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#shapeshifter.ShapeShifter.get_column_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves all column names from a dataset stored in a parquet file
+:type parquetFilePath: string
+:param parquetFilePath: filepath to a parquet file to be examined</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">All column names</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.ShapeShifter.get_filtered_samples">
+<code class="descname">get_filtered_samples</code><span class="sig-paren">(</span><em>continuous_queries</em>, <em>discrete_queries</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.ShapeShifter.get_filtered_samples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.ShapeShifter.merge_files">
+<code class="descname">merge_files</code><span class="sig-paren">(</span><em>file_list</em>, <em>out_file_path</em>, <em>out_file_type=None</em>, <em>gzip_results=False</em>, <em>on=None</em>, <em>how='inner'</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.ShapeShifter.merge_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merges multiple ShapeShifter-compatible files into a single file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_list</strong> (<em>list of str</em>) – File paths representing files that will be merged with the file in this ShapeShifter object.</li>
+<li><strong>out_file_path</strong> (<em>str</em>) – File path where the output of merging the files will be stored.</li>
+<li><strong>out_file_type</strong> (<em>str</em><em>, </em><em>default None</em>) – Name of the file format that results will be saved to. If None, the type will be inferred</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>from the file path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>gzip_results</strong> (<em>bool</em><em>, </em><em>default False</em>) – Indicates whether the resulting file will be gzipped.</li>
+<li><strong>on</strong> (<em>str</em><em>, </em><em>default None</em>) – Column or index level names to join on. These must be found in all files.
+If on is None and not merging on indexes then this defaults to the intersection of the columns in all.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.ShapeShifter.peek">
+<code class="descname">peek</code><span class="sig-paren">(</span><em>numRows=10</em>, <em>numCols=10</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.ShapeShifter.peek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a look at the first few rows and columns of a parquet file and returns a Pandas DataFrame corresponding to the number of requested rows and columns</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>numRows</strong> (<em>int</em><em>, </em><em>default 10</em>) – the number of rows the returned Pandas DataFrame will contain.</li>
+<li><strong>numCols</strong> (<em>int</em><em>, </em><em>default 10</em>) – the number of columns the returned Pandas DataFrame will contain.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The first numRows and numCols in the given parquet file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Pandas DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="shapeshifter.ShapeShifter.peek_by_column_names">
+<code class="descname">peek_by_column_names</code><span class="sig-paren">(</span><em>listOfColumnNames</em>, <em>numRows=10</em>, <em>indexCol='Sample'</em><span class="sig-paren">)</span><a class="headerlink" href="#shapeshifter.ShapeShifter.peek_by_column_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a look at a portion of the file by showing only the requested columns.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>listOfColumnNames</strong> (<em>list of str</em>) – Names of columns that will be given in the output.</li>
+<li><strong>numRows</strong> (<em>int</em><em>, </em><em>default 10</em>) – The number of rows that will be shown with the requested columns in the output.</li>
+<li><strong>indexCol</strong> (<em>str</em><em>, </em><em>default 'Sample'</em>) – Name of the column that will be the index column in the DataFrame.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Pandas DataFrame with only the requested columns and number of rows.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">shapeshifter package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-shapeshifter.shapeshifter">shapeshifter.shapeshifter module</a></li>
+<li><a class="reference internal" href="#module-shapeshifter">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/shapeshifter.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ShapeShifter 0.0.3 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Stephen Piccolo.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.2.
+    </div>
+  </body>
+</html>

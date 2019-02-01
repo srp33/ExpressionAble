@@ -138,8 +138,7 @@ class ShapeShifter:
         :param gzip_results: Indicates whether the resulting file will be gzipped.
 
         :type on: str, default None
-        :param on: Column or index level names to join on. These must be found in all files.
-                    If on is None and not merging on indexes then this defaults to the intersection of the columns in all.
+        :param on: Column or index level names to join on. These must be found in all files. If on is None and not merging on indexes then this defaults to the intersection of the columns in all.
 
         :return: None
         """

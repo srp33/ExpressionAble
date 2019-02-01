@@ -6,6 +6,7 @@ from shapeshifter.files import SSFile
 class ShapeShifter:
     """
     Creates a ShapeShifter object, which represents a file to be transformed.
+
     :type file_path: str
     :param file_path: Name of a file path to read and perform operations on.
 

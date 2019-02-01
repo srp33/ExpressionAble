@@ -29,8 +29,7 @@ class ShapeShifter:
         :param out_file_path: Name of the file that results will be saved to.
 
         :type out_file_type: str, default None
-        :param out_file_type: Name of the file format results will be saved to. If None, the type will be inferred
-        from the file path.
+        :param out_file_type: Name of the file format results will be saved to. If None, the type will be inferred from the file path.
 
         :type filters: str, default None
         :param filters: Query or filter to apply to the data set written in Python logic.

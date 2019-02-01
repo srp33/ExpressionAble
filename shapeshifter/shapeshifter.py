@@ -4,16 +4,16 @@ from shapeshifter.files import SSFile
 
 
 class ShapeShifter:
+    """
+    Creates a ShapeShifter object, which represents a file to be transformed.
+    :type file_path: str
+    :param file_path: Name of a file path to read and perform operations on.
 
+    :type file_type: str
+    :param file_type: Name of the type of file that is being read.
+    """
     def __init__(self, file_path, file_type=None):
-        """
-        Creates a ShapeShifter object, which represents a file to be transformed.
-        :type file_path: str
-        :param file_path: Name of a file path to read and perform operations on.
 
-        :type file_type: str
-        :param file_type: Name of the type of file that is being read.
-        """
 
         self.input_file = SSFile.factory(file_path, file_type)
         self.gzipped_input= self.__is_gzipped()

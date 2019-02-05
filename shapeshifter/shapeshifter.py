@@ -130,8 +130,7 @@ class ShapeShifter:
         :param out_file_path: File path where the output of merging the files will be stored.
 
         :type out_file_type: str, default None
-        :param out_file_type: Name of the file format that results will be saved to. If None, the type will be inferred
-        from the file path.
+        :param out_file_type: Name of the file format that results will be saved to. If None, the type will be inferred from the file path.
 
         :type gzip_results: bool, default False
         :param gzip_results: Indicates whether the resulting file will be gzipped.

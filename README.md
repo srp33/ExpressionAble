@@ -9,7 +9,7 @@ The official repository for the shapeshifter Python module, which allows for:
 Click for information on the [shapeshifter command-line tool](https://github.com/srp33/ShapeShifter-CLI), which combines
 the features of shapeshifter with the ease and speed of the command-line!
 
-Basic use is described below, but see the full documentation on Read the Docs.  
+Basic use is described below, but see the full documentation on [Read the Docs](https://shapeshifter.readthedocs.io/en/latest/).  
 ## Install
 `pip3 install shapeshifter`
 

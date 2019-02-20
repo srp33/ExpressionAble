@@ -43,6 +43,7 @@ class GCTFile(SSFile):
 
         self.write_to_file(df, gzip_results)
 
+
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         # if not transpose:
         #     df = df.set_index(indexCol) if indexCol in df.columns else df

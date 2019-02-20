@@ -21,17 +21,6 @@ class StataFile(SSFile):
             return pd.read_stata(self.filePath, columns=columnList)
         return pd.read_stata(self.filePath)
 
-    def export_filter_results(self, inputSSFile, column_list=[], query=None, transpose=False, include_all_columns=False,
-                              gzip_results=False, index_col="Sample"):
-        df = None
-        includeIndex = False
-        null = 'NA'
-        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, column_list, query, transpose,
-                                                                        include_all_columns, df, includeIndex, index_col)
-        # if not transpose:
-        #     df = df.set_index(indexCol) if indexCol in df.columns else df
-
-        self.write_to_file(df, gzip_results)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         # Sometimes stata interprets columns as 'object' type which is no good (sometimes). This code may fix it?

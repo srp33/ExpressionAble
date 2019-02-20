@@ -4,14 +4,17 @@ from shapeshifter.files import SSFile
 
 
 class ShapeShifter:
+    """
+    Creates a ShapeShifter object, which represents a file to be transformed.
 
+    :type file_path: str
+    :param file_path: Name of a file path to read and perform operations on.
+
+    :type file_type: str
+    :param file_type: Name of the type of file that is being read.
+    """
     def __init__(self, file_path, file_type=None):
-        """
-        Creates a ShapeShifter object
-        :param file_path: string name of a file path to read and perform operations on
-        :param file_type: string indicating the type of file that is being read
 
-        """
 
         self.input_file = SSFile.factory(file_path, file_type)
         self.gzipped_input= self.__is_gzipped()
@@ -20,15 +23,30 @@ class ShapeShifter:
     def export_filter_results(self, out_file_path, out_file_type=None, filters=None, columns=[],
                               transpose=False, include_all_columns=False, gzip_results=False, index='Sample'):
         """
-        Filters and then exports data to a file
-        :param out_file_path: Name of the file that results will be saved to
-        :param out_file_type: string indicating what file format results will be saved to
-        :param filters: string representing the query or filter to apply to the data set
-        :param columns: list of columns to include in the output. If blank and no filter is specified, all columns will be included.
-        :param transpose: boolean when, if True, index and columns will be transposed in the output file
-        :param include_all_columns: boolean indicating whether to include all columns in the output. If True, overrides columnList
-        :param gzip_results: boolean indicating whether the resulting file will be gzipped
-        :return:
+        Filters and then exports data to a file.
+
+        :type out_file_path: str
+        :param out_file_path: Name of the file that results will be saved to.
+
+        :type out_file_type: str, default None
+        :param out_file_type: Name of the file format results will be saved to. If None, the type will be inferred from the file path.
+
+        :type filters: str, default None
+        :param filters: Query or filter to apply to the data set written in Python logic.
+
+        :type columns: list of str, default []
+        :param columns: Names of columns to include in the output. If blank and no filter is specified, all columns will be included.
+
+        :type transpose: bool, default False
+        :param transpose: If True, index and columns will be transposed in the output file.
+
+        :type include_all_columns: bool, default False
+        :param include_all_columns: Indicates whether to include all columns in the output. If True, overrides columnList.
+
+        :type gzip_results: bool, default False
+        :param gzip_results: Indicates whether the resulting file will be gzipped.
+
+        :return: None
         """
         self.output_file = SSFile.factory(out_file_path, out_file_type)
         self.output_file.export_filter_results(self.input_file, column_list=columns, query=filters, transpose=transpose,
@@ -41,15 +59,32 @@ class ShapeShifter:
         """
         Filters and exports data to a file. Similar to export_filter_results, but takes filters in the form of ContinuousQuery and DiscreteQuery objects,
         and has slightly less flexible functionality
-        :param out_file_path: Name of the file that results will be saved to
-        :param out_file_type: string indicating what file format results will be saved to
-        :param columns: list of columns to include in the output. If blank, all columns will be included.
-        :param continuous_queries: list of ContinuousQuery objects representing queries on a column of continuous data
-        :param discrete_queries: list of DiscreteQuery objects representing queries on a column of discrete data
-        :param transpose: boolean when, if True, index and columns will be transposed in the output file
-        :param include_all_columns: boolean indicating whether to include all columns in the output. If True, overrides columnList
-        :param gzip_results: boolean indicating whether the resulting file will be gzipped
-        :return:
+
+        :type out_file_path: str
+        :param out_file_path: Name of the file that results will be saved to.
+
+        :type out_file_type: str, default None
+        :param out_file_type: Name of the file format results will be saved to. If None, the type will be inferred from the file path.
+
+        :type columns: list of str, default []
+        :param columns: Names of columns to include in the output. If blank and no filter is specified, all columns will be included.
+
+        :type continuous_queries: list of ContinuousQuery.
+        :param continuous_queries: Objects representing queries on a column of continuous data.
+
+        :type discrete_queries: list of DiscreteQuery
+        :param discrete_queries: Objects representing queries on a column of discrete data.
+
+        :type transpose: bool, default False
+        :param transpose: If True, index and columns will be transposed in the output file.
+
+        :type include_all_columns: bool, default False
+        :param include_all_columns: Indicates whether to include all columns in the output. If True, overrides columnList.
+
+        :type gzip_results: bool, default False
+        :param gzip_results: Indicates whether the resulting file will be gzipped.
+
+        :return: None
         """
 
         self.output_file = SSFile.factory(out_file_path, out_file_type)
@@ -64,11 +99,18 @@ class ShapeShifter:
 
     def peek_by_column_names(self, listOfColumnNames, numRows=10, indexCol="Sample"):
         """
-        Takes a look at a portion of the file by showing only the requested columns
-        :param listOfColumnNames: List of columns that will be given in the output
-        :param numRows: The number of rows that will be shown with the requested columns in the output
-        :param indexCol:
-        :return:
+        Takes a look at a portion of the file by showing only the requested columns.
+
+        :type listOfColumnNames: list of str
+        :param listOfColumnNames: Names of columns that will be given in the output.
+
+        :type numRows: int, default 10
+        :param numRows: The number of rows that will be shown with the requested columns in the output.
+
+        :type indexCol: str, default 'Sample'
+        :param indexCol: Name of the column that will be the index column in the DataFrame.
+
+        :return: Pandas DataFrame with only the requested columns and number of rows.
         """
         listOfColumnNames.insert(0, indexCol)
         df = self.input_file.read_input_to_pandas(columnList=listOfColumnNames, indexCol = indexCol)
@@ -79,14 +121,24 @@ class ShapeShifter:
 
     def merge_files(self, file_list, out_file_path, out_file_type=None, gzip_results=False, on=None, how='inner'):
         """
-        Merges multiple ShapeShifter-compatible files into a single file
+        Merges multiple ShapeShifter-compatible files into a single file.
 
-        :param file_list: List of file paths representing files that will be merged
-        :param out_file_path: File path where merged files will be stored
-        :param out_file_type: string representing the type of file that the merged file will be stored as
-        :param gzip_results: If True, merged file will be gzipped
-        :param on: Column or index level names to join on. These must be found in all files.
-                    If on is None and not merging on indexes then this defaults to the intersection of the columns in all.
+        :type file_list: list of str
+        :param file_list: File paths representing files that will be merged with the file in this ShapeShifter object.
+
+        :type out_file_path: str
+        :param out_file_path: File path where the output of merging the files will be stored.
+
+        :type out_file_type: str, default None
+        :param out_file_type: Name of the file format that results will be saved to. If None, the type will be inferred from the file path.
+
+        :type gzip_results: bool, default False
+        :param gzip_results: Indicates whether the resulting file will be gzipped.
+
+        :type on: str, default None
+        :param on: Column or index level names to join on. These must be found in all files. If on is None and not merging on indexes then this defaults to the intersection of the columns in all.
+
+        :return: None
         """
         how=how.lower()
         if how not in ['left','right','outer','inner']:
@@ -168,18 +220,18 @@ class ShapeShifter:
 
     def get_column_info(self, columnName: str, sizeLimit: int = None):
         """
-        Retrieves a specified column's name, data type, and all its unique values from a  file
+        Retrieves a specified column's name, data type, and all its unique values from a file.
 
-        :type columnName: string
-        :param columnName: the name of the column about which information is being obtained
+        :type columnName: str
+        :param columnName: The name of the column about which information is being obtained.
 
         :type sizeLimit: int
-        :param sizeLimit: limits the number of unique values returned to be no more than this number
+        :param sizeLimit: limits the number of unique values returned to be no more than this number.
 
         :return: Name, data type (continuous/discrete), and unique values from specified column
         :rtype: ColumnInfo object
         """
-        from . import columninfo
+        from shapeshifter.utils import columninfo
         columnList = [columnName]
         #df = pd.read_parquet(self.inputFile.filePath, columns=columnList)
         df = self.input_file.read_input_to_pandas(columnList=columnList)
@@ -197,13 +249,13 @@ class ShapeShifter:
 
     def get_all_columns_info(self):
         """
-        Retrieves the column name, data type, and all unique values from every column in a file
+        Retrieves the column name, data type, and all unique values from every column in a file.
 
-        :return: Name, data type (continuous/discrete), and unique values from every column
+        :return: Name, data type (continuous/discrete), and unique values from every column.
         :rtype: dictionary where key: column name and value:ColumnInfo object containing the column name, data type (continuous/discrete), and unique values from all columns
         """
         # columnNames = getColumnNames(parquetFilePath)
-        from . import columninfo
+        from shapeshifter.utils import columninfo
         df = self.input_file.read_input_to_pandas()
         columnDict = {}
         for col in df:
@@ -257,7 +309,7 @@ class ShapeShifter:
         """
         Function for internal use. Used to translate an OperatorEnum into a string representation of that operator
         """
-        from . import operatorenum
+        from shapeshifter.utils import operatorenum
         if operator == operatorenum.OperatorEnum.Equals:
             return "=="
         elif operator == operatorenum.OperatorEnum.GreaterThan:
@@ -293,16 +345,16 @@ class ShapeShifter:
 
     def peek(self, numRows=10, numCols=10):
         """
-        Takes a look at the first few rows and columns of a parquet file and returns a pandas dataframe corresponding to the number of requested rows and columns
+        Takes a look at the first few rows and columns of a parquet file and returns a Pandas DataFrame corresponding to the number of requested rows and columns
 
-        :type numRows: int
-        :param numRows: the number of rows the returned Pandas dataframe will contain
+        :type numRows: int, default 10
+        :param numRows: the number of rows the returned Pandas DataFrame will contain.
 
-        :type numCols: int
-        :param numCols: the number of columns the returned Pandas dataframe will contain
+        :type numCols: int, default 10
+        :param numCols: the number of columns the returned Pandas DataFrame will contain.
 
         :return: The first numRows and numCols in the given parquet file
-        :rtype: Pandas dataframe
+        :rtype: Pandas DataFrame
         """
         #TODO: Optimize peek for every file type by writing a get_column_names() function for every file type
         # allCols = self.get_column_names()

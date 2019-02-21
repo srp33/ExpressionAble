@@ -180,7 +180,7 @@ These tests will be run every time code is committed to GitHub to ensure that ne
 
  
 ### Tests for reading files
-First, create a file of your type that is equivalent to [this TSV file](https://github.com/srp33/ShapeShifter/blob/master/ShapeShifter/Tests/InputData/UnitTest.tsv). This preferably should be done
+First, create a file of your type that is equivalent to [this TSV file](https://github.com/srp33/ShapeShifter/blob/master/Tests/InputData/InputToRead/input.tsv). This preferably should be done
 by hand to ensure accuracy. This file must be named `input.tsv`, except you should replace the extension `tsv` with the appropriate extension for
 your file type.
 
@@ -197,7 +197,7 @@ Add your file type's extension, in quotes, to the list. Now when the testing sui
 your file and its gzipped version.
 
 ### Tests for writing to files
-If you have not yet done so,  create a file of your type that is equivalent to [this TSV file](https://github.com/srp33/ShapeShifter/blob/master/ShapeShifter/Tests/InputData/UnitTest.tsv). This preferably should be done
+If you have not yet done so,  create a file of your type that is equivalent to [this TSV file](https://github.com/srp33/ShapeShifter/blob/master/Tests/InputData/InputToRead/input.tsv). This preferably should be done
 by hand to ensure accuracy. This file must be named `input.tsv`, except you should replace the extension `tsv` with the appropriate extension for
 your file type.
 

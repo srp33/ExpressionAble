@@ -10,14 +10,6 @@ class TSVFile(SSFile):
             return pd.read_csv(self.filePath, sep="\t", low_memory=False)
         return pd.read_csv(self.filePath, sep="\t", usecols=columnList, low_memory=False)
 
-    def export_filter_results(self, inputSSFile, column_list=[], query=None, transpose=False, include_all_columns=False,
-                              gzip_results=False, index_col="Sample"):
-        df=None
-        includeIndex=False
-        null='NA'
-        query, inputSSFile, df, includeIndex = super()._prep_for_export(inputSSFile, column_list, query, transpose,
-                                                                        include_all_columns, df, includeIndex, index_col)
-        self.write_to_file(df, gzip_results, includeIndex, null)
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         if gzipResults:

@@ -7,7 +7,7 @@ import tempfile
 
 class SSFile:
     """
-    Abstract base class for all the supported file types in ShapeShifter. Subclasses must implement reading a file to pandas and exporting a dataframe to the filetype
+    Abstract base class for all the supported file types in ShapeShifter. Subclasses must implement reading a file to pandas and exporting a dataframe to the filetype.
     """
 
 
@@ -19,24 +19,45 @@ class SSFile:
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         """
-        Reads from a file into a Pandas data frame. File may be gzipped. Must be implemented by subclasses
-        :param columnList: List of string column names to be read in. If blank, all columns will be read in
-        :param indexCol: String name of the column representing the index of the data set
-        :return: Pandas data frame with the requested data
+        Reads from a file into a Pandas DataFrame. File may be gzipped. Must be implemented by subclasses.
+
+        :type columnList: list of str, default []
+        :param columnList: Names of columns to be read in. If the list is empty, all columns will be read in.
+
+        :type indexCol: str, default 'Sample'
+        :param indexCol: Name of the column representing the index of the data set.
+
+        :return: Pandas data frame with the requested data.
         """
         raise NotImplementedError("Reading from this file type is not currently supported.")
 
     def export_filter_results(self, inputSSFile, column_list=[], query=None, transpose=False, include_all_columns=False,
                               gzip_results=False, index_col="Sample"):
         """
-        Filters and then exports data to a file
-        :param inputSSFile: SSFile object representing the file to be read and filtered
-        :param column_list: list of columns to include in the output. If blank, all columns will be included.
-        :param query: string representing the query or filter to apply to the data set
-        :param transpose: boolean indicating whether the results will be transposed
-        :param include_all_columns: boolean indicating whether to include all columns in the output. If True, overrides columnList
-        :param gzip_results: boolean indicating whether the resulting file will be gzipped
-        :param index_col: string name of the index column of the data set
+        Filters and then exports data to a file.
+
+        :type inputSSFile: SSFile
+        :param inputSSFile: Object representing the file to be read and filtered.
+
+        :type column_list: list of str, default []
+        :param column_list: Names of columns to include in the output. If blank, all columns will be included.
+
+        :type query: str, default None
+        :param query: Query or filter to apply to the data set, written using Python logical syntax.
+
+        :type transpose: bool, default False
+        :param transpose:  If True, index and columns will be transposed in the output file.
+
+        :type include_all_columns: bool, default False
+        :param include_all_columns: Indicates whether to include all columns in the output. If True, overrides columnList.
+
+        :type gzip_results: bool, default false
+        :param gzip_results:  Indicates whether the resulting file will be gzipped.
+
+        :type index_col: str, default 'Sample'
+        :param index_col: string name of the index column of the data set.
+
+        :return: None
         """
         df = None
         includeIndex = False
@@ -77,10 +98,15 @@ class SSFile:
 
     def factory(filePath, type=None):
         """
-        Constructs the appropriate subclass object based on the type of file passed in
-        :param filePath: string representing a file's path
-        :param type: string representing the type of file
-        :return: SSFile subclass object
+        Constructs the appropriate subclass object based on the type of file passed in.
+
+        :type filePath: str
+        :param filePath: Path to a file.
+
+        :type type: str, default None
+        :param type: Name of the type of file. If None, type will be inferred from filePath.
+
+        :return: Appropriate SSFile subclass object.
         """
         from ..files import ARFFFile, CSVFile, ExcelFile, GCTFile, HDF5File, HTMLFile, JSONFile, MsgPackFile, ParquetFile
         from ..files import PickleFile, SQLiteFile, StataFile, TSVFile, JupyterNBFile, RMarkdownFile, KallistoTPMFile
@@ -178,13 +204,25 @@ class SSFile:
 
     def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
         """
-        Writes a Pandas data frame to a file
-        :param transpose:
-        :param indexCol:
-        :param df: Pandas data frame to be written to file
-        :param gzipResults: boolean indicating whether the written file will be gzipped
-        :param includeIndex: boolean indicating whether the index column should be written to the file
-        :param null: string representing how null or None values should be represented in the output file
+        Writes a Pandas DataFrame to a file.
+
+        :type df: Pandas DataFrame
+        :param df: Pandas DataFrame object that contains the data that will be written to a file.
+
+        :type gzipResults: bool, default False
+        :param gzipResults: Indicates whether the resulting file will be gzipped.
+
+        :type includeIndex: bool, default False
+        :param includeIndex: Indicates whether the index column should be written to the file.
+
+        :type null: str, default 'NA'
+        :param null: Indicates how null or None values should be represented in the output file.
+
+        :type indexCol: str, default 'Sample'
+        :param indexCol: Name of the column that will be the index in the output file.
+
+        :type transpose: bool, default False
+        :param transpose: If True, index and columns will be transposed in the output file.
         """
         raise NotImplementedError("Writing to this file type is not currently supported.")
     def _update_index_col(self, df, indexCol="Sample"):

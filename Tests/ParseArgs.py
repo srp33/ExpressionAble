@@ -42,6 +42,8 @@ def determineFileType(fileType):
         return 'gct'
     elif fileType.lower == "jupyternotebook":
         return "jupyternotebook"
+    elif fileType.lower() == "geo":
+        return 'geo'
 
 def determineExtension(fileName):
     extensions = fileName.rstrip("\n").split(".")

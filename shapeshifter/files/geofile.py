@@ -15,8 +15,9 @@ import shutil
 class GEOFile(SSFile):
     """handles all geo files"""
 
-    def read_input_to_pandas(self, columnList = [], indexCol="Sample"):
-
+    def read_input_to_pandas(self, columnList = [], indexCol="ID_REF"):
+        if "Sample" in columnList:
+            columnList.remove("Sample")
         ftp = FTP('ftp.ncbi.nlm.nih.gov')
         ftp.login(user="anonymous", passwd="")
 
@@ -98,12 +99,11 @@ class GEOFile(SSFile):
                 patients = line.split('\t')
                 patients = [x.strip("\"") for x in patients]
                 csv_writer.writerow(patients)
+                csv_writer.writerow(patients) # One is for the index column
                 break
 
         geo_file.seek(0)
         for line in geo_file:
-            if line.startswith('"ID_REF"'):
-                continue
             line = line.strip()
             data = line.split('\t')
             data = [x.strip("\"") for x in data]
@@ -120,20 +120,29 @@ class GEOFile(SSFile):
                 break
 
         for line in geo_file:
+            if line.startswith('"ID_REF"'):
+                continue
             line = line.strip()
             data = line.split('\t')
             if data[0] == "!series_matrix_table_end":
                 break
             data[0] = data[0].replace("\"", "")
-            csv_writer.writerow(data)
+            if len(columnList) == 0:
+                csv_writer.writerow(data)
+            else:
+                if data[0] in columnList:
+                    csv_writer.writerow(data)
+                else:
+                    continue
 
         output.seek(0)
         df = pd.read_csv(output)
-        df = df.transpose()
+        df = df.set_index('ID_REF').T
         geo_file.close()
         local_file.close()
         os.remove("new_file.txt")
         os.remove("new_file_2.txt")
+
         return df
 
 

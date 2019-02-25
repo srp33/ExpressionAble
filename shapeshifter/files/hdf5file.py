@@ -1,5 +1,6 @@
 import os
 import tempfile
+
 import pandas as pd
 
 from ..files import SSFile
@@ -7,7 +8,7 @@ from ..files import SSFile
 
 class HDF5File(SSFile):
 
-    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+    def read_input_to_pandas(self, columnList=[], indexCol=None):
         if self.isGzipped:
             tempFile = super()._gunzip_to_temp_file()
             df=pd.read_hdf(tempFile.name)
@@ -20,7 +21,7 @@ class HDF5File(SSFile):
         return df
 
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol=None, transpose=False):
         if not transpose:
             df = df.set_index(indexCol) if indexCol in df.columns else df.set_index(df.columns[0])
         if gzipResults:

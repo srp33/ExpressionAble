@@ -4,7 +4,7 @@ from ..files import SSFile
 
 
 class FWFFile(SSFile):
-    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+    def read_input_to_pandas(self, columnList=[], indexCol=None):
         if len(columnList) == 0:
             return pd.read_fwf(self.filePath, low_memory=False) #low_memory is false for not allowing mixed types?
         return pd.read_csv(self.filePath, usecols=columnList, low_memory=False)

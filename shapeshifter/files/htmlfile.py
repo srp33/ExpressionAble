@@ -1,11 +1,13 @@
-import pandas as pd
 import gzip
+
+import pandas as pd
+
 from ..files import SSFile
 
 
 class HTMLFile(SSFile):
 
-    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+    def read_input_to_pandas(self, columnList=[], indexCol=None):
         #NOTE: reading html files may be deprecated
         df = pd.read_html(self.filePath)[0]
         df = df.reset_index()
@@ -14,7 +16,7 @@ class HTMLFile(SSFile):
         return df
 
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol=None, transpose=False):
         html = df.to_html(na_rep=null, index=False)
         if gzipResults:
             html = html.encode()

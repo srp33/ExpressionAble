@@ -1,11 +1,12 @@
 import tempfile
-from ..utils import to_gct, gct_to_pandas
+
 from ..files import SSFile
+from ..utils import to_gct, gct_to_pandas
 
 
 class GCTFile(SSFile):
 
-    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+    def read_input_to_pandas(self, columnList=[], indexCol=None):
         # probably don't need this section since GCT is read in pretty much the same way CSV is
         # if self.isGzipped:
         #     super()._gunzip()
@@ -23,7 +24,7 @@ class GCTFile(SSFile):
         # return df
 
     def export_filter_results(self, inputSSFile, column_list=[], query=None, transpose=False, include_all_columns=False,
-                              gzip_results=False, index_col="Sample"):
+                              gzip_results=False, index_col=None):
         df = None
         includeIndex = False
         null = 'NA'
@@ -36,7 +37,7 @@ class GCTFile(SSFile):
                                       includeAllColumns=include_all_columns, indexCol=index_col)
 
         if transpose:
-            df = df.set_index(index_col) if index_col in df.columns else df
+            df = df.set_index(index_col) if (index_col != None and index_col in df.columns) else df.set_index(list(df)[0])
             df = df.transpose()
             includeIndex = True
         #TODO: remove returning inputSSFile for every file type, it is no longer needed since gzip is taken care of elsewhere
@@ -44,7 +45,7 @@ class GCTFile(SSFile):
         self.write_to_file(df, gzip_results)
 
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol=None, transpose=False):
         # if not transpose:
         #     df = df.set_index(indexCol) if indexCol in df.columns else df
         if gzipResults:

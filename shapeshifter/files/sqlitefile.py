@@ -3,13 +3,12 @@ import tempfile
 import pandas as pd
 
 from .ssfile import SSFile
-import gzip
 from ..errors import SizeExceededError
 
 
 class SQLiteFile(SSFile):
 
-    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+    def read_input_to_pandas(self, columnList=[], indexCol=None):
         from sqlalchemy import create_engine
         filePath=self.filePath
         if self.isGzipped:
@@ -31,7 +30,7 @@ class SQLiteFile(SSFile):
         return df
 
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol=None, transpose=False):
         filePath = self.filePath
         if len(df.columns) > 999:
             raise SizeExceededError("SQLite supports a maximum of 999 columns. Your data has " + str(

@@ -44,7 +44,7 @@ class RMarkdownFile(SSFile):
         # Close the Rmd file.
         myFile.close()
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol=None, transpose=False):
         if gzipResults:
             tempFile = tempfile.NamedTemporaryFile(delete=False)
             self.to_Rmd(df, tempFile.name, includeIndex)

@@ -5,15 +5,20 @@ from ..files import SSFile
 
 class JSONFile(SSFile):
 
-    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+    def read_input_to_pandas(self, columnList=[], indexCol=None):
         df = pd.read_json(self.filePath)
         df = df.reset_index()
         #todo: name the index column "Sample" instead of "index" and give a warning indicating that happened
         columns=columnList.copy()
-        if len(columns) > 0:
-            columns[columns.index(indexCol)] = 'index'
-            df = df[columns]
-        df.rename(columns={'index':'Sample'}, inplace=True)
+
+        if indexCol != None:
+            if len(columns) > 0:
+                columns[columns.index(indexCol)] = 'index'
+                df = df[columns]
+            df.rename(columns={'index':indexCol}, inplace=True)
+        else:
+            #todo: what should the index column be set to by default?
+            df.rename(columns={'index': 'Sample'}, inplace=True)
         return df
 
 

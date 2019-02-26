@@ -30,7 +30,7 @@ the file extensions provided. If necessary, `input_file_type` and `output_file_t
 
 ## Contributing
 We welcome contributions that help expand shapeshifter to be compatible with additional file formats. If you are 
-interested in contributing, please follow the instructions [here](https://github.com/srp33/ShapeShifter/blob/master/shapeshifter/README.md).
+interested in contributing, please follow the instructions [here](https://github.com/srp33/ShapeShifter/wiki).
 ## Currently Supported Formats
 #### Input Formats:
 * CSV

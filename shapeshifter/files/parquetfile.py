@@ -21,7 +21,7 @@ class ParquetFile(SSFile):
                 df = pd.read_parquet(self.filePath)
             else:
                 df = pd.read_parquet(self.filePath, columns=columnList)
-            if df.index.name == indexCol:
+            if df.index.name == indexCol and indexCol != None:
                 df.reset_index(inplace=True)
         return df
 

@@ -21,7 +21,7 @@ class ShapeShifter:
         self.output_file= None
 
     def export_filter_results(self, out_file_path, out_file_type=None, filters=None, columns=[],
-                              transpose=False, include_all_columns=False, gzip_results=False, index='Sample'):
+                              transpose=False, include_all_columns=False, gzip_results=False, index=None):
         """
         Filters and then exports data to a file.
 
@@ -45,6 +45,9 @@ class ShapeShifter:
 
         :type gzip_results: bool, default False
         :param gzip_results: Indicates whether the resulting file will be gzipped.
+
+        :type index: str, default None
+        :param index:
 
         :return: None
         """

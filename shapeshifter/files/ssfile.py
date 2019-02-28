@@ -17,14 +17,14 @@ class SSFile:
         self.isGzipped= self.__is_gzipped()
 
 
-    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+    def read_input_to_pandas(self, columnList=[], indexCol=None):
         """
         Reads from a file into a Pandas DataFrame. File may be gzipped. Must be implemented by subclasses.
 
         :type columnList: list of str, default []
         :param columnList: Names of columns to be read in. If the list is empty, all columns will be read in.
 
-        :type indexCol: str, default 'Sample'
+        :type indexCol: str, default None
         :param indexCol: Name of the column representing the index of the data set.
 
         :return: Pandas data frame with the requested data.
@@ -32,7 +32,7 @@ class SSFile:
         raise NotImplementedError("Reading from this file type is not currently supported.")
 
     def export_filter_results(self, inputSSFile, column_list=[], query=None, transpose=False, include_all_columns=False,
-                              gzip_results=False, index_col="Sample"):
+                              gzip_results=False, index_col=None):
         """
         Filters and then exports data to a file.
 
@@ -54,8 +54,8 @@ class SSFile:
         :type gzip_results: bool, default false
         :param gzip_results:  Indicates whether the resulting file will be gzipped.
 
-        :type index_col: str, default 'Sample'
-        :param index_col: string name of the index column of the data set.
+        :type index_col: str, default None
+        :param index_col: string name of the column that will be set as the index of the data. If None, it will not set an index.
 
         :return: None
         """
@@ -90,7 +90,8 @@ class SSFile:
                                       includeAllColumns=includeAllColumns, indexCol=indexCol)
 
         if transpose:
-            df = df.set_index(indexCol) if indexCol in df.columns else df
+            #df = df.set_index(indexCol) if indexCol in df.columns else df
+            df = df.set_index(indexCol) if (indexCol != None and indexCol in df.columns) else df.set_index(list(df)[0])
             df = df.transpose()
             includeIndex = True
         #TODO: remove returning inputSSFile for every file type, it is no longer needed since gzip is taken care of elsewhere
@@ -136,7 +137,9 @@ class SSFile:
         elif type.lower() == 'salmonnumreads': return SalmonNumReadsFile(filePath, type)
         #elif type.lower() == 'geo': return GEOFile(filePath,type)
         else:
-            raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
+            raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, "
+                            "HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT, JupyterNotebook, RMarkdown,"
+                            " KallistoTPM, Kallisto_est_counts, SalmonTPM, and SalmonNumReads")
     factory=staticmethod(factory)
 
     def __determine_extension(fileName):
@@ -199,7 +202,7 @@ class SSFile:
 
     __is_geo_filepath = staticmethod(__is_geo_filepath)
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol=None, transpose=False):
         """
         Writes a Pandas DataFrame to a file.
 
@@ -215,13 +218,14 @@ class SSFile:
         :type null: str, default 'NA'
         :param null: Indicates how null or None values should be represented in the output file.
 
-        :type indexCol: str, default 'Sample'
+        :type indexCol: str, default None
         :param indexCol: Name of the column that will be the index in the output file.
 
         :type transpose: bool, default False
         :param transpose: If True, index and columns will be transposed in the output file.
         """
         raise NotImplementedError("Writing to this file type is not currently supported.")
+
     def _update_index_col(self, df, indexCol="Sample"):
         """
         Function for internal use. If the given index column is not in the data frame, it will default to the first column name
@@ -238,7 +242,7 @@ class SSFile:
         return False
 
     def _filter_data(self, columnList=[], query=None,
-                     includeAllColumns=False, indexCol="Sample"):
+                     includeAllColumns=False, indexCol=None):
         """
         Filters a data set down according to queries and requested columns
         :param columnList: List of string column names to include in the results. If blank, all columns will be included
@@ -251,27 +255,30 @@ class SSFile:
         if includeAllColumns:
             columnList = []
             df = self.read_input_to_pandas(columnList, indexCol)
-            self.__report_if_missing_columns(df, [indexCol])
-            df = self.__replace_index(df, indexCol)
+           # self.__report_if_missing_columns(df, [indexCol])
+            if indexCol != None:
+                df = self.__replace_index(df, indexCol)
             if query != None:
                 df = df.query(query)
             return df
 
         if len(columnList) == 0 and query == None:
             df = self.read_input_to_pandas(columnList, indexCol)
-            self.__report_if_missing_columns(df, [indexCol])
-            df = self.__replace_index(df, indexCol)
+            #self.__report_if_missing_columns(df, [indexCol])
+            if indexCol != None:
+                df = self.__replace_index(df, indexCol)
             return df
 
         if query != None:
             columnNamesFromQuery = self.__parse_column_names_from_query(query)
             columnList = columnNamesFromQuery + columnList
-        if indexCol not in columnList:
+        if indexCol != None and indexCol not in columnList:
             columnList.insert(0, indexCol)
-        else:
+        elif indexCol != None and indexCol in columnList:
             columnList.insert(0, columnList.pop(columnList.index(indexCol)))
         df = self.read_input_to_pandas(columnList, indexCol)
         self.__report_if_missing_columns(df, columnList)
+        df = self.__replace_index(df, indexCol) if indexCol != None else df
         if query != None:
             df = df.query(query)
 
@@ -396,6 +403,9 @@ class SSFile:
         if indexCol in df.columns:
             df.set_index(indexCol, drop=True, inplace=True)
             df.reset_index(inplace=True)
+        else:
+            print("Warning: the column " + "\"" +indexCol+"\" you requested as the index is not found and therefore not"
+                                                          " included in the output.")
         return df
 
     def __report_if_missing_columns(self,df, columnList):

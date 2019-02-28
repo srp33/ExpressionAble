@@ -9,7 +9,7 @@ from ..files import SSFile
 
 class ExcelFile(SSFile):
 
-    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+    def read_input_to_pandas(self, columnList=[], indexCol=None):
         if self.isGzipped:
             with gzip.open(self.filePath) as path:
                 df=pd.read_excel(path)
@@ -21,7 +21,7 @@ class ExcelFile(SSFile):
         return df
 
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol=None, transpose=False):
         if len(df.columns) > 16384 or len(df.index) > 1048576:
             raise SizeExceededError("Excel supports a maximum of 1,048,576 rows and 16,384 columns. The dimensions of your data are " + str(df.shape)
                                                       +"\nPlease use a smaller data set or consider using a different file type")

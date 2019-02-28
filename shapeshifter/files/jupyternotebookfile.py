@@ -58,7 +58,7 @@ class JupyterNBFile(SSFile):
         # Write the .ipynb to the desired file path.
         nbf.write(nb, filename)
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol=None, transpose=False):
 
         if gzipResults:
             tempFile = tempfile.NamedTemporaryFile(delete=False)

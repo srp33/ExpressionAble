@@ -137,7 +137,9 @@ class SSFile:
         elif type.lower() == 'salmonnumreads': return SalmonNumReadsFile(filePath, type)
         #elif type.lower() == 'geo': return GEOFile(filePath,type)
         else:
-            raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
+            raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, "
+                            "HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT, JupyterNotebook, RMarkdown,"
+                            " KallistoTPM, Kallisto_est_counts, SalmonTPM, and SalmonNumReads")
     factory=staticmethod(factory)
 
     def __determine_extension(fileName):

@@ -18,6 +18,9 @@ class JSONFile(SSFile):
             df.rename(columns={'index':indexCol}, inplace=True)
         else:
             df.rename(columns={'index': 'Sample'}, inplace=True)
+
+        if len(columnList) > 0:
+            df = df[columnList]
         return df
 
 

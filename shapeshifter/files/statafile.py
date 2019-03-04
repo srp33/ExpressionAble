@@ -8,7 +8,7 @@ from ..files import SSFile
 
 class StataFile(SSFile):
 
-    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+    def read_input_to_pandas(self, columnList=[], indexCol=None):
         if self.isGzipped:
             tempFile = super()._gunzip_to_temp_file()
             if len(columnList)>0:
@@ -22,7 +22,7 @@ class StataFile(SSFile):
         return pd.read_stata(self.filePath)
 
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol=None, transpose=False):
         # Sometimes stata interprets columns as 'object' type which is no good (sometimes). This code may fix it?
         # However, as a result, boolean values are now converted to 1s and 0s
         type_pref = [int, float, str]

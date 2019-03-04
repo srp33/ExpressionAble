@@ -7,7 +7,7 @@ class ParquetFile(SSFile):
     def __init__(self, filePath, fileType):
         super().__init__(filePath,fileType)
 
-    def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
+    def read_input_to_pandas(self, columnList=[], indexCol=None):
         # if self.isGzipped:
         #     super()._gunzip()
         #     if len(columnList)==0:
@@ -21,12 +21,12 @@ class ParquetFile(SSFile):
                 df = pd.read_parquet(self.filePath)
             else:
                 df = pd.read_parquet(self.filePath, columns=columnList)
-            if df.index.name == indexCol:
+            if df.index.name == indexCol and indexCol != None:
                 df.reset_index(inplace=True)
         return df
 
 
-    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol="Sample", transpose=False):
+    def write_to_file(self, df, gzipResults=False, includeIndex=False, null='NA', indexCol=None, transpose=False):
         if gzipResults:
             df.to_parquet(super()._append_gz(self.filePath), compression='gzip')
         else:

@@ -17,8 +17,10 @@ class JSONFile(SSFile):
                 df = df[columns]
             df.rename(columns={'index':indexCol}, inplace=True)
         else:
-            #todo: what should the index column be set to by default?
             df.rename(columns={'index': 'Sample'}, inplace=True)
+
+        if len(columnList) > 0:
+            df = df[columnList]
         return df
 
 

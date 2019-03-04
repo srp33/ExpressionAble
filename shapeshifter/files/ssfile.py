@@ -4,6 +4,8 @@ import re
 import shutil
 import tempfile
 
+from ..errors import ColumnNotFoundError
+
 
 class SSFile:
     """
@@ -276,7 +278,10 @@ class SSFile:
             columnList.insert(0, indexCol)
         elif indexCol != None and indexCol in columnList:
             columnList.insert(0, columnList.pop(columnList.index(indexCol)))
-        df = self.read_input_to_pandas(columnList, indexCol)
+        try:
+            df = self.read_input_to_pandas(columnList, indexCol)
+        except (ValueError, KeyError) as e:
+            raise ColumnNotFoundError(str(e))
         self.__report_if_missing_columns(df, columnList)
         df = self.__replace_index(df, indexCol) if indexCol != None else df
         if query != None:

@@ -47,7 +47,7 @@ class ShapeShifter:
         :param gzip_results: Indicates whether the resulting file will be gzipped.
 
         :type index: str, default None
-        :param index:
+        :param index: Name of the column to be set as index.
 
         :return: None
         """

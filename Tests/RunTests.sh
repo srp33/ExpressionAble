@@ -108,7 +108,7 @@ python3 CompareDataframes.py Tests/InputData/KallistoTPMTest.tsv Tests/InputData
 echo -n Reading from Kallisto_est_counts:
 python3 CompareDataframes.py Tests/InputData/Kallisto_est_counts_Test.tsv Tests/InputData/KallistoTPMTest.zip kallisto_est_counts
 
-echo -n Reading from GEO:
+echo -n Reading from GEO
 python3 CompareDataframes.py Tests/InputData/GEOtest.tsv GSE1000 geo
 
 echo -n Reading from SalmonTPM:

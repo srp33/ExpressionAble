@@ -2,7 +2,7 @@
 
 set -o errexit
 
-tmpDir=/tmp/buildSS
+tmpDir=/tmp/buildSS_${USER}
 
 mkdir -p $tmpDir
 rm -rf $tmpDir/*
@@ -20,7 +20,7 @@ cp Tests/*.py $tmpDir/
 cp -r shapeshifter $tmpDir
 cp setup.py $tmpDir
 cd $tmpDir
-docker build -t srp33/shapeshifter:version$(cat VERSION) .
+docker build --no-cache -t srp33/shapeshifter:version$(cat VERSION) .
 
 docker run -i --rm srp33/shapeshifter:version$(cat VERSION) /RunTests2.sh
 #docker run -i --rm srp33/shapeshifter:version$(cat VERSION) /bin/bash

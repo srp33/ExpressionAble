@@ -110,7 +110,7 @@ class SSFile:
         """
         from ..files import ARFFFile, CSVFile, ExcelFile, GCTFile, HDF5File, HTMLFile, JSONFile, MsgPackFile, ParquetFile
         from ..files import PickleFile, SQLiteFile, StataFile, TSVFile, JupyterNBFile, RMarkdownFile, KallistoTPMFile
-        from ..files import KallistoEstCountsFile, SalmonTPMFile, SalmonNumReadsFile, GEOFile, PDFFile
+        from ..files import KallistoEstCountsFile, SalmonTPMFile, SalmonNumReadsFile, GEOFile, PDFFile, StarReadsFile
 
         if type==None:
             type = SSFile.__determine_extension(filePath)
@@ -136,6 +136,7 @@ class SSFile:
         elif type.lower() == 'salmonnumreads': return SalmonNumReadsFile(filePath, type)
         elif type.lower() == 'geo': return GEOFile(filePath, type)
         elif type.lower() == 'pdf': return PDFFile(filePath, type)
+        elif type.lower() == 'starreads': return StarReadsFile(filePath, type)
         else:
             raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT")
     factory=staticmethod(factory)

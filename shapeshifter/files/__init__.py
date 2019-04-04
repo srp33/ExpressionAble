@@ -1,7 +1,7 @@
 from shapeshifter.files.ssfile import SSFile
 __all__ = ['SSFile', 'ARFFFile', 'CSVFile', 'ExcelFile', 'GCTFile', 'HDF5File', 'HTMLFile', 'JSONFile', 'JupyterNBFile',
            'KallistoEstCountsFile', 'KallistoTPMFile', 'MsgPackFile', 'ParquetFile', 'PickleFile', 'RMarkdownFile',
-           'SalmonNumReadsFile', 'SalmonTPMFile', 'SQLiteFile', 'StataFile', 'TSVFile', 'FWFFile', 'GEOFile', 'PDFFile']
+           'SalmonNumReadsFile', 'SalmonTPMFile', 'SQLiteFile', 'StataFile', 'TSVFile', 'FWFFile', 'GEOFile', 'PDFFile', 'StarReadsFile']
 
 
 
@@ -27,3 +27,4 @@ from shapeshifter.files.statafile import StataFile
 from shapeshifter.files.tsvfile import TSVFile
 from shapeshifter.files.geofile import GEOFile
 from shapeshifter.files.pdffile import PDFFile
+from shapeshifter.files.star_reads_file import StarReadsFile

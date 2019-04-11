@@ -4,11 +4,11 @@ import sys
 import pandas as pd
 import pyarrow
 
-from shapeshifter import ShapeShifter
-from shapeshifter.errors import ColumnNotFoundError
-from shapeshifter.utils import ContinuousQuery
-from shapeshifter.utils import DiscreteQuery
-from shapeshifter.utils import OperatorEnum
+from expressionable import ExpressionAble
+from expressionable.errors import ColumnNotFoundError
+from expressionable.utils import ContinuousQuery
+from expressionable.utils import DiscreteQuery
+from expressionable.utils import OperatorEnum
 
 
 def determineFileType(fileType):
@@ -22,7 +22,7 @@ def determineFileType(fileType):
         return 'excel'
     elif fileType.lower() == "hdf5":
         return 'hdf5'
-    #elif fileType=="Feather":
+    #elif dataType=="Feather":
     #	return FileTypeEnum.Feather
     elif fileType.lower() =="parquet":
         return 'parquet'
@@ -242,7 +242,7 @@ indexCol="Sample"
 if args.set_index:
     indexCol=args.set_index[0]
 try:
-    ss = ShapeShifter(args.input_file, inFileType)
+    ss = ExpressionAble(args.input_file, inFileType)
     ss.export_filter_results(args.output_file, outFileType, filters=query, columns=colList, transpose=isTransposed,
                              include_all_columns=allCols, gzip_results=gzip, index=indexCol)
 

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='shapeshifter',
+    name='expressionable',
     url='https://github.com/srp33/ShapeShifter',
     author='Piccolo Lab',
     author_email='stephen_piccolo@byu.edu',

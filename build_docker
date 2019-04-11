@@ -17,13 +17,13 @@ mkdir $tmpDir/Tests/
 cp -r Tests/InputData $tmpDir/Tests/
 cp -r Tests/OutputData $tmpDir/Tests/
 cp Tests/*.py $tmpDir/
-cp -r shapeshifter $tmpDir
+cp -r expressionable $tmpDir
 cp setup.py $tmpDir
 cd $tmpDir
 docker build --no-cache -t srp33/shapeshifter:version$(cat VERSION) .
 
 docker run -i --rm srp33/shapeshifter:version$(cat VERSION) /RunTests2.sh
-#docker run -i --rm srp33/shapeshifter:version$(cat VERSION) /bin/bash
+#docker run -i --rm srp33/expressionable:version$(cat VERSION) /bin/bash
 
 cd -
 rm -rf $tmpDir/

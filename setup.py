@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='expressionable',
-    url='https://github.com/srp33/ShapeShifter',
+    url='https://github.com/srp33/ExpressionAble',
     author='Piccolo Lab',
     author_email='stephen_piccolo@byu.edu',
     packages=find_packages(exclude=['Tests*', 'docs*']),

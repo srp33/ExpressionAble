@@ -14,7 +14,7 @@ Basic use is described below, but see the full documentation on [Read the Docs](
 `pip install expressionable`
 
 ## Basic Use
-After installing, import the ExpressionAble class with `from expressionable import ExpressionAble`. A ShapeShifter object 
+After installing, import the ExpressionAble class with `from expressionable import ExpressionAble`. An ExpressionAble object 
 represents the file to be transformed. It is then transformed using the `export_filter_results` method. Here is a simple
 example of file called `input_file.tsv` being transformed into an HDF5 file called `output_file.h5`, while filtering 
 the data on sex and age:
@@ -24,7 +24,7 @@ from expressionable import ExpressionAble
 my_expressionable = ExpressionAble("input_file.tsv")
 my_expressionable.export_filter_results("output_file.h5", filters="Sex == 'M' and Age > 40")
 ```
-Note that the type of file being read and exported to were not stated explicitly but inferred by shapeshifter based on
+Note that the type of file being read and exported to were not stated explicitly but inferred by ExpressionAble based on
 the file extensions provided. If necessary, `input_file_type` and `output_file_type` can be named explicitly.
 
 
@@ -65,7 +65,7 @@ interested in contributing, please follow the instructions [here](https://github
 * JupyterNotebook
 
 ## Future Formats to Support
-We are working hard to expand ShapeShifter to work with even more file formats! Expect the following formats to be 
+We are working hard to expand ExpressionAble to work with even more file formats! Expect the following formats to be 
 included in future releases:
 * Fixed-width files (fwf)
 * Genomic Data Commons clinical XML

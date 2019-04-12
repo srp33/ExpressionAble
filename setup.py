@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='shapeshifter',
-    url='https://github.com/srp33/ShapeShifter',
+    name='expressionable',
+    url='https://github.com/srp33/ExpressionAble',
     author='Piccolo Lab',
     author_email='stephen_piccolo@byu.edu',
     packages=find_packages(exclude=['Tests*', 'docs*']),

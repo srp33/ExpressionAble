@@ -243,8 +243,8 @@ if args.set_index:
     indexCol=args.set_index[0]
 try:
     ss = ExpressionAble(args.input_file, inFileType)
-    ss.export_filter_results(args.output_file, outFileType, filters=query, columns=colList, transpose=isTransposed,
-                             include_all_columns=allCols, gzip_results=gzip, index=indexCol)
+    ss.convert(args.output_file, outFileType, filters=query, columns=colList, transpose=isTransposed,
+               include_all_columns=allCols, gzip_results=gzip, index=indexCol)
 
     #export_filter_results(args.input_file, args.output_file, outFileType, inputFileType=inFileType, gzippedInput=isInFileGzipped, query=query, columnList=colList, transpose=isTransposed, includeAllColumns=allCols, gzipResults=gzip, indexCol=indexCol)
 

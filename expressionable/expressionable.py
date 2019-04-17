@@ -11,19 +11,19 @@ class ExpressionAble:
     :type file_path: str
     :param file_path: Name of a file path to read and perform operations on.
 
-    :type file_type: str
-    :param file_type: Name of the type of file that is being read.
+    :type data_type: str
+    :param data_type: Name of the type of file that is being read.
     """
-    def __init__(self, file_path, file_type=None):
+    def __init__(self, file_path, data_type=None):
 
 
-        self.input_file = EAFile.factory(file_path, file_type)
+        self.input_file = EAFile.factory(file_path, data_type)
         self.gzipped_input= self.__is_gzipped()
         self.output_file= None
 
     def convert(self, output_file_path, data_type=None, filters=None, columns=[],
                 transpose=False, include_all_columns=False, gzip_results=False, index=None,
-                files_to_merge=None, merge_on=None, merge_how='inner'):
+                files_to_merge=None, files_to_merge_types=None, merge_on=None, merge_how='inner'):
         """
         Filters and then exports data to a file.
 
@@ -54,6 +54,9 @@ class ExpressionAble:
         :type files_to_merge: list of str, default None
         :param files_to_merge: List of file paths of files that will be merged with the base file before processing
 
+        :type files_to_merge_types: list of str
+        :param files_to_merge_types: List of data types of files corresponding to files_to_merge. Must be the same length as files_to_merge, if used. If None, data types will be inferred from the file extensions.
+
         :type merge_on: str, default None
         :param merge_on: Column or index level names to join on. These must be found in all files. If on is None and not merging on indexes then this defaults to the intersection of the columns in all.
 
@@ -64,7 +67,7 @@ class ExpressionAble:
         """
         if files_to_merge != None:
             self.output_file = EAFile.factory(output_file_path, data_type)
-            merged_data_tempfile = self.__merge_files(files_to_merge, merge_on, merge_how)
+            merged_data_tempfile = self.__merge_files(files_to_merge, files_to_merge_types, merge_on, merge_how)
             merged_data_file = EAFile.factory(merged_data_tempfile.name, "parquet")
             self.output_file.export_filter_results(merged_data_file, column_list=columns, query=filters, transpose=transpose,
                                      include_all_columns=include_all_columns, gzip_results=gzip_results,
@@ -75,16 +78,18 @@ class ExpressionAble:
         else:
             self.output_file = EAFile.factory(output_file_path, data_type)
             self.output_file.export_filter_results(self.input_file, column_list=columns, query=filters, transpose=transpose,
-                                     include_all_columns=include_all_columns, gzip_results=gzip_results,
-                                     index_col=index)
+                                     include_all_columns=include_all_columns, gzip_results=gzip_results, index_col=index)
 
 
-    def __merge_files(self, file_list, on=None, how='inner'):
+    def __merge_files(self, files_to_merge, files_to_merge_types = None, on=None, how='inner'):
         """
         Merges multiple ExpressionAble-compatible files into a single temporary file to be used in the convert function.
 
-        :type file_list: list of str
-        :param file_list: File paths representing files that will be merged with the file in this ExpressionAble object.
+        :type files_to_merge: list of str
+        :param files_to_merge: File paths representing files that will be merged with the file in this ExpressionAble object.
+
+        :type files_to_merge_types: list of str
+        :param files_to_merge_types: List of data types corresponding to file_list. Must be the same length as file_list, if used. If None, data types will be inferred from the file extensions.
 
         :type on: str, default None
         :param on: Column or index level names to join on. These must be found in all files. If on is None and not merging on indexes then this defaults to the intersection of the columns in all.
@@ -92,7 +97,7 @@ class ExpressionAble:
         :type merge_how: str, default 'inner'
         :param merge_how: Method of merge: must be one of 'inner', 'outer', 'left', or 'right'
 
-        :return: None
+        :return: NamedTempFile object representing a parquet file with the merged data
         """
         how=how.lower()
         if how not in ['left','right','outer','inner']:
@@ -100,27 +105,33 @@ class ExpressionAble:
             return
         f_out = tempfile.NamedTemporaryFile(delete=False)
         outFile = EAFile.factory(f_out.name, 'parquet')
-        SSFileList=[]
+        EAFileList=[]
         # create a file object for every file path passed in
-        for file in file_list:
-            SSFileList.append(EAFile.factory(file))
+        if files_to_merge_types != None:
+            if len(files_to_merge_types) != len(files_to_merge):
+                raise Exception("Error: files_to_merge and files_to_merge_types must be the same length")
+            for i in range(len(files_to_merge)):
+                EAFileList.append(EAFile.factory(files_to_merge[i], files_to_merge_types[i]))
+        else:
+            for file in files_to_merge:
+                EAFileList.append(EAFile.factory(file))
 
-        if len(SSFileList) < 1:
+        if len(EAFileList) < 1:
             print("Error: there must be at least one input file to merge with.")
             return
 
-        SSFileList.insert(0, self.input_file)
-        df1 = SSFileList[0].read_input_to_pandas()
+        EAFileList.insert(0, self.input_file)
+        df1 = EAFileList[0].read_input_to_pandas()
 
         #we keep track of how often a column name appears and will change the names to avoid duplicates if necessary
         #the exception is whatever columns they want to merge on - we don't keep track of those
         columnDict={}
         self.__increment_columnname_counters(columnDict, df1, on)
-        if len(SSFileList) == 1:
+        if len(EAFileList) == 1:
             outFile.write_to_file(df1)
             return f_out
-        for i in range(0, len(SSFileList) - 1):
-            df2 = SSFileList[i + 1].read_input_to_pandas()
+        for i in range(0, len(EAFileList) - 1):
+            df2 = EAFileList[i + 1].read_input_to_pandas()
             if on !=None:
                 self.__increment_columnname_counters(columnDict, df2, on)
                 self.__rename_common_columns(columnDict, df1, df2, on)

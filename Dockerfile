@@ -1,13 +1,12 @@
-FROM python:3.6-stretch
-RUN pip3 uninstall -y scipy numpy scikit-learn
-RUN pip3 install --no-binary numpy pandas 
-RUN pip3 install --no-cache-dir pyarrow sqlalchemy xlsxwriter tables xlrd nbformat
+FROM python:3.7-stretch
 ADD RunTests.sh /
 ADD RunTests2.sh /
 ADD Tests/InputData /Tests/InputData
 ADD Tests/OutputData /Tests/OutputData
 ADD *.py /
-ADD VERSION /ShapeShifter/
-RUN mv setup.py /ShapeShifter/
-ADD shapeshifter /ShapeShifter/shapeshifter
-RUN pip3 install -e ShapeShifter
+ADD VERSION /ExpressionAble/
+ADD MANIFEST.in /ExpressionAble/
+ADD README.md /ExpressionAble/
+RUN mv setup.py /ExpressionAble/
+ADD expressionable /ExpressionAble/expressionable
+RUN pip3 install -e ExpressionAble

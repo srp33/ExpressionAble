@@ -1,6 +1,6 @@
 import time
 
-from shapeshifter.files import SSFile
+from expressionable.files import EAFile
 
 if __name__ == '__main__':
     supported_file_types = {"Small": ["Parquet", "CSV", "Excel", "HDF5", "JSON", "MsgPack", "Pickle", "SQLite", "Stata", "TSV"],
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     for file_size in supported_file_types:
         for file_type in supported_file_types[file_size]:
             file_path = input_file_paths[file_size] + extensions[file_type]
-            file_obj = SSFile.factory(file_path)
+            file_obj = EAFile.factory(file_path)
             for filter_description in filters:
                 t1 = time.time()
                 df = file_obj.read_input_to_pandas(columnList=columns_needed[filter_description])
@@ -39,9 +39,9 @@ if __name__ == '__main__':
 
     for file_size in supported_file_types:
         for file_type in supported_file_types[file_size]:
-            in_file = SSFile.factory(input_file_paths[file_size] + "pq")
+            in_file = EAFile.factory(input_file_paths[file_size] + "pq")
             for filter_description in filters:
-                out_file = SSFile.factory(output_file_paths[file_size] + extensions[file_type])
+                out_file = EAFile.factory(output_file_paths[file_size] + extensions[file_type])
                 df = in_file._filter_data(columnList=columns_needed[filter_description])
                 t1 = time.time()
                 out_file.write_to_file(df)

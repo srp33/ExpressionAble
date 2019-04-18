@@ -1,6 +1,6 @@
 import time
 
-from shapeshifter.files import SSFile
+from expressionable.files import EAFile
 
 if __name__ == '__main__':
     #add tests for reading the whole file and a tall data set (10 cols, 1 million rows)
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     for i in range(0,len(filetypes)):
         for j in range(0, len(filterDescriptions)):
             fileName = "Tests/Speed/Small/SmallTest." +extensions[i]
-            smallFile = SSFile.factory(fileName)
+            smallFile = EAFile.factory(fileName)
             t1=time.time()
             df=smallFile.read_input_to_pandas(columnList=smallColumns[j])
             t2=time.time()
@@ -52,8 +52,8 @@ if __name__ == '__main__':
     for i in range(0,len(filetypes)):
         for j in range(0, len(filterDescriptions)):
             fileName = "Tests/Speed/Small/SmallTest.pq"
-            inFile = SSFile.factory(fileName)
-            outFile = SSFile.factory("Tests/Speed/Output/smallOutput"+str(j)+"." + extensions[i])
+            inFile = EAFile.factory(fileName)
+            outFile = EAFile.factory("Tests/Speed/Output/smallOutput" + str(j) + "." + extensions[i])
             df = inFile._filter_data(columnList=smallColumns[j], query=smallFilters[j])
             t1 = time.time()
             outFile.write_to_file(df)
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     for i in range(0,len(filetypes)):
         for j in range(0, len(filterDescriptions)):
             fileName = "Tests/Speed/Medium/MediumTest." +extensions[i]
-            mediumFile = SSFile.factory(fileName)
+            mediumFile = EAFile.factory(fileName)
             t1=time.time()
             df=mediumFile.read_input_to_pandas(columnList=mediumColumns[j])
             t2=time.time()
@@ -87,8 +87,8 @@ if __name__ == '__main__':
     for i in range(0,len(filetypes)):
         for j in range(0, len(filterDescriptions)):
             fileName = "Tests/Speed/Medium/MediumTest.pq"
-            inFile = SSFile.factory(fileName)
-            outFile = SSFile.factory("Tests/Speed/Output/MediumOutput"+str(j)+"." + extensions[i])
+            inFile = EAFile.factory(fileName)
+            outFile = EAFile.factory("Tests/Speed/Output/MediumOutput" + str(j) + "." + extensions[i])
             df = inFile._filter_data(columnList=mediumColumns[j], query=mediumFilters[j])
             t1 = time.time()
             outFile.write_to_file(df)
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     #         for j in range(0, len(filterDescriptions)):
     #             print("Reading METABRIC from " + filetypes[i] +": " +str(j))
     #             fileName = "Tests/Speed/METABRIC/metabric." +extensions[i]
-    #             metabricFile = SSFile.factory(fileName)
+    #             metabricFile = EAFile.factory(fileName)
     #             t1=time.time()
     #             df=metabricFile.read_input_to_pandas(columnList=metabricColumns[j])
     #             t2=time.time()
@@ -137,8 +137,8 @@ if __name__ == '__main__':
     #         for j in range(0, len(filterDescriptions)):
     #             print("Writing METABRIC to " + filetypes[i] + ": " +str(j))
     #             fileName = "Tests/Speed/METABRIC/metabric.pq"
-    #             inFile = SSFile.factory(fileName)
-    #             outFile = SSFile.factory("Tests/Speed/Output/METABRICOutput"+str(j)+"." + extensions[i])
+    #             inFile = EAFile.factory(fileName)
+    #             outFile = EAFile.factory("Tests/Speed/Output/METABRICOutput"+str(j)+"." + extensions[i])
     #             df = inFile._filter_data(columnList=metabricColumns[j], query=metabricFilters[j])
     #             t1 = time.time()
     #             outFile.write_to_file(df)
@@ -157,7 +157,7 @@ if __name__ == '__main__':
     for i in range(0,len(filetypes)):
         for j in range(0, len(filterDescriptions)):
             fileName = "Tests/Speed/Tall/TallData." +extensions[i]
-            tallFile = SSFile.factory(fileName)
+            tallFile = EAFile.factory(fileName)
             t1=time.time()
             df= tallFile.read_input_to_pandas(columnList=tallColumns[j])
             t2=time.time()
@@ -178,8 +178,8 @@ if __name__ == '__main__':
     for i in range(0,len(filetypes)):
         for j in range(0, len(filterDescriptions)):
             fileName = "Tests/Speed/Tall/TallData.pq"
-            inFile = SSFile.factory(fileName)
-            outFile = SSFile.factory("Tests/Speed/Output/TallOutput"+str(j)+"." + extensions[i])
+            inFile = EAFile.factory(fileName)
+            outFile = EAFile.factory("Tests/Speed/Output/TallOutput" + str(j) + "." + extensions[i])
             df = inFile._filter_data(columnList=tallColumns[j], query=tallFilters[j])
             t1 = time.time()
             outFile.write_to_file(df)
@@ -192,7 +192,7 @@ if __name__ == '__main__':
     file_sizes=["Small", "Medium", "Tall"]
     filter_files=["Tests/Speed/Small/SmallTest.pq", "Tests/Speed/Medium/MediumTest.pq", "Tests/Speed/Tall/TallData.pq"]
     for i in range(1, len(filterDescriptions)):
-        small_file_obj = SSFile.factory(filter_files[0])
+        small_file_obj = EAFile.factory(filter_files[0])
         df = small_file_obj.read_input_to_pandas(columnList = smallColumns[i])
         t1 = time.time()
         df = df.query(smallFilters[i])
@@ -202,7 +202,7 @@ if __name__ == '__main__':
         filterLines.append(line)
 
     for i in range(1, len(filterDescriptions)):
-        medium_file_obj = SSFile.factory(filter_files[1])
+        medium_file_obj = EAFile.factory(filter_files[1])
         df = medium_file_obj.read_input_to_pandas(columnList = mediumColumns[i])
         t1 = time.time()
         df = df.query(mediumFilters[i])
@@ -212,7 +212,7 @@ if __name__ == '__main__':
         filterLines.append(line)
 
     for i in range(1, len(filterDescriptions)):
-        tall_file_obj = SSFile.factory(filter_files[2])
+        tall_file_obj = EAFile.factory(filter_files[2])
         df = tall_file_obj.read_input_to_pandas(columnList=tallColumns[i])
         t1 = time.time()
         df = df.query(tallFilters[i])

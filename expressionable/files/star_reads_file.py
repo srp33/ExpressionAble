@@ -1,4 +1,4 @@
-from ..files import SSFile
+from ..files import eafile
 from ..utils import star_to_pandas
 
 # Special Case Format: Used when a user wants to grab columns 1 or 2 instead of 3
@@ -25,7 +25,7 @@ def column_finder(filePath):
             return 3
         return int(cols)
 
-class StarReadsFile(SSFile):
+class StarReadsFile(eafile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         file_name = check_file_name(self.filePath)

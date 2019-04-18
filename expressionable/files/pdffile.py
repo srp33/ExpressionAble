@@ -1,6 +1,6 @@
 # before this program can be used make sure to pip install tabula-py
 
-from ..files import SSFile
+from ..files import eafile
 import tabula
 import os
 import subprocess
@@ -89,7 +89,7 @@ def check_file_path(raw_input, index_1):
         print("invalid path")
         sys.exit()
 
-class PDFFile(SSFile):
+class PDFFile(eafile):
     """Coverts pdf tables into a pandas data frame"""
 
     def read_input_to_pandas(self, columnList = [], indexCol="Sample" ):

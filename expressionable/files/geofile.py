@@ -1,6 +1,6 @@
 
 
-from ..files import SSFile
+from ..files import eafile
 import pandas as pd
 from io import StringIO
 import csv
@@ -9,7 +9,6 @@ from ftplib import FTP
 import sys
 import gzip
 import os
-import io
 import shutil
 import tempfile
 
@@ -27,7 +26,7 @@ def gunzip_to_temp_file(path):
 
 def build_df(filename, columnList = []):
     geo_file = open(filename, 'r')
-    output = io.StringIO()
+    output = StringIO()
     csv_writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
 
     for line in geo_file:
@@ -150,7 +149,7 @@ def ftp_download(geo_id):
     fd.close()
     return fd
 
-class GEOFile(SSFile):
+class GEOFile(eafile):
     """handles all geo files"""
 
     def read_input_to_pandas(self, columnList = [], indexCol="ID_REF"):

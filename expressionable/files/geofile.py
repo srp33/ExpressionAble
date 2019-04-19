@@ -78,7 +78,6 @@ def build_df(filename, columnList = []):
     df = df.set_index('ID_REF').T
     geo_file.close()
     df = df.convert_objects(convert_numeric=True)
-
     return df
 
 
@@ -149,8 +148,9 @@ def ftp_download(geo_id):
     fd.close()
     return fd
 
-class GEOFile(eafile):
+class GEOFile(eafile.EAFile):
     """handles all geo files"""
+
 
     def read_input_to_pandas(self, columnList = [], indexCol="ID_REF"):
         if "Sample" in columnList:

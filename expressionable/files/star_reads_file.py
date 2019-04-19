@@ -25,7 +25,7 @@ def column_finder(filePath):
             return 3
         return int(cols)
 
-class StarReadsFile(eafile):
+class StarReadsFile(eafile.EAFile):
 
     def read_input_to_pandas(self, columnList=[], indexCol="Sample"):
         file_name = check_file_name(self.filePath)

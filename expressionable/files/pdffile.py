@@ -89,7 +89,7 @@ def check_file_path(raw_input, index_1):
         print("invalid path")
         sys.exit()
 
-class PDFFile(eafile):
+class PDFFile(eafile.EAFile):
     """Coverts pdf tables into a pandas data frame"""
 
     def read_input_to_pandas(self, columnList = [], indexCol="Sample" ):

@@ -109,7 +109,10 @@ echo -n Reading from Kallisto_est_counts:
 python3 CompareDataframes.py Tests/InputData/Kallisto_est_counts_Test.tsv Tests/InputData/KallistoTPMTest.zip kallisto_est_counts
 
 echo -n Reading from GEO:
-python3 CompareDataframes.py Tests/InputData/GEOtest.tsv GSE1000 geo
+python3 CompareDataframes.py Tests/InputData/GEOtest.tsv GSE66952 geo
+
+echo -n Reading from .gctx:
+python3 CompareDataframes.py Tests/InputData/GCTXUnitTest.tsv GCTXUnitTest.gctx
 
 echo -n Reading from Star:
 python3 CompareDataframes.py Tests/InputData/StarTest.tsv Tests/InputData/StarTest.zip starreads

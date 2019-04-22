@@ -186,6 +186,8 @@ class EAFile:
             return 'arff'
         elif extension == "gct":
             return 'gct'
+        elif extension == "pdf":
+            return 'pdf'
         elif extension == "gctx":
             return 'gctx'
         elif extension == "ipynb":

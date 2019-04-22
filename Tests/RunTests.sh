@@ -112,7 +112,7 @@ echo -n Reading from GEO:
 python3 CompareDataframes.py Tests/InputData/GEOtest.tsv GSE66952 geo
 
 echo -n Reading from .gctx:
-python3 CompareDataframes.py Tests/InputData/GCTXUnitTest.tsv GCTXUnitTest.gctx
+python3 CompareDataframes.py Tests/InputData/GCTXUnitTest.tsv Tests/InputData/GCTXUnitTest.gctx
 
 echo -n Reading from Star:
 python3 CompareDataframes.py Tests/InputData/StarTest.tsv Tests/InputData/StarTest.zip starreads

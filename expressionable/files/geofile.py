@@ -24,6 +24,18 @@ def gunzip_to_temp_file(path):
         f_out.close()
     return f_out
 
+def check_file_path(file_name):
+    print(os.getcwd())
+    if os._exists(file_name):
+        print('Running parser on local file')
+        return False
+    elif os.path.isfile(file_name):
+        print('Running parser on local file')
+        return False
+    else:
+        print('Downloading File')
+        return True
+
 def build_df(filename, columnList = []):
     geo_file = open(filename, 'r')
     output = StringIO()
@@ -73,11 +85,12 @@ def build_df(filename, columnList = []):
                 continue
 
     output.seek(0)
-    df = pd.read_csv(output)
-    df.apply(pd.to_numeric, errors='ignore')
+    df = pd.read_csv(output, low_memory=False)
     df = df.set_index('ID_REF').T
     geo_file.close()
-    df = df.convert_objects(convert_numeric=True)
+    # df = df.convert_objects(convert_numeric=True)
+    df = df.apply(pd.to_numeric, errors='ignore')
+    # print(df.dtypes)
     return df
 
 
@@ -155,13 +168,15 @@ class GEOFile(eafile.EAFile):
     def read_input_to_pandas(self, columnList = [], indexCol="ID_REF"):
         if "Sample" in columnList:
             columnList.remove("Sample")
-
-        f_in = ftp_download(self.filePath)
-        tempfile = gunzip_to_temp_file(f_in.name)
-
-        df = build_df(tempfile.name, columnList)
-
-        os.remove(f_in.name)
-        os.remove(tempfile.name)
+        if check_file_path(self.filePath) == True:
+            f_in = ftp_download(self.filePath)
+            tempfile = gunzip_to_temp_file(f_in.name)
+            df = build_df(tempfile.name, columnList)
+            os.remove(f_in.name)
+            os.remove(tempfile.name)
+        else:
+            f_in = gunzip_to_temp_file(self.filePath)
+            df = build_df(f_in.name, columnList)
+            os.remove(f_in.name)
 
         return df

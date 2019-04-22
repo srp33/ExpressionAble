@@ -6,6 +6,7 @@ install: true
 branches:
   only:
     - master
+    - Nates_integration
 script:
   - bash build_docker
   

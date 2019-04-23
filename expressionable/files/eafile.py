@@ -113,7 +113,7 @@ class EAFile:
         """
         from ..files import ARFFFile, CSVFile, ExcelFile, GCTFile, HDF5File, HTMLFile, JSONFile, MsgPackFile, ParquetFile
         from ..files import PickleFile, SQLiteFile, StataFile, TSVFile, JupyterNBFile, RMarkdownFile, KallistoTPMFile
-        from ..files import KallistoEstCountsFile, SalmonTPMFile, SalmonNumReadsFile
+        from ..files import KallistoEstCountsFile, SalmonTPMFile, SalmonNumReadsFile, StarReadsFile, GEOFile, GCTXFile, PDFFile
 
         if type==None:
             type = EAFile.__determine_extension(filePath)
@@ -137,11 +137,14 @@ class EAFile:
         elif type.lower() == 'kallisto_est_counts': return KallistoEstCountsFile(filePath, type)
         elif type.lower() == 'salmontpm': return SalmonTPMFile(filePath, type)
         elif type.lower() == 'salmonnumreads': return SalmonNumReadsFile(filePath, type)
-        #elif type.lower() == 'geo': return GEOFile(filePath,type)
+        elif type.lower() == 'geo': return GEOFile(filePath,type)
+        elif type.lower() == 'pdf': return  PDFFile(filePath, type)
+        elif type.lower() == 'starreads': return StarReadsFile(filePath, type)
+        elif type.lower() == 'gctx': return GCTXFile(filePath, type)
         else:
             raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, "
-                            "HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT, JupyterNotebook, RMarkdown,"
-                            " KallistoTPM, Kallisto_est_counts, SalmonTPM, and SalmonNumReads")
+                            "HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT, GCTX, PDF JupyterNotebook, RMarkdown,"
+                            " KallistoTPM, Kallisto_est_counts, SalmonTPM, StarReads and SalmonNumReads")
     factory=staticmethod(factory)
 
     def __determine_extension(fileName):
@@ -183,6 +186,10 @@ class EAFile:
             return 'arff'
         elif extension == "gct":
             return 'gct'
+        elif extension == "pdf":
+            return 'pdf'
+        elif extension == "gctx":
+            return 'gctx'
         elif extension == "ipynb":
             return 'jupyternotebook'
         elif extension == "rmd":

@@ -6,7 +6,7 @@ setup(
     author='Piccolo Lab',
     author_email='stephen_piccolo@byu.edu',
     packages=find_packages(exclude=['Tests*', 'docs*']),
-    install_requires=['pandas', 'pyarrow', 'matplotlib==3.0.3', 'numpy', 'sqlalchemy', 'xlsxwriter', 'tables', 'xlrd',
+    install_requires=['pandas', 'pyarrow', 'matplotlib', 'numpy', 'sqlalchemy', 'xlsxwriter', 'tables', 'xlrd',
                       'nbformat', 'cmapPy', 'tabula-py'],
     version=open('VERSION').read().strip(),
     license='MIT',

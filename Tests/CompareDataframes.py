@@ -12,7 +12,7 @@ def standardize_null_value(x):
 
     return x
 
-from shapeshifter.shapeshifter import ShapeShifter
+from expressionable.expressionable import ExpressionAble
 f1 = sys.argv[1]
 f2 = sys.argv[2]
 type=None
@@ -20,8 +20,8 @@ if len(sys.argv)>3:
     type=sys.argv[3]
 
 try:
-    ss1 = ShapeShifter(f1)
-    ss2 = ShapeShifter(f2,type)
+    ss1 = ExpressionAble(f1)
+    ss2 = ExpressionAble(f2, type)
 
     df1 = ss1.input_file.read_input_to_pandas()
     df2 = ss2.input_file.read_input_to_pandas()

@@ -16,7 +16,7 @@ fileNames=("NoChange" "SimpleTranspose" "FloatFilter" "IntFilter" "DiscreteFilte
 filterList=("" "-t" "-f \"float1 > 9.1\"" "-f \"int2 <= 12\"" "-f \"discrete1 = hot\"" "-f \"discrete1 = hot medium\"" "-f \"bool1 = True\"" "-f \"Sample = A\"" "-f \"Sample = A\" \"float1 < 2\" \"int1 > 3\" \"discrete2 = blue\" \"bool1 = True\"" "-f \"float1 < 8\" -c int1" "-f \"float1 < 8\" -c int1 discrete1 bool1 float2" "-f \"float1 < 8\" -a")
 
 #When testing new file types, add your file type's extension to the appropriate list(s) below!
-extensionsForReading=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff")
+extensionsForReading=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff" "pdf")
 extensionsForWriting=("rmd" "ipynb")
 
 extensionsForFiltering=("csv" "json" "xlsx" "hdf" "pq" "mp" "dta" "pkl" "db" "arff")
@@ -107,6 +107,15 @@ echo -n Reading from KallistoTPM:
 python3 CompareDataframes.py Tests/InputData/KallistoTPMTest.tsv Tests/InputData/KallistoTPMTest.zip kallistotpm
 echo -n Reading from Kallisto_est_counts:
 python3 CompareDataframes.py Tests/InputData/Kallisto_est_counts_Test.tsv Tests/InputData/KallistoTPMTest.zip kallisto_est_counts
+
+echo -n Reading from GEO:
+python3 CompareDataframes.py Tests/InputData/GEOtest.tsv GSE66952 geo
+
+echo -n Reading from .gctx:
+python3 CompareDataframes.py Tests/InputData/GCTXUnitTest.tsv GCTXUnitTest.gctx
+
+echo -n Reading from Star:
+python3 CompareDataframes.py Tests/InputData/StarTest.tsv Tests/InputData/StarTest.zip starreads
 
 echo -n Reading from SalmonTPM:
 python3 CompareDataframes.py Tests/InputData/SalmonTPMTest.tsv Tests/InputData/SalmonTPMTest.zip salmontpm

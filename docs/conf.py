@@ -19,14 +19,14 @@ sys.path.insert(0, os.path.abspath('../'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'ShapeShifter'
+project = 'ExpressionAble'
 copyright = '2019, Stephen Piccolo'
 author = 'Stephen Piccolo'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '0.0.3'
+release = '1.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -129,7 +129,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'ShapeShifter.tex', 'ShapeShifter Documentation',
+    (master_doc, 'ExpressionAble.tex', 'ExpressionAble Documentation',
      'Stephen Piccolo', 'manual'),
 ]
 
@@ -139,7 +139,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'shapeshifter', 'ShapeShifter Documentation',
+    (master_doc, 'expressionable', 'ExpressionAble Documentation',
      [author], 1)
 ]
 
@@ -150,8 +150,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'ShapeShifter', 'ShapeShifter Documentation',
-     author, 'ShapeShifter', 'One line description of project.',
+    (master_doc, 'ExpressionAble', 'ExpressionAble Documentation',
+     author, 'ExpressionAble', 'One line description of project.',
      'Miscellaneous'),
 ]
 

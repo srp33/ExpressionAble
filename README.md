@@ -45,8 +45,11 @@ interested in contributing, please follow the instructions [here](https://github
 * SQLite
 * ARFF
 * GCT
+* GCTX
+* PDF
 * Kallisto
 * GEO
+* StarReads
 
 #### Output Formats:
 * CSV 

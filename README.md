@@ -30,7 +30,7 @@ the file extensions provided. If necessary, `input_file_type` and `output_file_t
 
 ## Contributing
 We welcome contributions that help expand ExpressionAble to be compatible with additional file formats. If you are 
-interested in contributing, please follow the instructions [here](https://github.com/srp33/ShapeShifter/wiki).
+interested in contributing, please follow the instructions [here](https://github.com/srp33/ExpressionAble/wiki/Adding-Support-for-Additional-File-Types-in-ExpressionAble).
 ## Currently Supported Formats
 #### Input Formats:
 * CSV
@@ -45,8 +45,11 @@ interested in contributing, please follow the instructions [here](https://github
 * SQLite
 * ARFF
 * GCT
+* GCTX
+* PDF
 * Kallisto
 * GEO
+* StarReads
 
 #### Output Formats:
 * CSV 

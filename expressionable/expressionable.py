@@ -122,15 +122,18 @@ class ExpressionAble:
         df = df[0:numRows]
         return df
 
-    def merge_files(self, file_list, out_file_path, out_file_type=None, gzip_results=False, on=None, how='inner'):
+    def merge_files(self, files_to_merge, out_file_path, files_to_merge_types=[], out_file_type=None, gzip_results=False, on=None, how='inner'):
         """
         Merges multiple ExpressionAble-compatible files into a single file.
 
-        :type file_list: list of str
-        :param file_list: File paths representing files that will be merged with the file in this ExpressionAble object.
+        :type files_to_merge: list of str
+        :param files_to_merge: File paths representing files that will be merged with the file in this ExpressionAble object.
 
         :type out_file_path: str
         :param out_file_path: File path where the output of merging the files will be stored.
+
+        :type files_to_merge_types: list of str
+        :param files_to_merge_types: list of file types corresponding to files_to_merge. If the list is empty, types will be inferred from file extensions. If the list has one value, that will be the type of every file in files_to_merge. If the list has the same number of items as files_to_merge, the types will correspond to the files in files_to_merge.
 
         :type out_file_type: str, default None
         :param out_file_type: Name of the file format that results will be saved to. If None, the type will be inferred from the file path.
@@ -148,27 +151,39 @@ class ExpressionAble:
             print("Error: \'How\' must one of the following options: left, right, outer, inner")
             return
         outFile = EAFile.factory(out_file_path, out_file_type)
-        SSFileList=[]
+        eaFileList=[]
         #create a file object for every file path passed in
-        for file in file_list:
-            SSFileList.append(EAFile.factory(file))
-
-        if len(SSFileList) < 1:
+        if len(files_to_merge_types) == 1:
+            for file in files_to_merge:
+                eaFileList.append(EAFile.factory(file, type=files_to_merge_types[0]))
+        elif len(files_to_merge_types) > 1:
+            if len(files_to_merge_types) != len(files_to_merge):
+                print("Error: the number of input files and the number of input file types must be the same "
+                      "unless only one input type is specified, in which case all input files to merge are assumed"
+                      "to be of that type.")
+                return
+            else:
+                for i in range(len(files_to_merge)):
+                    eaFileList.append(EAFile.factory(files_to_merge[i], type=files_to_merge_types[i]))
+        else:
+            for file in files_to_merge:
+                eaFileList.append(EAFile.factory(file))
+        if len(eaFileList) < 1:
             print("Error: there must be at least one input file to merge with.")
             return
 
-        SSFileList.insert(0, self.input_file)
-        df1 = SSFileList[0].read_input_to_pandas()
+        eaFileList.insert(0, self.input_file)
+        df1 = eaFileList[0].read_input_to_pandas()
 
         #we keep track of how often a column name appears and will change the names to avoid duplicates if necessary
         #the exception is whatever columns they want to merge on - we don't keep track of those
         columnDict={}
         self.__increment_columnname_counters(columnDict, df1, on)
-        if len(SSFileList) == 1:
+        if len(eaFileList) == 1:
             outFile.write_to_file(df1, gzipResults=gzip_results)
             return
-        for i in range(0, len(SSFileList) - 1):
-            df2 = SSFileList[i + 1].read_input_to_pandas()
+        for i in range(0, len(eaFileList) - 1):
+            df2 = eaFileList[i + 1].read_input_to_pandas()
             if on !=None:
                 self.__increment_columnname_counters(columnDict, df2, on)
                 self.__rename_common_columns(columnDict, df1, df2, on)

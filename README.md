@@ -66,9 +66,3 @@ interested in contributing, please follow the instructions [here](https://github
 * GCT 
 * RMarkdown 
 * JupyterNotebook
-
-## Future Formats to Support
-We are working hard to expand ExpressionAble to work with even more file formats! Expect the following formats to be 
-included in future releases:
-* Fixed-width files (fwf)
-* Genomic Data Commons clinical XML

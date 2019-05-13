@@ -117,6 +117,9 @@ python3 CompareDataframes.py Tests/InputData/GCTXUnitTest.tsv Tests/InputData/GC
 echo -n Reading from Star:
 python3 CompareDataframes.py Tests/InputData/StarTest.tsv Tests/InputData/StarTest.zip starreads
 
+echo -n Reading from HTSEQ:
+python3 CompareDataframes.py Tests/InputData/HTSEQOutput.tsv Tests/InputData/HTSEQTests.zip starreads
+
 echo -n Reading from SalmonTPM:
 python3 CompareDataframes.py Tests/InputData/SalmonTPMTest.tsv Tests/InputData/SalmonTPMTest.zip salmontpm
 echo -n Reading from SalmonNumReads:

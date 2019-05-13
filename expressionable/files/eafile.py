@@ -113,7 +113,7 @@ class EAFile:
         """
         from ..files import ARFFFile, CSVFile, ExcelFile, GCTFile, HDF5File, HTMLFile, JSONFile, MsgPackFile, ParquetFile
         from ..files import PickleFile, SQLiteFile, StataFile, TSVFile, JupyterNBFile, RMarkdownFile, KallistoTPMFile
-        from ..files import KallistoEstCountsFile, SalmonTPMFile, SalmonNumReadsFile, StarReadsFile, GEOFile, GCTXFile, PDFFile
+        from ..files import KallistoEstCountsFile, SalmonTPMFile, SalmonNumReadsFile, StarReadsFile, GEOFile, GCTXFile, PDFFile, HTSEQFile
 
         if type==None:
             type = EAFile.__determine_extension(filePath)
@@ -141,6 +141,7 @@ class EAFile:
         elif type.lower() == 'pdf': return  PDFFile(filePath, type)
         elif type.lower() == 'starreads': return StarReadsFile(filePath, type)
         elif type.lower() == 'gctx': return GCTXFile(filePath, type)
+        elif type.lower() == 'htseq': return HTSEQFile(filePath, type)
         else:
             raise Exception("File type not recognized. Supported file types include: TSV, CSV, Parquet, JSON, Excel, "
                             "HDF5, Pickle, MsgPack, Stata, SQLite, HTML, ARFF, GCT, GCTX, PDF JupyterNotebook, RMarkdown,"

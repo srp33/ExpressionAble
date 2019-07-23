@@ -8,22 +8,24 @@ mkdir -p $tmpDir
 rm -rf $tmpDir/*
 
 cp Dockerfile $tmpDir/
-cp Tests/RunTests.sh $tmpDir/
-cp Tests/RunTests2.sh $tmpDir/
+cp Tests/RunTests*.sh $tmpDir/
 cp VERSION $tmpDir/
 cp MANIFEST.in $tmpDir/
 cp README.md $tmpDir/
+
 mkdir $tmpDir/Tests/
 cp -r Tests/InputData $tmpDir/Tests/
 cp -r Tests/OutputData $tmpDir/Tests/
 cp Tests/*.py $tmpDir/
 cp -r expressionable $tmpDir
 cp setup.py $tmpDir
+
 cd $tmpDir
-docker build --no-cache -t srp33/expressionable:version$(cat VERSION) .
+
+#docker build --no-cache -t srp33/expressionable:version$(cat VERSION) .
+docker build -t srp33/expressionable:version$(cat VERSION) .
 
 docker run -i --rm srp33/expressionable:version$(cat VERSION) /RunTests2.sh
-#docker run -i --rm srp33/expressionable:version$(cat VERSION) /bin/bash
 
 cd -
 rm -rf $tmpDir/

@@ -32,5 +32,5 @@ try:
 	if match:
 		print(filePath1 + " and " + filePath2 + ": PASS")
 except Exception as e:
-	print(filePath1 + " and " +filePath2 +": FAIL")
+	print(filePath1 + " and " +filePath2 + ": FAIL")
 	print("Error: " +str(e))

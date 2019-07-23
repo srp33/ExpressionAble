@@ -2,7 +2,6 @@ import pandas as pd
 
 from expressionable.files import EAFile
 
-
 class ExpressionAble:
     """
     Creates an ExpressionAble object, which represents a file to be transformed.

@@ -1,7 +1,7 @@
 import math
 import sys
+from expressionable.expressionable import ExpressionAble
 from numbers import Number
-
 
 def standardize_null_value(x):
     if x==None or x=='None' or x=='' or x=='nan' or x=='NaN' or (isinstance(x, Number) and math.isnan(x)):
@@ -12,21 +12,20 @@ def standardize_null_value(x):
 
     return x
 
-from expressionable.expressionable import ExpressionAble
-f1 = sys.argv[1]
-f2 = sys.argv[2]
+masterFilePath = sys.argv[1]
+testFilePath = sys.argv[2]
 type=None
 if len(sys.argv)>3:
     type=sys.argv[3]
 
 try:
-    ss1 = ExpressionAble(f1)
-    ss2 = ExpressionAble(f2, type)
+    ss1 = ExpressionAble(masterFilePath)
+    ss2 = ExpressionAble(testFilePath, type)
 
     df1 = ss1.input_file.read_input_to_pandas()
     df2 = ss2.input_file.read_input_to_pandas()
     if len(df1.index) != len(df2.index) or len(df1.columns) != len(df2.columns):
-        print(f1 + " and " +f2+ ": FAIL: dimensions differ")
+        print(masterFilePath + " and " + testFilePath + ": FAIL: dimensions differ")
         sys.exit()
 
     for i in range(0,len(df1.index)):
@@ -43,24 +42,12 @@ try:
                 if temp!=temp2:
                     isEqual = False
             if not isEqual:
-                print(f1 + " and " + f2 + ": FAIL: Values differ at row " +str(df1.index[i]) + " and column \'"+str(df1.columns[j])+"\'")
-                print("\t"+f1 + " value: " + str(temp) + "\t"+f2 + " value: " + str(temp2))
-#                print("\t"+f2 + " value: " + str(temp2))
+                print(masterFilePath + " and " + testFilePath + ": FAIL: Values differ at row " +str(df1.index[i]) + " and column \'"+str(df1.columns[j])+"\'")
+                print("\t" + masterFilePath + " value: " + str(temp) + "\t" + testFilePath + " value: " + str(temp2))
                 sys.exit()
 
-    print(f1 + " and " +f2 + ": PASS")
+    print(masterFilePath + " and " + testFilePath + ": PASS")
 
-    # if df1.equals(df2):
-    #     print(f1 + " and " +f2+ ": PASS")
-    # else:
-    #     merged = df1.merge(df2, indicator=True, how='outer')
-    #     merged[merged['_merge'] == 'right_only']
-    #     if 'right_only' in merged._merge.values or 'left_only' in merged._merge.values:
-    #         print(f1 + " and " + f2 + ": FAIL")
-    #         print(merged)
-    #     else:
-    #         print(f1 + " and "+ f2 +": PASS")
 except Exception as e:
-    print(f1 + " and " +f2+ ": FAIL")
+    print(masterFilePath + " and " + testFilePath + ": FAIL")
     print("Error: " + str(e))
-

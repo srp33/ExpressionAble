@@ -8,7 +8,7 @@ This is the official repository for the ExpressionAble Python module, which allo
 * Merging data sets of various formats into a single file.
 * Gzipping resulting data sets, as well as the ability to read gzipped files.
 
-**Most people will prefer to use the [ExpressionAble command-line tool](https://github.com/srp33/ShapeShifter-CLI), which combines the features of ExpressionAble with the ease and speed of the command-line.**
+**Most people will prefer to use the [ExpressionAble command-line tool](https://github.com/srp33/ShapeShifter-CLI), which combines the features of ExpressionAble with the ease of the command-line.**
 
 Basic use of the Python module is described below. You can see full documentation on the functions in this module [here](https://shapeshifter.readthedocs.io/en/latest/).  
 

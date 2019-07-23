@@ -2,7 +2,7 @@ from expressionable.files.eafile import EAFile
 __all__ = ['EAFile', 'ARFFFile', 'CSVFile', 'ExcelFile', 'GCTFile', 'HDF5File', 'HTMLFile', 'JSONFile', 'JupyterNBFile',
            'KallistoEstCountsFile', 'KallistoTPMFile', 'MsgPackFile', 'ParquetFile', 'PickleFile', 'RMarkdownFile',
            'SalmonNumReadsFile', 'SalmonTPMFile', 'SQLiteFile', 'StataFile', 'TSVFile', 'FWFFile', 'PDFFile', 'GEOFile',
-           'StarReadsFile', 'gctxfile']
+           'StarReadsFile', 'gctxfile', 'HTSEQFile', 'TransTSV', 'CbioFile']
 
 
 
@@ -30,4 +30,7 @@ from expressionable.files.geofile import GEOFile
 from expressionable.files.pdffile import PDFFile
 from expressionable.files.star_reads_file import StarReadsFile
 from expressionable.files.gctxfile import GCTXFile
+from expressionable.files.htseqfile import HTSEQFile
+from expressionable.files.transtsv import TransTSV
+from expressionable.files.cbiofile import CbioFile
 

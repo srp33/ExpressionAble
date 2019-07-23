@@ -117,6 +117,23 @@ python3 CompareDataframes.py Tests/InputData/GCTXUnitTest.tsv Tests/InputData/GC
 echo -n Reading from Star:
 python3 CompareDataframes.py Tests/InputData/StarTest.tsv Tests/InputData/StarTest.zip starreads
 
+echo -n Reading from HTSEQ:
+python3 CompareDataframes.py Tests/InputData/HTSEQOut.tsv Tests/InputData/HTSEQ.zip htseq
+
+echo -n Reading from Tranposed TSV file:
+python3 CompareDataframes.py Tests/InputData/inputFile1  Tests/InputData/input.ttsv ttsv
+
+echo -n Reading from G-Zipped Tranposed TSV file:
+python3 CompareDataframes.py Tests/InputData/inputFile1 Tests/InputData/GzippedInput/gzipped.ttsv.gz ttsv
+
+echo -n Reading from CBIO file:
+python3 CompareDataframes.py Tests/InputData/CBioUnitOut.tsv Tests/InputData/CBioTest.tsv cbio
+
+echo -n Reading from G-Zipped CBIO file:
+python3 CompareDataframes.py Tests/InputData/CBioUnitOut.tsv Tests/InputData/CBioTest.tsv.gz cbio
+
+
+
 echo -n Reading from SalmonTPM:
 python3 CompareDataframes.py Tests/InputData/SalmonTPMTest.tsv Tests/InputData/SalmonTPMTest.zip salmontpm
 echo -n Reading from SalmonNumReads:

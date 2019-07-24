@@ -25,8 +25,7 @@ cd $tmpDir
 #docker build --no-cache -t srp33/expressionable:version$(cat VERSION) .
 docker build -t srp33/expressionable:version$(cat VERSION) .
 
-docker run -i --rm srp33/expressionable:version$(cat VERSION) /RunTests2.sh
+docker run -i --rm srp33/expressionable:version$(cat VERSION) /RunTests.sh
 
 cd -
 rm -rf $tmpDir/
-

@@ -2,8 +2,6 @@ from ..files import eafile
 import pandas as pd
 import os
 
-
-
 class TransTSV(eafile.EAFile):
     def read_input_to_pandas(self, columnList=[], indexCol=None):
         if self.isGzipped:

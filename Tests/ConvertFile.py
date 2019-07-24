@@ -28,7 +28,6 @@ def determineOperator(operator):
         return OperatorEnum.GreaterThanOrEqualTo
     elif operator == "!=":
         return OperatorEnum.NotEquals
-    else:
 
 def isOperator(operator):
     if operator=="==" or operator=="=" or operator=="<" or operator ==">" or operator==">=" or operator=="<=" or operator=="!=":
@@ -121,7 +120,7 @@ if args.input_file_type:
     inFileType = args.input_file_type.lower()
 isInFileGzipped = isGzipped(args.input_file)
 
-outFileTyp e= None
+outFileType = None
 if args.output_file_type:
     outFileType = args.output_file_type.lower()
 
@@ -130,7 +129,7 @@ if args.transpose:
     isTransposed=True
     if outFileType == 'feather' or outFileType == 'parquet' or outFileType == 'stata':
         print("Error: Parquet and Stata file types do not support transposing. Either choose a different output file type or remove the --transpose flag")
-        sys.exit()
+        sys.exit(1)
 
 colList=[]
 query=None
@@ -144,7 +143,7 @@ if args.filter:
     query=args.filter[0]
     if not("==" in query or "!=" in query or "<" in query or ">" in query or "<=" in query or ">=" in query):
         print("Error: Filter must be an expression involving an operator such as '==' or '<'. If you simply want to include specific columns in the output, try using the --columns flag")
-        sys.exit()
+        sys.exit(1)
 
 if args.columns:
     colList=parseColumns(args.columns[0])

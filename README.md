@@ -43,7 +43,8 @@ interested in contributing, please follow the instructions [here](https://github
 #### Input Formats:
 
 * CSV
-* TSV
+* TSV (samples as rows, variables as columns)
+* Transposed TSV (variables as rows, samples as columns)
 * JSON
 * Excel
 * HDF5

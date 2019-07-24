@@ -18,14 +18,14 @@ RUN export JAVA_HOME && \
                  pyrsistent jsonschema nbformat chardet certifi urllib3 \
                  idna requests h5py cmapPy distro tabula-py
 
-COPY RunTests*.sh /
 COPY Tests/InputData /Tests/InputData
 COPY Tests/OutputData /Tests/OutputData
-COPY *.py /
 COPY VERSION /ExpressionAble/
 COPY MANIFEST.in /ExpressionAble/
 COPY README.md /ExpressionAble/
 COPY setup.py /ExpressionAble/
+COPY RunTests*.sh /
+COPY *.py /
 COPY expressionable /ExpressionAble/expressionable
 
 RUN pip3 install -e ExpressionAble

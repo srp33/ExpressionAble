@@ -26,7 +26,7 @@ try:
     df2 = ss2.input_file.read_input_to_pandas()
     if len(df1.index) != len(df2.index) or len(df1.columns) != len(df2.columns):
         print(masterFilePath + " and " + testFilePath + ": FAIL: dimensions differ")
-        sys.exit()
+        sys.exit(0)
 
     for i in range(0,len(df1.index)):
         for j in range(0, len(df1.columns)):
@@ -44,10 +44,11 @@ try:
             if not isEqual:
                 print(masterFilePath + " and " + testFilePath + ": FAIL: Values differ at row " +str(df1.index[i]) + " and column \'"+str(df1.columns[j])+"\'")
                 print("\t" + masterFilePath + " value: " + str(temp) + "\t" + testFilePath + " value: " + str(temp2))
-                sys.exit()
+                sys.exit(0)
 
     print(masterFilePath + " and " + testFilePath + ": PASS")
 
 except Exception as e:
     print(masterFilePath + " and " + testFilePath + ": FAIL")
     print("Error: " + str(e))
+    sys.exit(1)

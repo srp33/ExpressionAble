@@ -12,7 +12,6 @@ class EAFile:
     Abstract base class for all the supported file types in ExpressionAble. Subclasses must implement reading a file to pandas and exporting a dataframe to the data type.
     """
 
-
     def __init__(self, filePath, fileType):
         self.filePath=filePath
         self.dataType=fileType
@@ -167,6 +166,8 @@ class EAFile:
             extension = None
         if extension == "tsv":
             return 'tsv'
+        if extension == "ttsv":
+            return 'ttsv'
         elif extension == "csv":
             return 'csv'
         elif extension == "json":
@@ -199,6 +200,8 @@ class EAFile:
             return 'jupyternotebook'
         elif extension == "rmd":
             return 'rmarkdown'
+        if extension == "cbio":
+            return 'cbio'
         elif EAFile.__is_geo_filepath(fileName):
             return 'geo'
         else:

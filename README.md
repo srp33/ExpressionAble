@@ -8,7 +8,7 @@
 
 **The solution**: We developed the ExpressionAble tool to reduce the time from data acquisition to analysis for researchers studying gene expression. This tool can help researchers more easily work with their own data as well as the immense gene-expression resources in public databases.
 
-## expressionable Python Module
+### expressionable Python Module
 
 This is the official repository for the ExpressionAble Python module, which allows for:
 
@@ -22,10 +22,11 @@ This is the official repository for the ExpressionAble Python module, which allo
 
 Basic use of the Python module is described below. You can see full documentation on the functions in this module [here](https://shapeshifter.readthedocs.io/en/latest/).  
 
-## Install
+### Install
+
 `pip install expressionable`
 
-## Basic Use
+### Basic Use
 
 After installing, import the ExpressionAble class with `from expressionable import ExpressionAble`. An ExpressionAble object 
 represents the file to be transformed. It is then transformed using the `export_filter_results` method. Here is a simple
@@ -43,14 +44,14 @@ Note that the type of file being read and exported to were not stated explicitly
 the file extensions provided. If necessary, `input_file_type` and `output_file_type` can be named explicitly.
 
 
-## Contributing
+### Contributing
 
 We welcome contributions that help expand ExpressionAble to be compatible with additional file formats. If you are 
 interested in contributing, please follow the instructions [here](https://github.com/srp33/ExpressionAble/wiki/Adding-Support-for-Additional-File-Types-in-ExpressionAble).
 
-## Currently Supported Formats
+### Currently Supported Formats
 
-#### Input Formats:
+##### Input Formats:
 
 * CSV
 * TSV (samples as rows, variables as columns)
@@ -74,7 +75,7 @@ interested in contributing, please follow the instructions [here](https://github
 * HT-Seq (RNA-Sequencing)
 * CBio Portal (RNA expression format)
 
-#### Output Formats:
+##### Output Formats:
 
 * CSV 
 * TSV

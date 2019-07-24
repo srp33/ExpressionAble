@@ -1,4 +1,12 @@
-# expressionable Python Module
+# Background
+
+**The context**: Gene-expression levels help in determining cellular function. To understand these roles, scientists have performed thousands of gene-expression studies using microarray assays and next-generation sequencing. Such data are typically stored in tabular files (with rows and columns).
+
+**The problem**: Different functional-genomics repositories and preprocessing tools store gene-expression data in a cacophony of file formats. Analysis tools (such as Python, R, and Excel) do not support all these formats natively. It is time consuming and labor intensive for bioinformaticians to translate data between file formats and identify samples that match specific criteria.
+
+**The solution**: We developed the ExpressionAble tool to reduce the time from data acquisition to analysis for researchers studying gene expression. This tool can help researchers more easily work with their own data as well as the immense gene-expression resources in public databases.
+
+## expressionable Python Module
 
 This is the official repository for the ExpressionAble Python module, which allows for:
 
